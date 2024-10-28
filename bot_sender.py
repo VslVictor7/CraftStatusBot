@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
 
-TOKEN = ''  # Insira seu token aqui
-CHANNEL_ID = ''  # Insira o ID do canal aqui
+TOKEN = "token com aspas, é uma STR"  # Insira seu token aqui
+CHANNEL_ID = 'id deve ser sem aspas, é um INT'  # Insira o ID do canal aqui
 
 # Criação do bot com intents
 intents = discord.Intents.default()
