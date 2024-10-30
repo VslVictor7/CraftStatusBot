@@ -1,0 +1,10 @@
+O bot possui a função de atualizar uma certa mensagem de texto para mostrar o status do servidor do minecraft.
+
+Passo 1: crie um arquivo .env e use o .example-env de base para ele. Substitua o que for necessário.
+
+Passo 2: Utilizar do bot_sender.py para mandar um texto placeholder para ele ser utilizado em edições.
+
+Passo 3: Rodar o script .vbs, pois com ele não aparecerá o terminal toda vez que rodar. (Interessante saber também que não tem problema rodar o script diretamente,
+ o ip updater, mas por gostos pessoais, eu fiz dessa forma).
+
+Conclusão: Ao substituir os tokens e os ID's, o bot deve funcionar normalmente.
