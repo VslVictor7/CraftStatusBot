@@ -8,3 +8,15 @@ Passo 3: Rodar o script .vbs, pois com ele não aparecerá o terminal toda vez q
  o ip updater, mas por gostos pessoais, eu fiz dessa forma).
 
 Conclusão: Ao substituir os tokens e os ID's, o bot deve funcionar normalmente.
+
+
+CRIAR MAQUINA VIRTUAL!
+
+python -m venv venv
+
+ou
+
+python -m venv .venv
+
+
+Importante notar que deve-se colocar o nome da venv dentro do gitignore para não causar conflitos de commit.
