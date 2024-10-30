@@ -1,0 +1,21 @@
+O bot possui a função de atualizar uma certa mensagem de texto para mostrar o status do servidor do minecraft.
+
+Passo 1: crie um arquivo .env e use o .example-env de base para ele. Substitua o que for necessário.
+
+Passo 2: Utilizar do bot_sender.py para mandar um texto placeholder para ele ser utilizado em edições.
+
+Passo 3: rodar "python ip_updater.py" com a maquina virtual ativada.
+
+Conclusão: Ao substituir os tokens e os ID's, o bot deve funcionar normalmente.
+
+
+CRIAR MAQUINA VIRTUAL!
+
+python -m venv venv
+
+ou
+
+python -m venv .venv
+
+
+Importante notar que deve-se colocar o nome da venv dentro do gitignore para não causar conflitos de commit.
