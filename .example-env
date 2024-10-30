@@ -1,5 +1,0 @@
-DISCORD_TOKEN= Token do discord
-CHANNEL_ID= ID do canal do discord
-MESSAGE_ID= id da mensagem que deve ser atualizada
-MINECRAFT_SERVER_IP= ip do server do minecraft
-MINECRAFT_SERVER_PORT= porta do server do minecraft
