@@ -32,7 +32,6 @@ async def get_server_status(bot):
         status = await bot.server.async_status()
         bot.uptime_start = bot.uptime_start or datetime.utcnow()
 
-        # Obter nomes dos jogadores online, se disponíveis
         player_names = [player.name for player in status.players.sample] if status.players.sample else []
 
         return True, status.players.online, status.version.name, player_names
@@ -66,13 +65,11 @@ async def update_message_periodically(channel, message, session, interval=3):
         current_ip = await get_public_ipv4(session)
         server_online, players_online, version, player_names = await get_server_status(bot)
 
-        # Verificar se nenhum nome contém "Anonymous Player"
         if "Anonymous Player" not in player_names:
-            # Atualizar mensagem apenas se houver mudanças
+
             if (current_ip != last_ip or server_online != last_status or players_online != last_players_online
                 or version != last_version or player_names != last_player_names):
 
-                # Criar embed com a lista atualizada de jogadores e outras informações
                 embed = create_embed(current_ip, server_online, players_online, version, player_names)
                 try:
                     await message.edit(embed=embed, content="")
@@ -85,7 +82,6 @@ async def update_message_periodically(channel, message, session, interval=3):
                     current_ip, server_online, players_online, version, player_names
                 )
 
-        # Aguardar intervalo antes da próxima atualização
         await asyncio.sleep(interval)
 
 @bot.tree.command(name="uptime", description="Verifica o tempo que o servidor está online")
