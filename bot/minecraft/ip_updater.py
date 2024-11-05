@@ -31,12 +31,17 @@ async def get_server_status(bot):
     try:
         status = await bot.server.async_status()
         bot.uptime_start = bot.uptime_start or datetime.utcnow()
-        return True, status.players.online, status.version.name  # Retorna a versão do servidor
+
+        # Obter nomes dos jogadores online, se disponíveis
+        player_names = [player.name for player in status.players.sample] if status.players.sample else []
+
+        return True, status.players.online, status.version.name, player_names
     except:
         bot.uptime_start = None
-        return False, 0, "Desconhecido"
+        return False, 0, "Desconhecido", []
 
-def create_embed(ip, server_online, players_online, version):
+
+def create_embed(ip, server_online, players_online, version, player_names):
     embed = discord.Embed(
         title="Status do Servidor Minecraft",
         color=0x00ff00 if server_online else 0xff0000
@@ -44,26 +49,43 @@ def create_embed(ip, server_online, players_online, version):
     embed.add_field(name="🖥️ IP", value=ip or "N/A", inline=False)
     embed.add_field(name="📶 Status", value="🟢 Online" if server_online else "🔴 Offline", inline=False)
     embed.add_field(name="👥 Jogadores Online", value=f"{players_online} jogador{'es' if players_online != 1 else ''}" if server_online else "Nenhum", inline=False)
+
+    if player_names:
+        embed.add_field(name="📝 Nomes", value=", ".join(player_names), inline=False)
+    else:
+        embed.add_field(name="📝 Nomes", value="Nenhum", inline=False)
+
     embed.add_field(name="🌐 Versão", value=version, inline=False)
+
     return embed
 
-async def update_message_periodically(channel, message, session, interval=5):
-    last_status, last_ip, last_players_online, last_version = None, None, None, None
+async def update_message_periodically(channel, message, session, interval=3):
+    last_status, last_ip, last_players_online, last_version, last_player_names = None, None, None, None, None
 
     while True:
         current_ip = await get_public_ipv4(session)
-        server_online, players_online, version = await get_server_status(bot)
+        server_online, players_online, version, player_names = await get_server_status(bot)
 
-        if (current_ip != last_ip or server_online != last_status or players_online != last_players_online or version != last_version):
-            embed = create_embed(current_ip, server_online, players_online, version)
-            try:
-                await message.edit(embed=embed, content="")
-                print("Mensagem atualizada.")
-            except discord.DiscordException as e:
-                print(f"Erro ao atualizar mensagem: {e}")
+        # Verificar se nenhum nome contém "Anonymous Player"
+        if "Anonymous Player" not in player_names:
+            # Atualizar mensagem apenas se houver mudanças
+            if (current_ip != last_ip or server_online != last_status or players_online != last_players_online
+                or version != last_version or player_names != last_player_names):
 
-            last_ip, last_status, last_players_online, last_version = current_ip, server_online, players_online, version
+                # Criar embed com a lista atualizada de jogadores e outras informações
+                embed = create_embed(current_ip, server_online, players_online, version, player_names)
+                try:
+                    await message.edit(embed=embed, content="")
+                    print("Mensagem atualizada.")
+                except discord.DiscordException as e:
+                    print(f"Erro ao atualizar mensagem: {e}")
 
+                # Atualizar o estado anterior
+                last_ip, last_status, last_players_online, last_version, last_player_names = (
+                    current_ip, server_online, players_online, version, player_names
+                )
+
+        # Aguardar intervalo antes da próxima atualização
         await asyncio.sleep(interval)
 
 @bot.tree.command(name="uptime", description="Verifica o tempo que o servidor está online")
