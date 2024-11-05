@@ -1,4 +1,4 @@
-import discord, os, aiohttp, asyncio
+import discord, os, asyncio
 from discord.ext import commands
 from dotenv import load_dotenv
 from mcstatus import JavaServer
@@ -80,14 +80,3 @@ async def update_message_periodically(channel, message, session, interval=3):
                 )
 
         await asyncio.sleep(interval)
-
-@bot.tree.command(name="uptime", description="Verifica o tempo que o servidor está online")
-async def uptime(interaction: discord.Interaction):
-    if bot.uptime_start:
-        uptime_duration = datetime.utcnow() - bot.uptime_start
-        hours, remainder = divmod(int(uptime_duration.total_seconds()), 3600)
-        minutes, seconds = divmod(remainder, 60)
-        uptime_message = f"Servidor online há: {hours} horas, {minutes} minutos e {seconds} segundos."
-        await interaction.response.send_message(uptime_message)
-    else:
-        await interaction.response.send_message("O servidor está offline no momento.")
