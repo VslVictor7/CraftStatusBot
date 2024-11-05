@@ -6,9 +6,6 @@ from datetime import datetime
 
 load_dotenv()
 
-TOKEN = os.getenv('DISCORD_TOKEN')
-CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
-MESSAGE_ID = int(os.getenv('MESSAGE_ID'))
 MINECRAFT_SERVER_IP = os.getenv('MINECRAFT_SERVER_IP')
 MINECRAFT_SERVER_PORT = int(os.getenv('MINECRAFT_SERVER_PORT'))
 
@@ -94,21 +91,3 @@ async def uptime(interaction: discord.Interaction):
         await interaction.response.send_message(uptime_message)
     else:
         await interaction.response.send_message("O servidor está offline no momento.")
-
-@bot.event
-async def on_ready():
-    async with aiohttp.ClientSession() as session:
-        channel = bot.get_channel(CHANNEL_ID)
-        if channel:
-            try:
-                message = await channel.fetch_message(MESSAGE_ID)
-                print("Bot pronto para monitoramento de IP, Servidor e Jogadores.")
-                await update_message_periodically(channel, message, session)
-            except discord.DiscordException as e:
-                print(f"Erro ao buscar mensagem: {e}")
-                await bot.close()
-        else:
-            print("Canal não detectado.")
-            await bot.close()
-
-bot.run(TOKEN)
