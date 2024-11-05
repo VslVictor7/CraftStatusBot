@@ -7,7 +7,7 @@ from datetime import datetime
 load_dotenv()
 
 MINECRAFT_SERVER_IP = os.getenv('MINECRAFT_SERVER_IP')
-MINECRAFT_SERVER_PORT = int(os.getenv('MINECRAFT_SERVER_PORT'))
+MINECRAFT_SERVER_PORT = os.getenv('MINECRAFT_SERVER_PORT')
 
 class MyBot(commands.Bot):
     def __init__(self):
