@@ -1,4 +1,4 @@
-from minecraft import message_manager
+from minecraft.scripts import message_manager
 import discord, os, aiohttp
 from dotenv import load_dotenv
 from datetime import datetime
