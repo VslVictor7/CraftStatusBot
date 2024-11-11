@@ -19,26 +19,31 @@ Este bot atualiza automaticamente uma mensagem com o status do servidor de Minec
 
 1. **Clone o repositório** (caso ainda não tenha feito):
    ```bash
-   - git clone <https://github.com/VslVictor7/Minecraft-Server-Status-Manager.git>
+   git clone <https://github.com/VslVictor7/Minecraft-Server-Status-Manager.git>
 
-   - cd Minecraft-Server-Status-Manager
+   cd Minecraft-Server-Status-Manager
    ```
 
 2. **Crie uma Máquina Virtual** (venv):
 
-- python -m venv venv
+```bash
+  python -m venv venv
+```
 
 Ou
-
+```bash
 - python -m venv .venv
+```
 
 3. **Ativar Máquina Virtual**:
-
-- source .venv/bin/activate
+```bash
+  source .venv/bin/activate
+```
 
 4. **Instalar requirements.txt**
-
-- pip install -r requirements.txt
+```bash
+  pip install -r requirements.txt
+```
 
 ## Configuração
 
@@ -50,13 +55,13 @@ Ou
 2. Enviar mensagem inicial do bot:
 
 - Execute o script bot_sender.py para enviar uma mensagem placeholder que será usada nas atualizações de status do servidor:
-
+```bash
 python bot_sender.py
-
+```
 
 ## Execução
 
-- Após configurar o .env, execute o bot por meio do:
+- Após configurar o .env, execute o bot por meio dos arquivos:
 
 run_message_manager.vbs
 
@@ -65,8 +70,9 @@ ou
 script.bat
 
 - Caso queira rodar diretamente, execute o main.py:
-
+```bash
 python main.py
+```
 
 
 ## Considerações Importantes
