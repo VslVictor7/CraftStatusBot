@@ -14,6 +14,7 @@ cursor.execute('''
 CREATE TABLE IF NOT EXISTS server_data (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT,
+    player_left TEXT,
     online_in_server INTEGER,
     players_online INTEGER,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -23,17 +24,15 @@ CREATE TABLE IF NOT EXISTS server_data (
 conn.commit()
 conn.close()
 
-def insert_server_data(player_name, server_online, players_online):
-    # Insere o status do servidor e as informações de log na tabela server_data
+def insert_server_data(player_name, server_online, players_online, player_left=None):
 
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
 
     cursor.execute('''
-    INSERT INTO server_data (nome, online_in_server, players_online, server_status)
-    VALUES (?, ?, ?, ?)
-    ''', (player_name, server_online, players_online, 'online' if server_online else 'offline'))
+    INSERT INTO server_data (nome, online_in_server, players_online, server_status, player_left)
+    VALUES (?, ?, ?, ?, ?)
+    ''', (player_name, server_online, players_online, 'online' if server_online else 'offline', player_left))
 
-    # Confirme a transação
     conn.commit()
     conn.close()
