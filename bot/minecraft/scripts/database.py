@@ -1,6 +1,8 @@
-import sqlite3, os
+import sqlite3, os, pytz
 from dotenv import load_dotenv
+from datetime import datetime
 
+# Carregar variáveis de ambiente
 load_dotenv()
 
 DATABASE_PATH = os.getenv('DATABASE_PATH')
@@ -14,7 +16,7 @@ cursor.execute('''
 CREATE TABLE IF NOT EXISTS server_data (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT,
-    online_in_server INTEGER,
+    player_left TEXT,
     players_online INTEGER,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     server_status TEXT
@@ -23,17 +25,17 @@ CREATE TABLE IF NOT EXISTS server_data (
 conn.commit()
 conn.close()
 
-def insert_server_data(player_name, server_online, players_online):
-    # Insere o status do servidor e as informações de log na tabela server_data
-
+def insert_server_data(player_name, server_online, players_online, player_left=None):
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
 
-    cursor.execute('''
-    INSERT INTO server_data (nome, online_in_server, players_online, server_status)
-    VALUES (?, ?, ?, ?)
-    ''', (player_name, server_online, players_online, 'online' if server_online else 'offline'))
+    br_tz = pytz.timezone('America/Sao_Paulo')
+    current_time = datetime.now(br_tz)
 
-    # Confirme a transação
+    cursor.execute('''
+    INSERT INTO server_data (nome, players_online, server_status, player_left, timestamp)
+    VALUES (?, ?, ?, ?, ?)
+    ''', (player_name, players_online, 'online' if server_online else 'offline', player_left, current_time))
+
     conn.commit()
     conn.close()
