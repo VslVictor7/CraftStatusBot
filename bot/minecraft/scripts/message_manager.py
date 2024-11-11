@@ -46,7 +46,7 @@ def create_embed(ip, server_online, players_online, version, player_names):
         title="Status do Servidor Minecraft",
         color=0x00ff00 if server_online else 0xff0000
     )
-    embed.add_field(name="🖥️ IP", value=ip or "N/A", inline=False)
+    embed.add_field(name="🖥️ IP", value=ip if server_online else "Nenhum", inline=False)
     embed.add_field(name="📶 Status", value="🟢 Online" if server_online else "🔴 Offline", inline=False)
     embed.add_field(
         name="👥 Jogadores Online",
