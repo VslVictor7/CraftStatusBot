@@ -1,4 +1,7 @@
-import discord, os, asyncio
+import discord
+import os
+import asyncio
+from . import database
 from discord.ext import commands
 from dotenv import load_dotenv
 from mcstatus import JavaServer
@@ -64,8 +67,12 @@ async def update_message_periodically(channel, message, session, interval=3):
 
         if "Anonymous Player" not in player_names:
 
+            player_name = player_names[0] if player_names else "Nenhum jogador"
+
             if (current_ip != last_ip or server_online != last_status or players_online != last_players_online
                 or version != last_version or player_names != last_player_names):
+
+                database.insert_server_data(player_name, server_online, players_online)
 
                 embed = create_embed(current_ip, server_online, players_online, version, player_names)
                 try:
