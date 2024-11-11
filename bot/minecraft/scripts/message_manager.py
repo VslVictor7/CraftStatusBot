@@ -81,16 +81,17 @@ async def update_message_periodically(channel, message, session, interval=3):
 
             player_name = player_names[0] if player_names else "Nenhum jogador"
 
-            # Se um jogador saiu, será inserido o jogador que saiu no banco de dados
-            if left_players:
-
-                for player in left_players:
-                    database.insert_server_data(player_name, server_online, players_online, player_left=player)
-
             if (current_ip != last_ip or server_online != last_status or players_online != last_players_online
                 or version != last_version or player_names != last_player_names):
 
-                database.insert_server_data(player_name, server_online, players_online)
+                if left_players:
+
+                    for player in left_players:
+                        database.insert_server_data(player_name, server_online, players_online, player_left=player)
+
+                else:
+
+                    database.insert_server_data(player_name, server_online, players_online)
 
                 embed = create_embed(current_ip, server_online, players_online, version, player_names)
                 try:
