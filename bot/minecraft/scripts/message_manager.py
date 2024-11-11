@@ -1,6 +1,4 @@
-import discord
-import os
-import asyncio
+import discord, os, asyncio
 from . import database
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -41,6 +39,9 @@ async def get_server_status(bot):
 
 
 def create_embed(ip, server_online, players_online, version, player_names):
+
+    player_names_sorted = sorted(player_names)
+
     embed = discord.Embed(
         title="Status do Servidor Minecraft",
         color=0x00ff00 if server_online else 0xff0000
@@ -50,7 +51,7 @@ def create_embed(ip, server_online, players_online, version, player_names):
     embed.add_field(name="👥 Jogadores Online", value=f"{players_online} jogador{'es' if players_online != 1 else ''}" if server_online else "Nenhum", inline=False)
 
     if player_names:
-        embed.add_field(name="📝 Nomes", value=", ".join(player_names), inline=False)
+        embed.add_field(name="📝 Nomes", value=", ".join(player_names_sorted), inline=False)
     else:
         embed.add_field(name="📝 Nomes", value="Nenhum", inline=False)
 
