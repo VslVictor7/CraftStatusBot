@@ -18,11 +18,11 @@ Este bot atualiza automaticamente uma mensagem com o status do servidor de Minec
 ## Instalação
 
 1. **Clone o repositório** (caso ainda não tenha feito):
-   ```bash
+```bash
    git clone <https://github.com/VslVictor7/Minecraft-Server-Status-Manager.git>
 
    cd Minecraft-Server-Status-Manager
-   ```
+```
 
 2. **Crie uma Máquina Virtual** (venv):
 
@@ -32,7 +32,7 @@ Este bot atualiza automaticamente uma mensagem com o status do servidor de Minec
 
 Ou
 ```bash
-- python -m venv .venv
+  python -m venv .venv
 ```
 
 3. **Ativar Máquina Virtual**:
