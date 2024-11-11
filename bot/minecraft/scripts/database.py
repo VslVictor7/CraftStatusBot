@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS server_data (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT,
     player_left TEXT,
-    online_in_server INTEGER,
     players_online INTEGER,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     server_status TEXT
@@ -34,9 +33,9 @@ def insert_server_data(player_name, server_online, players_online, player_left=N
     current_time = datetime.now(br_tz)
 
     cursor.execute('''
-    INSERT INTO server_data (nome, online_in_server, players_online, server_status, player_left, timestamp)
-    VALUES (?, ?, ?, ?, ?, ?)
-    ''', (player_name, server_online, players_online, 'online' if server_online else 'offline', player_left, current_time))
+    INSERT INTO server_data (nome, players_online, server_status, player_left, timestamp)
+    VALUES (?, ?, ?, ?, ?)
+    ''', (player_name, players_online, 'online' if server_online else 'offline', player_left, current_time))
 
     conn.commit()
     conn.close()
