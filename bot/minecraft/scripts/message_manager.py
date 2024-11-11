@@ -48,7 +48,11 @@ def create_embed(ip, server_online, players_online, version, player_names):
     )
     embed.add_field(name="🖥️ IP", value=ip or "N/A", inline=False)
     embed.add_field(name="📶 Status", value="🟢 Online" if server_online else "🔴 Offline", inline=False)
-    embed.add_field(name="👥 Jogadores Online", value=f"{players_online} jogador{'es' if players_online != 1 else ''}" if server_online else "Nenhum", inline=False)
+    embed.add_field(
+        name="👥 Jogadores Online",
+        value="Nenhum" if players_online == 0 else f"{players_online} jogador{'es' if players_online != 1 else ''}",
+        inline=False
+    )
 
     if player_names:
         embed.add_field(name="📝 Nomes", value=", ".join(player_names_sorted), inline=False)
@@ -66,9 +70,22 @@ async def update_message_periodically(channel, message, session, interval=3):
         current_ip = await get_public_ipv4(session)
         server_online, players_online, version, player_names = await get_server_status(bot)
 
+        # Verificar se algum jogador saiu
+        if last_player_names:
+            left_players = set(last_player_names) - set(player_names)
+
+        else:
+            left_players = set()
+
         if "Anonymous Player" not in player_names:
 
             player_name = player_names[0] if player_names else "Nenhum jogador"
+
+            # Se um jogador saiu, será inserido o jogador que saiu no banco de dados
+            if left_players:
+
+                for player in left_players:
+                    database.insert_server_data(player_name, server_online, players_online, player_left=player)
 
             if (current_ip != last_ip or server_online != last_status or players_online != last_players_online
                 or version != last_version or player_names != last_player_names):
