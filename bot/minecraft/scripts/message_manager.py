@@ -64,44 +64,60 @@ def create_embed(ip, server_online, players_online, version, player_names):
     return embed
 
 async def update_message_periodically(channel, message, session, interval=3):
+
+    def get_left_players(player_names):
+        if last_player_names:
+            left_players = set(last_player_names) - set(player_names)
+            return left_players
+        else:
+            left_players = set()
+            return left_players
+
+    def update_last_state(current_ip, server_online, players_online, version, player_names):
+        return current_ip, server_online, players_online, version, player_names
+
+    def update_database(player_name, server_online, players_online, player_left=None):
+        if player_left:
+            for player in player_left:
+                database.insert_server_data(player_name, server_online, players_online, player_left=player)
+        else:
+            database.insert_server_data(player_name, server_online, players_online)
+
+    async def handle_message_update(message, embed):
+        try:
+            await message.edit(embed=embed, content="")
+            print("Mensagem atualizada.")
+        except discord.DiscordException as e:
+            print(f"Erro ao atualizar mensagem: {e}")
+
     last_status, last_ip, last_players_online, last_version, last_player_names = None, None, None, None, None
 
     while True:
+
         current_ip = await get_public_ipv4(session)
         server_online, players_online, version, player_names = await get_server_status(bot)
 
-        # Verificar se algum jogador saiu
-        if last_player_names:
-            left_players = set(last_player_names) - set(player_names)
-
-        else:
-            left_players = set()
+        left_players = get_left_players(player_names)
 
         if "Anonymous Player" not in player_names:
 
-            player_name = player_names[0] if player_names else "Nenhum jogador"
+            player_name = player_names[0] if player_names else None
 
             if (current_ip != last_ip or server_online != last_status or players_online != last_players_online
                 or version != last_version or player_names != last_player_names):
 
-                if left_players:
+                # Atualizar banco de dados.
+                update_database(player_name, server_online, players_online, left_players)
 
-                    for player in left_players:
-                        database.insert_server_data(player_name, server_online, players_online, player_left=player)
-
-                else:
-
-                    database.insert_server_data(player_name, server_online, players_online)
-
+                # Criar embed com conteúdo.
                 embed = create_embed(current_ip, server_online, players_online, version, player_names)
-                try:
-                    await message.edit(embed=embed, content="")
-                    print("Mensagem atualizada.")
-                except discord.DiscordException as e:
-                    print(f"Erro ao atualizar mensagem: {e}")
 
-                # Atualizar o estado anterior
-                last_ip, last_status, last_players_online, last_version, last_player_names = (
+                # Atualizar mensagem.
+                await handle_message_update(message, embed)
+
+                # Atualizar último estado.
+
+                last_ip, last_status, last_players_online, last_version, last_player_names = update_last_state(
                     current_ip, server_online, players_online, version, player_names
                 )
 
