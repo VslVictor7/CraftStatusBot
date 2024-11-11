@@ -1,6 +1,8 @@
-import sqlite3, os
+import sqlite3, os, pytz
 from dotenv import load_dotenv
+from datetime import datetime
 
+# Carregar variáveis de ambiente
 load_dotenv()
 
 DATABASE_PATH = os.getenv('DATABASE_PATH')
@@ -25,14 +27,16 @@ conn.commit()
 conn.close()
 
 def insert_server_data(player_name, server_online, players_online, player_left=None):
-
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
 
+    br_tz = pytz.timezone('America/Sao_Paulo')
+    current_time = datetime.now(br_tz)
+
     cursor.execute('''
-    INSERT INTO server_data (nome, online_in_server, players_online, server_status, player_left)
-    VALUES (?, ?, ?, ?, ?)
-    ''', (player_name, server_online, players_online, 'online' if server_online else 'offline', player_left))
+    INSERT INTO server_data (nome, online_in_server, players_online, server_status, player_left, timestamp)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ''', (player_name, server_online, players_online, 'online' if server_online else 'offline', player_left, current_time))
 
     conn.commit()
     conn.close()
