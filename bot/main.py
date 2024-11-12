@@ -34,10 +34,26 @@ async def uptime(interaction: discord.Interaction):
 @bot.tree.command(name="ping", description="Verifica o ping do servidor Minecraft")
 async def ping(interaction: discord.Interaction):
     try:
-        latency = bot.server.ping()  # Obtém o ping do servidor
-        await interaction.response.send_message(f"Ping do servidor é de {latency} ms")
+        latency = bot.server.ping()
+
+        latency = round(latency, 2)
+
+        embed = discord.Embed(
+            title="Latência do Servidor",
+            description=f"{latency} ms",
+            color=0x7289DA
+        )
+
+        await interaction.response.send_message(embed=embed)
+
     except Exception as e:
-        await interaction.response.send_message(f"Ocorreu um erro ao tentar obter o ping: {e}")
+
+        embed = discord.Embed(
+            title="Latência do Servidor",
+            description=f"Erro ao obter latência: {e}",
+            color=0x7289DA
+        )
+        await interaction.response.send_message(embed=embed)
 
 # Rodar o bot.
 
