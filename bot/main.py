@@ -1,5 +1,5 @@
-from minecraft.scripts import message_manager
 import discord, os, aiohttp
+from minecraft.scripts import message_manager
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -13,16 +13,23 @@ bot = message_manager.MyBot()
 
 # Comandos.
 
-@bot.tree.command(name="uptime", description="Verifica o tempo que o servidor está online")
+@bot.tree.command(name="uptime", description="Mostra o tempo que o servidor está online.")
 async def uptime(interaction: discord.Interaction):
-    if bot.uptime_start:
-        uptime_duration = datetime.utcnow() - bot.uptime_start
-        hours, remainder = divmod(int(uptime_duration.total_seconds()), 3600)
-        minutes, seconds = divmod(remainder, 60)
-        uptime_message = f"Servidor online há: {hours} horas, {minutes} minutos e {seconds} segundos."
-        await interaction.response.send_message(uptime_message)
-    else:
-        await interaction.response.send_message("O servidor está offline no momento.")
+    if not await message_manager.get_server_status(bot) or not bot.uptime_start:
+        return await interaction.response.send_message("O servidor está offline no momento.", ephemeral=True)
+
+    uptime_duration = datetime.utcnow() - bot.uptime_start
+
+    hours, remainder = divmod(uptime_duration.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    embed = discord.Embed(
+        title="Uptime do Servidor",
+        description=f"O servidor está online há {hours} horas, {minutes} minutos e {seconds} segundos.",
+        color=0x7289DA
+    )
+    await interaction.response.send_message(embed=embed)
+
 
 @bot.tree.command(name="ping", description="Verifica o ping do servidor Minecraft")
 async def ping(interaction: discord.Interaction):
