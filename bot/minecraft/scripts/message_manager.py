@@ -1,4 +1,4 @@
-import discord, os, asyncio
+import discord, os, asyncio, pytz
 from . import database
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -24,7 +24,8 @@ class MyBot(commands.Bot):
             status = self.server.status()
             if status:
                 if self.uptime_start is None:
-                    self.uptime_start = datetime.utcnow()
+                    sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
+                    self.uptime_start = datetime.now(sao_paulo_tz)
                 return True, self.uptime_start
             else:
                 return False, 0
