@@ -15,20 +15,20 @@ bot = message_manager.MyBot()
 
 @bot.tree.command(name="uptime", description="Mostra o tempo que o servidor está online.")
 async def uptime(interaction: discord.Interaction):
-    if not await message_manager.get_server_status(bot) or not bot.uptime_start:
+    if bot.uptime_start:  # Verifica se o uptime foi iniciado
+        uptime_duration = datetime.utcnow() - bot.uptime_start
+        hours, remainder = divmod(uptime_duration.seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+
+        embed = discord.Embed(
+            title="Uptime do Servidor",
+            description=f"O servidor está online há {hours} horas, {minutes} minutos e {seconds} segundos.",
+            color=0x7289DA
+        )
+
+        await interaction.response.send_message(embed=embed)
+    else:
         return await interaction.response.send_message("O servidor está offline no momento.", ephemeral=True)
-
-    uptime_duration = datetime.utcnow() - bot.uptime_start
-
-    hours, remainder = divmod(uptime_duration.seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-
-    embed = discord.Embed(
-        title="Uptime do Servidor",
-        description=f"O servidor está online há {hours} horas, {minutes} minutos e {seconds} segundos.",
-        color=0x7289DA
-    )
-    await interaction.response.send_message(embed=embed)
 
 
 @bot.tree.command(name="ping", description="Verifica o ping do servidor Minecraft")
@@ -62,6 +62,13 @@ async def on_ready():
 
     activity = discord.Activity(type=discord.ActivityType.watching, name="Movimentação do nosso servidor")
     await bot.change_presence(status=discord.Status.online, activity=activity)
+
+    is_online, uptime_start = await bot.get_server_uptime()
+    if is_online:
+        bot.uptime_start = uptime_start  # Armazena o horário de início do uptime
+        print(f"Uptime do servidor iniciado em: {bot.uptime_start}")
+    else:
+        print("Servidor offline ou não foi possível verificar o status.")
 
     async with aiohttp.ClientSession() as session:
         channel = bot.get_channel(CHANNEL_ID)
