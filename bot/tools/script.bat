@@ -1,4 +1,5 @@
 @echo off
+timeout /t 20 /nobreak
 call "D:\Minecraft Servers\Status_Manager_Bot\.venv\Scripts\activate.bat"
 if %errorlevel% equ 0 (
     echo Ambiente Virtual Ativado > "D:\Minecraft Servers\Status_Manager_Bot\bot\env\log.txt"
