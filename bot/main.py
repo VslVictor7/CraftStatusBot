@@ -1,5 +1,5 @@
+import discord, os, aiohttp, pytz
 from minecraft.scripts import message_manager
-import discord, os, aiohttp
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -13,24 +13,49 @@ bot = message_manager.MyBot()
 
 # Comandos.
 
-@bot.tree.command(name="uptime", description="Verifica o tempo que o servidor está online")
+@bot.tree.command(name="uptime", description="Mostra o tempo que o servidor está online.")
 async def uptime(interaction: discord.Interaction):
     if bot.uptime_start:
-        uptime_duration = datetime.utcnow() - bot.uptime_start
-        hours, remainder = divmod(int(uptime_duration.total_seconds()), 3600)
+        sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
+        current_time = datetime.now(sao_paulo_tz)
+        uptime_duration = current_time - bot.uptime_start
+        hours, remainder = divmod(uptime_duration.seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
-        uptime_message = f"Servidor online há: {hours} horas, {minutes} minutos e {seconds} segundos."
-        await interaction.response.send_message(uptime_message)
+
+        embed = discord.Embed(
+            title="Uptime do Servidor",
+            description=f"O servidor está online há {hours} horas, {minutes} minutos e {seconds} segundos.",
+            color=0x7289DA
+        )
+
+        await interaction.response.send_message(embed=embed)
     else:
-        await interaction.response.send_message("O servidor está offline no momento.")
+        return await interaction.response.send_message("O servidor está offline no momento.", ephemeral=True)
+
 
 @bot.tree.command(name="ping", description="Verifica o ping do servidor Minecraft")
 async def ping(interaction: discord.Interaction):
     try:
-        latency = bot.server.ping()  # Obtém o ping do servidor
-        await interaction.response.send_message(f"Ping do servidor é de {latency} ms")
+        latency = bot.server.ping()
+
+        latency = round(latency, 2)
+
+        embed = discord.Embed(
+            title="Latência do Servidor",
+            description=f"{latency} ms",
+            color=0x7289DA
+        )
+
+        await interaction.response.send_message(embed=embed)
+
     except Exception as e:
-        await interaction.response.send_message(f"Ocorreu um erro ao tentar obter o ping: {e}")
+
+        embed = discord.Embed(
+            title="Latência do Servidor",
+            description=f"Erro ao obter latência: {e}",
+            color=0x7289DA
+        )
+        await interaction.response.send_message(embed=embed)
 
 # Rodar o bot.
 
@@ -39,6 +64,13 @@ async def on_ready():
 
     activity = discord.Activity(type=discord.ActivityType.watching, name="Movimentação do nosso servidor")
     await bot.change_presence(status=discord.Status.online, activity=activity)
+
+    is_online, uptime_start = await bot.get_server_uptime()
+    if is_online:
+        bot.uptime_start = uptime_start  # Armazena o horário de início do uptime
+        print(f"Uptime do servidor iniciado em: {bot.uptime_start}")
+    else:
+        print("Servidor offline ou não foi possível verificar o status.")
 
     async with aiohttp.ClientSession() as session:
         channel = bot.get_channel(CHANNEL_ID)

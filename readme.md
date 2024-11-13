@@ -29,7 +29,6 @@ Este bot atualiza automaticamente uma mensagem com o status do servidor de Minec
 ```bash
   python -m venv venv
 ```
-
 Ou
 ```bash
   python -m venv .venv
@@ -37,7 +36,7 @@ Ou
 
 3. **Ativar Máquina Virtual**:
 ```bash
-  source .venv/bin/activate
+  source .venv/Scripts/activate
 ```
 
 4. **Instalar requirements.txt**
