@@ -19,6 +19,19 @@ class MyBot(commands.Bot):
     async def setup_hook(self):
         await self.tree.sync()
 
+    async def get_server_uptime(self):
+        try:
+            status = self.server.status()
+            if status:
+                if self.uptime_start is None:
+                    self.uptime_start = datetime.utcnow()
+                return True, self.uptime_start
+            else:
+                return False, 0
+        except Exception as e:
+            print(f"Erro ao tentar acessar o servidor: {e}")
+            return False, 0
+
 bot = MyBot()
 
 async def get_public_ipv4(session):
@@ -28,13 +41,11 @@ async def get_public_ipv4(session):
 async def get_server_status(bot):
     try:
         status = await bot.server.async_status()
-        bot.uptime_start = bot.uptime_start or datetime.utcnow()
 
         player_names = [player.name for player in status.players.sample] if status.players.sample else []
 
         return True, status.players.online, status.version.name, player_names
     except:
-        bot.uptime_start = None
         return False, 0, "Desconhecido", []
 
 
