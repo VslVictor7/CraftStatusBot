@@ -1,4 +1,4 @@
-import discord, os, aiohttp
+import discord, os, aiohttp, pytz
 from minecraft.scripts import message_manager
 from dotenv import load_dotenv
 from datetime import datetime
@@ -15,8 +15,10 @@ bot = message_manager.MyBot()
 
 @bot.tree.command(name="uptime", description="Mostra o tempo que o servidor está online.")
 async def uptime(interaction: discord.Interaction):
-    if bot.uptime_start:  # Verifica se o uptime foi iniciado
-        uptime_duration = datetime.utcnow() - bot.uptime_start
+    if bot.uptime_start:
+        sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
+        current_time = datetime.now(sao_paulo_tz)
+        uptime_duration = current_time - bot.uptime_start
         hours, remainder = divmod(uptime_duration.seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
 
