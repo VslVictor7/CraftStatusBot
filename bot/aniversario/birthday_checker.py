@@ -16,27 +16,20 @@ def parse_birthdays(birthdays_str):
             birthdays[name.strip()] = date.strip()
     return birthdays
 
-async def send_birthday_messages(bot, birthdays, channel_id):
+async def send_birthday_messages(bot, birthdays):
     today = datetime.now().strftime('%m-%d')
     birthday_friends = [name for name, date in birthdays.items() if date == today]
 
     if birthday_friends:
-        channel = bot.get_channel(channel_id)
-        if channel:
+        user = bot.get_user(USER_ID)
+        if user:
             for friend in birthday_friends:
 
                 if not has_sent_birthday_message(friend):
-
-                    user = bot.get_user(USER_ID)
-                    if user:
-                        await channel.send(f"🎉 {user.mention} Hoje é o aniversário de {friend}! Dê parabéns a ele/ela! 🎂🎈")
-                    else:
-                        await channel.send(f"🎉 Hoje é o aniversário de {friend}! Dê parabéns a ele/ela!🎂🎈")
-
+                    await user.send(f"🎉 Hoje é o aniversário de {friend}! Dê parabéns a ele/ela! 🎂🎈")
                     mark_birthday_sent(friend)
 
-
-async def birthday_check_periodically(bot, birthdays, channel_id, interval=5):
+async def birthday_check_periodically(bot, birthdays, interval=600):
     while True:
-        await send_birthday_messages(bot, birthdays, channel_id)
+        await send_birthday_messages(bot, birthdays)
         await asyncio.sleep(interval)
