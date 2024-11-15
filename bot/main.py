@@ -32,6 +32,12 @@ async def uptime(interaction: discord.Interaction):
             color=0x7289DA
         )
 
+        embed.timestamp = current_time
+
+        embed.set_footer(
+            text="CraftMonitor"
+        )
+
         await interaction.response.send_message(embed=embed)
     else:
         return await interaction.response.send_message("O servidor está offline no momento.", ephemeral=True)
@@ -39,9 +45,12 @@ async def uptime(interaction: discord.Interaction):
 
 @bot.tree.command(name="ping", description="Verifica o ping do servidor Minecraft")
 async def ping(interaction: discord.Interaction):
+
+    sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
+    current_time = datetime.now(sao_paulo_tz)
+
     try:
         latency = bot.server.ping()
-
         latency = round(latency, 2)
 
         embed = discord.Embed(
@@ -50,15 +59,25 @@ async def ping(interaction: discord.Interaction):
             color=0x7289DA
         )
 
+        embed.timestamp = current_time
+        embed.set_footer(
+            text="CraftMonitor"
+        )
+
         await interaction.response.send_message(embed=embed)
 
     except Exception as e:
-
         embed = discord.Embed(
             title="Latência do Servidor",
             description=f"Erro ao obter latência: {e}",
             color=0x7289DA
         )
+
+        embed.timestamp = current_time
+        embed.set_footer(
+            text="CraftMonitor"
+        )
+
         await interaction.response.send_message(embed=embed)
 
 # Rodar o bot
