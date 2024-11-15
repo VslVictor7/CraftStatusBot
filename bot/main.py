@@ -85,10 +85,6 @@ async def ping(interaction: discord.Interaction):
 @bot.event
 async def on_ready():
 
-    parsed_birthdays = birthday_checker.parse_birthdays(FRIENDS_BIRTHDAYS)
-    bot.loop.create_task(birthday_checker.birthday_check_periodically(bot, parsed_birthdays, DISCORD_CHANNEL_ID))
-    print("Lista de aniversariantes analisadas.")
-
     activity = discord.Activity(type=discord.ActivityType.watching, name="Movimentação do nosso servidor")
     await bot.change_presence(status=discord.Status.online, activity=activity)
 
@@ -105,6 +101,9 @@ async def on_ready():
             try:
                 message = await channel.fetch_message(MESSAGE_ID)
                 print("Bot pronto para monitoramento de Status, Servidor, Jogadores e Aniversariantes.")
+                parsed_birthdays = birthday_checker.parse_birthdays(FRIENDS_BIRTHDAYS)
+                bot.loop.create_task(birthday_checker.birthday_check_periodically(bot, parsed_birthdays, DISCORD_CHANNEL_ID))
+                print("Lista de aniversariantes analisadas.")
                 await message_manager.update_message_periodically(channel, message, session)
             except discord.DiscordException as e:
                 print(f"Erro ao buscar mensagem: {e}")
