@@ -1,5 +1,9 @@
-import discord, os, aiohttp, pytz
+import discord
+import os
+import aiohttp
+import pytz
 from minecraft.scripts import message_manager
+from aniversario import birthday_checker
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -8,10 +12,10 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
 MESSAGE_ID = int(os.getenv('MESSAGE_ID'))
+FRIENDS_BIRTHDAYS = os.getenv('BIRTHDAYS')
+DISCORD_CHANNEL_ID = int(os.getenv('CHANNEL_TEST_ID'))
 
 bot = message_manager.MyBot()
-
-# Comandos.
 
 @bot.tree.command(name="uptime", description="Mostra o tempo que o servidor está online.")
 async def uptime(interaction: discord.Interaction):
@@ -57,10 +61,14 @@ async def ping(interaction: discord.Interaction):
         )
         await interaction.response.send_message(embed=embed)
 
-# Rodar o bot.
+# Rodar o bot
 
 @bot.event
 async def on_ready():
+
+    parsed_birthdays = birthday_checker.parse_birthdays(FRIENDS_BIRTHDAYS)
+    bot.loop.create_task(birthday_checker.birthday_check_periodically(bot, parsed_birthdays, DISCORD_CHANNEL_ID))
+    print("Lista de aniversariantes analisadas.")
 
     activity = discord.Activity(type=discord.ActivityType.watching, name="Movimentação do nosso servidor")
     await bot.change_presence(status=discord.Status.online, activity=activity)
@@ -77,7 +85,7 @@ async def on_ready():
         if channel:
             try:
                 message = await channel.fetch_message(MESSAGE_ID)
-                print("Bot pronto para monitoramento de IP, Servidor e Jogadores.")
+                print("Bot pronto para monitoramento de Status, Servidor, Jogadores e Aniversariantes.")
                 await message_manager.update_message_periodically(channel, message, session)
             except discord.DiscordException as e:
                 print(f"Erro ao buscar mensagem: {e}")
