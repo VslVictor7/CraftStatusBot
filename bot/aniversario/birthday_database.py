@@ -7,11 +7,9 @@ load_dotenv()
 
 DATABASE_PATH = os.getenv('DATABASE_PATH')
 
-# Conectar ao banco de dados (ou criar um novo arquivo de banco de dados)
 conn = sqlite3.connect(DATABASE_PATH)
 cursor = conn.cursor()
 
-# Criar tabela para armazenar aniversariantes que já foram cumprimentados
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS birthday_messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,12 +19,11 @@ CREATE TABLE IF NOT EXISTS birthday_messages (
 )
 ''')
 
-# Função para verificar se a mensagem de aniversário já foi enviada
 def has_sent_birthday_message(name):
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
 
-    today = datetime.now().strftime('%m-%d')  # Formato de data 'MM-DD'
+    today = datetime.now().strftime('%m-%d')
 
     cursor.execute('''
     SELECT 1 FROM birthday_messages WHERE name = ? AND date_sent = ?
@@ -37,7 +34,6 @@ def has_sent_birthday_message(name):
 
     return result is not None
 
-# Função para salvar um aniversariante que já foi cumprimentado
 def mark_birthday_sent(name):
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
