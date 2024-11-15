@@ -29,9 +29,9 @@ async def send_birthday_messages(bot, birthdays, channel_id):
 
                     user = bot.get_user(USER_ID)
                     if user:
-                        await channel.send(f"🎉 {user.mention} Hoje é o aniversário de {friend}! 🎂🎈")
+                        await channel.send(f"🎉 {user.mention} Hoje é o aniversário de {friend}! Dê parabéns a ele/ela! 🎂🎈")
                     else:
-                        await channel.send(f"🎉 Feliz aniversário, {friend}! 🎂🎈")
+                        await channel.send(f"🎉 Hoje é o aniversário de {friend}! Dê parabéns a ele/ela!🎂🎈")
 
                     mark_birthday_sent(friend)
 
