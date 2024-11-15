@@ -51,8 +51,10 @@ async def get_server_status(bot):
 
 
 def create_embed(ip, server_online, players_online, version, player_names):
-
     player_names_sorted = sorted(player_names)
+
+    sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
+    current_time = datetime.now(sao_paulo_tz)
 
     embed = discord.Embed(
         title="Status do Servidor Minecraft",
@@ -72,6 +74,12 @@ def create_embed(ip, server_online, players_online, version, player_names):
         embed.add_field(name="📝 Nomes", value="Nenhum", inline=False)
 
     embed.add_field(name="🌐 Versão", value=version, inline=False)
+
+    embed.timestamp = current_time
+
+    embed.set_footer(
+        text="CraftMonitor"
+    )
 
     return embed
 
