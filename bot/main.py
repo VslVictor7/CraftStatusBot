@@ -4,6 +4,7 @@ import aiohttp
 import pytz
 from minecraft.scripts import message_manager
 from aniversario import birthday_checker
+from musica import lyrics_finder
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -17,6 +18,21 @@ DISCORD_CHANNEL_ID = int(os.getenv('CHANNEL_TEST_ID'))
 
 bot = message_manager.MyBot()
 
+sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
+current_time = datetime.now(sao_paulo_tz)
+
+def create_embed(title, description, color):
+
+    embed = discord.Embed(
+        title=title,
+        description=description,
+        color=color
+    )
+
+    embed.timestamp = current_time
+
+    return embed
+
 @bot.tree.command(name="uptime", description="Mostra o tempo que o servidor está online.")
 async def uptime(interaction: discord.Interaction):
     if bot.uptime_start:
@@ -26,17 +42,9 @@ async def uptime(interaction: discord.Interaction):
         hours, remainder = divmod(uptime_duration.seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
 
-        embed = discord.Embed(
-            title="Uptime do Servidor",
-            description=f"O servidor está online há {hours} horas, {minutes} minutos e {seconds} segundos.",
-            color=0x7289DA
-        )
+        uptime_message = f"O servidor está online há {hours} horas, {minutes} minutos e {seconds} segundos."
 
-        embed.timestamp = current_time
-
-        embed.set_footer(
-            text="CraftMonitor"
-        )
+        embed = create_embed("Uptime do Servidor", uptime_message, 0x7289DA)
 
         await interaction.response.send_message(embed=embed)
     else:
@@ -46,41 +54,41 @@ async def uptime(interaction: discord.Interaction):
 @bot.tree.command(name="ping", description="Verifica o ping do servidor Minecraft")
 async def ping(interaction: discord.Interaction):
 
-    sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
-    current_time = datetime.now(sao_paulo_tz)
-
     try:
         latency = bot.server.ping()
         latency = round(latency, 2)
 
-        embed = discord.Embed(
-            title="Latência do Servidor",
-            description=f"{latency} ms",
-            color=0x7289DA
-        )
+        latency_text = f"{latency} ms"
 
-        embed.timestamp = current_time
-        embed.set_footer(
-            text="CraftMonitor"
-        )
+        embed = create_embed("Latência do Servidor", latency_text, 0x7289DA)
 
         await interaction.response.send_message(embed=embed)
 
     except Exception as e:
-        embed = discord.Embed(
-            title="Latência do Servidor",
-            description=f"Erro ao obter latência: {e}",
-            color=0x7289DA
-        )
 
-        embed.timestamp = current_time
-        embed.set_footer(
-            text="CraftMonitor"
-        )
+        latency_text = f"Erro ao obter latência: {e}"
+
+        embed = create_embed("Latência do Servidor", latency_text, 0x7289DA)
 
         await interaction.response.send_message(embed=embed)
 
-# Rodar o bot
+
+@bot.tree.command(name="letra", description="Busca a letra de uma música no Genius")
+async def fetch_lyrics(interaction: discord.Interaction, song_title: str):
+    await interaction.response.defer()
+    final_title, lyrics = lyrics_finder.get_song_lyrics(song_title)
+
+    if final_title == "Nenhuma música encontrada.":
+        await interaction.followup.send(final_title)
+        return
+
+    partes_lyricas = lyrics_finder.split_lyrics(lyrics)
+
+    for parte in partes_lyricas:
+        embed = create_embed(f"Letra de {final_title}", parte, 0x7289DA)
+        await interaction.followup.send(embed=embed)
+
+# Rodar o bot.
 
 @bot.event
 async def on_ready():
