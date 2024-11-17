@@ -95,20 +95,20 @@ async def on_ready():
         bot.uptime_start = uptime_start  # Armazena o horário de início do uptime
         print(f"[BOT] Uptime do servidor iniciado e registrado ás: {bot.uptime_start}")
     else:
-        print("Servidor offline ou não foi possível verificar o status.")
+        print("[BOT ERROR] Servidor offline ou não foi possível verificar o status.")
 
     async with aiohttp.ClientSession() as session:
         channel = bot.get_channel(CHANNEL_ID)
         if channel:
             try:
                 message = await channel.fetch_message(MESSAGE_ID)
-                print("[BOT READY] Pronto para monitoramento de IP, Servidor e Jogadores.")
+                print("[BOT STARTED] Pronto para monitoramento de IP, Servidor e Jogadores.")
                 await message_manager.update_message_periodically(channel, message, session)
             except discord.DiscordException as e:
-                print(f"Erro ao buscar mensagem: {e}")
+                print(f"[BOT ERROR] Erro ao buscar mensagem: {e}")
                 await bot.close()
         else:
-            print("Canal não detectado.")
+            print("[BOT ERROR] Canal não detectado.")
             await bot.close()
 
 bot.run(TOKEN)
