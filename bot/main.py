@@ -93,7 +93,7 @@ async def on_ready():
     is_online, uptime_start = await bot.get_server_uptime()
     if is_online:
         bot.uptime_start = uptime_start  # Armazena o horário de início do uptime
-        print(f"Uptime do servidor iniciado em: {bot.uptime_start}")
+        print(f"[BOT] Uptime do servidor iniciado e registrado ás: {bot.uptime_start}")
     else:
         print("Servidor offline ou não foi possível verificar o status.")
 
@@ -102,7 +102,7 @@ async def on_ready():
         if channel:
             try:
                 message = await channel.fetch_message(MESSAGE_ID)
-                print("Bot pronto para monitoramento de IP, Servidor e Jogadores.")
+                print("[BOT READY] Pronto para monitoramento de IP, Servidor e Jogadores.")
                 await message_manager.update_message_periodically(channel, message, session)
             except discord.DiscordException as e:
                 print(f"Erro ao buscar mensagem: {e}")

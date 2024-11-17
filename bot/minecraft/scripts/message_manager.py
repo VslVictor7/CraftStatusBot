@@ -105,8 +105,10 @@ async def update_message_periodically(channel, message, session, interval=3):
 
     async def handle_message_update(message, embed):
         try:
+            sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
+            current_time = datetime.now(sao_paulo_tz)
             await message.edit(embed=embed, content="")
-            print("Mensagem atualizada.")
+            print(f"[TEXT] {current_time} - Atualização de mensagem realizada.")
         except discord.DiscordException as e:
             print(f"Erro ao atualizar mensagem: {e}")
 
