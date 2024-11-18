@@ -38,8 +38,8 @@ async def on_ready():
 
     print(f"[BOT] Logado como {bot.user.name} - {bot.user.id}")
 
-    await setup_commands(bot)
-    await sync_commands(bot)
+    bot.loop.create_task(setup_commands(bot))
+    bot.loop.create_task(sync_commands(bot))
 
     activity = discord.Activity(type=discord.ActivityType.watching, name="Movimentação do nosso servidor")
     await bot.change_presence(status=discord.Status.online, activity=activity)
