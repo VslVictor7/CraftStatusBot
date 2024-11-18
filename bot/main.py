@@ -28,7 +28,7 @@ async def sync_commands(bot):
         minutes = int(sync_duration // 60)
         seconds = int(sync_duration % 60)
 
-        print(f"[BOT SYNC] Comandos sincronizados globalmente com duração de {minutes} minutos e {seconds} segundos.")
+        print(f"[BOT SYNC] Comandos sincronizados globalmente. Feito em {minutes} minutos e {seconds} segundos.")
 
     except Exception as e:
         print(f"[BOT ERROR] Falha ao sincronizar os comandos: {e}")
@@ -47,7 +47,7 @@ async def on_ready():
     is_online, uptime_start = await bot.get_server_uptime()
     if is_online:
         bot.uptime_start = uptime_start
-        print(f"[BOT] Uptime do servidor iniciado e registrado ás: {bot.uptime_start}")
+        print(f"[BOT] Uptime do servidor iniciado e registrado as: {bot.uptime_start}")
     else:
         print("[BOT ERROR] Servidor offline ou não foi possível verificar o status.")
 
