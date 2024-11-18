@@ -32,7 +32,8 @@ async def setup_commands(bot):
 
             uptime_message = f"O servidor está online há {hours} horas, {minutes} minutos e {seconds} segundos."
             embed = create_embed("Uptime do Servidor", uptime_message, 0x7289DA)
-            await interaction.response.send_message(embed=embed)
+            msg = await interaction.response.send_message(embed=embed)
+            await msg.delete(delay=180)
         else:
             await interaction.response.send_message("O servidor está offline no momento.", ephemeral=True)
 
@@ -43,11 +44,14 @@ async def setup_commands(bot):
             latency = round(latency, 2)
             latency_text = f"{latency} ms"
             embed = create_embed("Latência do Servidor", latency_text, 0x7289DA)
-            await interaction.response.send_message(embed=embed)
+            msg = await interaction.response.send_message(embed=embed)
+            await msg.delete(delay=180)
+
         except Exception as e:
             latency_text = f"Erro ao obter latência: {e}"
             embed = create_embed("Latência do Servidor", latency_text, 0x7289DA)
-            await interaction.response.send_message(embed=embed)
+            msg = await interaction.response.send_message(embed=embed)
+            await msg.delete(delay=180)
 
     @bot.tree.command(name="letra", description="Busca a letra de uma música no Genius")
     async def fetch_lyrics(interaction: discord.Interaction, song_title: str):
@@ -61,7 +65,8 @@ async def setup_commands(bot):
         partes_lyricas = lyrics_finder.split_lyrics(lyrics)
         for parte in partes_lyricas:
             embed = create_embed(f"Letra de {final_title}", parte, 0x7289DA)
-            await interaction.followup.send(embed=embed)
+            msg = await interaction.followup.send(embed=embed)
+            await msg.delete(delay=600)
 
     @bot.tree.command(name="stats", description="Mostra estatísticas do jogador Minecraft.")
     async def player_information(interaction: discord.Interaction, username: str):
@@ -74,7 +79,9 @@ async def setup_commands(bot):
 
             stats_message = player_json.player_stats(path, username)
 
-            await interaction.response.send_message(embed=stats_message)
+            msg = await interaction.response.send_message(embed=stats_message)
+
+            await msg.delete(delay=1200)
 
         except FileNotFoundError:
             await interaction.response.send_message(
@@ -123,4 +130,5 @@ async def setup_commands(bot):
         )
         embed.set_footer(text="Utilize os comandos para explorar as funcionalidades do bot.")
 
-        await interaction.response.send_message(embed=embed)
+        msg = await interaction.response.send_message(embed=embed)
+        await msg.delete(delay=600)
