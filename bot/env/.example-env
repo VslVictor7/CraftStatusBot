@@ -1,6 +1,15 @@
+# Discord
 DISCORD_TOKEN= Token do discord
-CHANNEL_ID= ID do canal do discord
-MESSAGE_ID= id da mensagem que deve ser atualizada
-MINECRAFT_SERVER_IP= ip do server do minecraft
-MINECRAFT_SERVER_PORT= porta do server do minecraft
-DATABASE_PATH= Diretorio onde o banco de dados será criado
+GENIUS_API_TOKEN= Token da API do Genius
+
+# Minecraft
+CHANNEL_ID= ID do canal do discord princpal
+MESSAGE_ID= ID da mensagem que deve ser atualizada
+MINECRAFT_SERVER_IP= IP do servidor do Minecraft
+MINECRAFT_SERVER_PORT= Porta do servidor do Minecraft
+
+# Diretorio do arquivo JSON (se necessário)
+JSON_PATH= Diretorio completo para onde ficará armazenado os arquivos .json do UUID dos jogadores. (Exemplo: "D:/Minecraft Servers/Diretorio Status/")
+
+# Banco de Dados
+DATABASE_PATH= Diretorio completo onde ficará o banco de dados
