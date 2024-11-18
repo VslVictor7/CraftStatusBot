@@ -11,13 +11,10 @@ MINECRAFT_SERVER_PORT= Porta do servidor do Minecraft
 # Diretorio do arquivo JSON (se necessário)
 JSON_PATH= Diretorio completo para onde ficará armazenado os arquivos .json do UUID dos jogadores. (Exemplo: "D:/Minecraft Servers/Diretorio Status/")
 
-<<<<<<< HEAD
 # Aniversários
 CHANNEL_TEST_ID= ID do canal de testes do Discord
 BIRTHDAYS= Lista de aniversários no formato 'Nome:MM-DD' (Exemplo: teste:04-30,testando:01-17)
 USED_ID= ID do usuário que será mencionado sobre o aniversario
 
-=======
->>>>>>> main
 # Banco de Dados
 DATABASE_PATH= Diretorio completo onde ficará o banco de dados
