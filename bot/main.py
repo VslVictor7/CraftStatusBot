@@ -62,7 +62,7 @@ async def on_ready():
                 parsed_birthdays = parse_birthdays(FRIENDS_BIRTHDAYS)
                 bot.loop.create_task(birthday_check_periodically(bot, parsed_birthdays, DISCORD_CHANNEL_ID))
                 print("[BIRTHDAYS] Lista de aniversariantes analisadas.")
-                print("[BOT STARTED] Pronto para monitoramento de IP, Servidor e Jogadores.")
+                print("[BOT STARTED] Pronto para monitoramento de IP, Servidor, Jogadores e Aniversariantes.")
                 await update_message_periodically(channel, message, session)
             except discord.DiscordException as e:
                 print(f"[BOT ERROR] Erro ao buscar mensagem: {e}")
