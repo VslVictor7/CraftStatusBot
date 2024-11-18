@@ -28,9 +28,9 @@ async def send_birthday_messages(bot, birthdays):
 
                 if not has_sent_birthday_message(friend):
                     await user.send(f"🎉 Hoje é o aniversário de {friend}! Dê parabéns a ele/ela! 🎂🎈")
-                    print(f"[BIRTHDAYS] Mensagem de aniversário enviada para {user.name}.")
+                    print(f"[BIRTHDAYS] Mensagem de lembrete enviada para {user.name}.")
                     mark_birthday_sent(friend)
-                print(f"[BIRTHDAYS] Mensagem de aniversário já foi enviada para {user.name}. Verificando novamente em 10 minutos.")
+                print(f"[BIRTHDAYS] Mensagem de lembrete já foi enviada para {user.name}. Verificando novamente em 10 minutos.")
 
 async def birthday_check_periodically(bot, birthdays, interval=600):
     while True:
