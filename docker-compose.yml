@@ -1,0 +1,11 @@
+version: '3'
+services:
+  discord-bot:
+    image: my-discord-bot
+    container_name: discord-bot
+    volumes:
+      - "D:/Minecraft Servers/Forge Oficial/world/stats:/app/world/stats"
+    env_file:
+      - .env
+    restart: always
+
