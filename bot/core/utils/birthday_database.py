@@ -1,13 +1,11 @@
 import sqlite3
 import os
-from dotenv import load_dotenv
 from datetime import datetime
 
-load_dotenv()
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, 'bot_database.db')
 
-DATABASE_PATH = os.getenv('DATABASE_PATH')
-
-conn = sqlite3.connect(DATABASE_PATH)
+conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()
 
 cursor.execute('''
@@ -20,7 +18,7 @@ CREATE TABLE IF NOT EXISTS birthday_messages (
 ''')
 
 def has_sent_birthday_message(name):
-    conn = sqlite3.connect(DATABASE_PATH)
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     today = datetime.now().strftime('%m-%d')
@@ -35,7 +33,7 @@ def has_sent_birthday_message(name):
     return result is not None
 
 def mark_birthday_sent(name):
-    conn = sqlite3.connect(DATABASE_PATH)
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     today = datetime.now().strftime('%m-%d')

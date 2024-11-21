@@ -1,6 +1,6 @@
 import discord, asyncio, pytz
-from . import database
-from utils.mybot import MyBot
+from utils import database
+from .mybot import MyBot
 from datetime import datetime
 
 bot = MyBot()
