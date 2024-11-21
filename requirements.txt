@@ -17,7 +17,6 @@ multidict==6.1.0
 propcache==0.2.0
 python-dotenv==1.0.1
 pytz==2024.2
-pywin32==308
 requests==2.32.3
 soupsieve==2.6
 urllib3==2.2.3
