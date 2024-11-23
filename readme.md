@@ -90,6 +90,11 @@ rode o container com:
 docker-compose up --build
 ```
 
+ou
+
+```bash
+docker-compose up --build --no-cache
+```
 
 ## Considerações Importantes
 
