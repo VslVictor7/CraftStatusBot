@@ -1,17 +1,14 @@
-import sqlite3, os, pytz
-from dotenv import load_dotenv
+import sqlite3
+import os
+import pytz
 from datetime import datetime
 
-# Carregar variáveis de ambiente
-load_dotenv()
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, 'bot_database.db')
 
-DATABASE_PATH = os.getenv('DATABASE_PATH')
-
-# Conectar ao banco de dados (ou criar um novo arquivo de banco de dados)
-conn = sqlite3.connect(DATABASE_PATH)
+conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()
 
-# Criar tabela de status e logs do servidor (se não existir)
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS server_data (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,7 +23,7 @@ conn.commit()
 conn.close()
 
 def insert_server_data(player_name, server_online, players_online, player_left=None):
-    conn = sqlite3.connect(DATABASE_PATH)
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     br_tz = pytz.timezone('America/Sao_Paulo')
