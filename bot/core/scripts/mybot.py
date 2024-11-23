@@ -1,6 +1,7 @@
 import discord
 import os
 import pytz
+import requests
 from discord.ext import commands
 from dotenv import load_dotenv
 from mcstatus import JavaServer
@@ -8,14 +9,13 @@ from datetime import datetime
 
 load_dotenv()
 
-MINECRAFT_SERVER_IP = os.getenv('MINECRAFT_SERVER_IP')
-MINECRAFT_SERVER_PORT = os.getenv('MINECRAFT_SERVER_PORT')
+IP = os.getenv('MINECRAFT_SERVER')
 
 class MyBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix="!", intents=discord.Intents.all())
         self.uptime_start = None
-        self.server = JavaServer.lookup(f"{MINECRAFT_SERVER_IP}:{MINECRAFT_SERVER_PORT}")
+        self.server = JavaServer(IP,JavaServer.DEFAULT_PORT)
 
     async def setup_hook(self):
         await self.tree.sync()

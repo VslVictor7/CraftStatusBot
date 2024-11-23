@@ -73,6 +73,23 @@ script.bat
 python main.py
 ```
 
+## Executando com Docker Container
+
+- Certifique-se de que está do diretorio do Dockerfile e dockercompose:
+
+- Certifique-se que .env e requirements.txt também estejam no mesmo diretorio descrito acima:
+
+- após isso, crie a imagem com:
+
+```bash
+docker build -t my-discord-bot .
+```
+rode o container com:
+
+```bash
+docker-compose up --build
+```
+
 
 ## Considerações Importantes
 

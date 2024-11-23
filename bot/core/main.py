@@ -2,8 +2,8 @@ import discord
 import os
 import aiohttp
 import time
-from utils.mybot import MyBot
-from minecraft.scripts.message_manager import update_message_periodically
+from scripts.mybot import MyBot
+from scripts.message_manager import update_message_periodically
 from commands import setup_commands
 from dotenv import load_dotenv
 
@@ -49,14 +49,14 @@ async def on_ready():
         bot.uptime_start = uptime_start
         print(f"[BOT] Uptime do servidor iniciado e registrado as: {bot.uptime_start}")
     else:
-        print("[BOT ERROR] Servidor offline ou não foi possível verificar o status.")
+        print("[BOT ERROR] Não foi possível verificar o uptime do servidor.")
 
     async with aiohttp.ClientSession() as session:
         channel = bot.get_channel(CHANNEL_ID)
         if channel:
             try:
                 message = await channel.fetch_message(MESSAGE_ID)
-                print("[BOT STARTED] Pronto para monitoramento de IP, Servidor e Jogadores.")
+                print("[BOT STARTED] Pronto para monitoramento de IP, Servidor e Jogadores")
                 await update_message_periodically(channel, message, session)
             except discord.DiscordException as e:
                 print(f"[BOT ERROR] Erro ao buscar mensagem: {e}")
