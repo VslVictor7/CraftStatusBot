@@ -39,6 +39,27 @@ async def setup_commands(bot):
         else:
             await interaction.response.send_message("O servidor está offline no momento.", ephemeral=True)
 
+    @bot.tree.command(name="limpar_dms", description="Apaga mensagens do bot na DM atual.")
+    async def limpar_dms(interaction: discord.Interaction):
+        # Verifica se está em um canal de mensagem direta (DM)
+        if isinstance(interaction.channel, discord.DMChannel):
+            await interaction.response.defer(ephemeral=True)  # Defere a resposta (indica que vai demorar um pouco)
+
+            count = 0
+            async for message in interaction.channel.history(limit=100):
+                if message.author == bot.user:
+                    await message.delete()
+                    count += 1
+
+            # Envia a resposta final
+            await interaction.followup.send(f"{count} mensagens apagadas.")
+        else:
+            # Resposta caso o comando não esteja em uma DM
+            await interaction.response.send_message(
+                "Este comando só funciona em mensagens diretas (DMs).",
+                ephemeral=True,
+            )
+
     @bot.tree.command(name="ping", description="Verifica o ping do servidor Minecraft")
     async def ping(interaction: discord.Interaction):
         try:
@@ -75,7 +96,7 @@ async def setup_commands(bot):
 
             uuid = shortcut.get_uuid_from_username(username)
 
-            stats_path = f"{JSON_PATH}/{uuid}.json"
+            stats_path = f"{JSON_PATH}{uuid}.json"
 
             stats_message = player_json.player_stats(stats_path, username)
 

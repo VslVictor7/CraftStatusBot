@@ -1,11 +1,12 @@
-version: '3'
 services:
   discord-bot:
-    image: my-discord-bot
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: discord-bot
+    image: my-discord-bot:latest
     volumes:
       - "D:/Minecraft Servers/Forge Oficial/world/stats:/app/world/stats"
     env_file:
       - .env
     restart: always
-
