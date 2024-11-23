@@ -4,7 +4,6 @@ import aiohttp
 import time
 from scripts.mybot import MyBot
 from scripts.message_manager import update_message_periodically
-from aniversario.birthday_checker import birthday_check_periodically, parse_birthdays
 from commands import setup_commands
 from dotenv import load_dotenv
 
@@ -13,8 +12,6 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
 MESSAGE_ID = int(os.getenv('MESSAGE_ID'))
-FRIENDS_BIRTHDAYS = os.getenv('BIRTHDAYS')
-DISCORD_CHANNEL_ID = int(os.getenv('CHANNEL_TEST_ID'))
 
 # Rodar o bot.
 
@@ -59,9 +56,7 @@ async def on_ready():
         if channel:
             try:
                 message = await channel.fetch_message(MESSAGE_ID)
-                parsed_birthdays = parse_birthdays(FRIENDS_BIRTHDAYS)
-                bot.loop.create_task(birthday_check_periodically(bot, parsed_birthdays, DISCORD_CHANNEL_ID))
-                print("[BOT STARTED] Pronto para monitoramento de IP, Servidor, Jogadores e Aniversariantes.")
+                print("[BOT STARTED] Pronto para monitoramento de IP, Servidor e Jogadores")
                 await update_message_periodically(channel, message, session)
             except discord.DiscordException as e:
                 print(f"[BOT ERROR] Erro ao buscar mensagem: {e}")
