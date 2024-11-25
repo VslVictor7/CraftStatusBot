@@ -82,18 +82,12 @@ python main.py
 - após isso, crie a imagem com:
 
 ```bash
-docker build -t my-discord-bot .
+docker build -t discord-bot .
 ```
 rode o container com:
 
 ```bash
 docker-compose up --build
-```
-
-ou
-
-```bash
-docker-compose up --build --no-cache
 ```
 
 ## Considerações Importantes
@@ -102,17 +96,10 @@ docker-compose up --build --no-cache
 
 - Substituições Necessárias: Certifique-se de substituir os tokens e IDs no arquivo .env para garantir o funcionamento correto do bot.
 
-- Problema de depêndencia com LyricsGenius: Verificar e mudar a linha de código necessária para que o comando "letra" funcione
+- Problema de depêndencia com LyricsGenius: Verificar e mudar a linha de código necessária para que o comando "letra" funcione.
 
 ```bash
-Linha 137, genius.py
-        divs = html.find_all("div", class_=re.compile("^lyrics$|Lyrics__Container"))
-        if divs is None or len(divs) <= 0:
-            if self.verbose:
-                print("Couldn't find the lyrics section. "
-                      "Please report this if the song has lyrics.\n"
-                      "Song URL: https://genius.com/{}".format(path))
-            return None
-
-        lyrics = "\n".join([div.get_text() for div in divs])
+git+https://github.com/johnwmillr/LyricsGenius.git
 ```
+
+- Colocar código acima em requirements.txt

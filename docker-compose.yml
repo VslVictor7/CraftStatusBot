@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: discord-bot
-    image: my-discord-bot:latest
+    image: discord-bot:latest
     volumes:
       - "D:/Minecraft Servers/Forge Oficial/world/stats:/app/world/stats"
       # Mudar diretorio para stats do mundo minecraft + /app/world/stats
