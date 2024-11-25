@@ -39,7 +39,12 @@ Ou
   source .venv/Scripts/activate
 ```
 
-4. **Instalar requirements.txt**
+4. **Atualizar o pip**
+```bash
+python -m pip install --upgrade pip
+```
+
+5. **Instalar requirements.txt**
 ```bash
   pip install -r requirements.txt
 ```
