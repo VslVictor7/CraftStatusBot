@@ -60,6 +60,49 @@ async def setup_commands(bot):
                 ephemeral=True,
             )
 
+    @bot.tree.command(name="limpar", description="Apaga mensagens do canal atual no servidor.")
+    async def limpar(interaction: discord.Interaction, quantidade: int):
+        if isinstance(interaction.channel, discord.TextChannel):
+            if not interaction.user.guild_permissions.manage_messages:
+                await interaction.response.send_message(
+                    "Você não tem permissão para usar este comando.",
+                    ephemeral=True
+                )
+                return
+
+            if quantidade < 1:
+                await interaction.response.send_message(
+                    "Por favor, insira um número válido de mensagens para apagar (no mínimo 1).",
+                    ephemeral=True
+                )
+                return
+
+            await interaction.response.defer(ephemeral=True)
+
+            try:
+                deleted_messages = await interaction.channel.purge(limit=quantidade)
+                await interaction.followup.send(
+                    f"{len(deleted_messages)} mensagens apagadas com sucesso!",
+                    ephemeral=True
+                )
+            except discord.Forbidden:
+                await interaction.followup.send(
+                    "O bot não tem permissão para apagar mensagens neste canal.",
+                    ephemeral=True
+                )
+            except discord.HTTPException as e:
+                await interaction.followup.send(
+                    f"Ocorreu um erro ao tentar apagar as mensagens: {e}",
+                    ephemeral=True
+                )
+        else:
+            # Caso o comando seja usado em uma DM
+            await interaction.response.send_message(
+                "Este comando só pode ser usado em canais de texto do servidor.",
+                ephemeral=True
+            )
+
+
     @bot.tree.command(name="ping", description="Verifica o ping do servidor Minecraft")
     async def ping(interaction: discord.Interaction):
         try:
@@ -148,6 +191,16 @@ async def setup_commands(bot):
         embed.add_field(
             name="/help",
             value="Exibe esta lista de comandos.",
+            inline=False
+        )
+        embed.add_field(
+            name="/limpar",
+            value="Limpa o chat do canal onde o comando vai ser feito.",
+            inline=False
+        )
+        embed.add_field(
+            name="/limpar_dms",
+            value="Limpa a dm do bot, comando deve ser feito na dm e não chat normal.",
             inline=False
         )
         embed.set_footer(text="Utilize os comandos para explorar as funcionalidades do bot.")
