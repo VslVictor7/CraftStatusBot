@@ -56,7 +56,7 @@ async def on_ready():
         if channel:
             try:
                 message = await channel.fetch_message(MESSAGE_ID)
-                print("[BOT STARTED] Pronto para monitoramento de IP, Servidor e Jogadores")
+                print("[BOT STARTED] Pronto para monitoramento de IP, Servidor e Jogadores.")
                 await update_message_periodically(channel, message, session)
             except discord.DiscordException as e:
                 print(f"[BOT ERROR] Erro ao buscar mensagem: {e}")
