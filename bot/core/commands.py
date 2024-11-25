@@ -77,7 +77,7 @@ async def setup_commands(bot):
                 )
                 return
 
-            await interaction.response.defer(ephemeral=True)  # Indica que a resposta pode levar algum tempo
+            await interaction.response.defer(ephemeral=True)
 
             try:
                 deleted_messages = await interaction.channel.purge(limit=quantidade)
@@ -95,12 +95,12 @@ async def setup_commands(bot):
                     f"Ocorreu um erro ao tentar apagar as mensagens: {e}",
                     ephemeral=True
                 )
-            else:
-                # Caso o comando seja usado em uma DM
-                await interaction.response.send_message(
-                    "Este comando só pode ser usado em canais de texto do servidor.",
-                    ephemeral=True
-                )
+        else:
+            # Caso o comando seja usado em uma DM
+            await interaction.response.send_message(
+                "Este comando só pode ser usado em canais de texto do servidor.",
+                ephemeral=True
+            )
 
 
     @bot.tree.command(name="ping", description="Verifica o ping do servidor Minecraft")
