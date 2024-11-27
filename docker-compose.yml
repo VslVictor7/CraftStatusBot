@@ -19,7 +19,7 @@ services:
       - bot_network
 
   db:
-    image: postgres:latest
+    image: postgres:17-alpine
     container_name: bot-database
     environment:
       POSTGRES_USER: ${DB_USER}
@@ -30,6 +30,8 @@ services:
     restart: always
     networks:
       - bot_network
+    ports:
+      - "5432:5432"
 
 volumes:
   db_data:
