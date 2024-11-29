@@ -12,37 +12,41 @@ DB_NAME = os.getenv('DB_NAME', 'botdb')
 DB_USER = os.getenv('DB_USER', 'myuser')
 DB_PASSWORD = os.getenv('DB_PASSWORD', 'mypassword')
 
-conn = psycopg2.connect(
-    host=DB_HOST,
-    port=DB_PORT,
-    dbname=DB_NAME,
-    user=DB_USER,
-    password=DB_PASSWORD
-)
+def connection():
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD
+    )
+    return conn
 
-cursor = conn.cursor()
+def create_server_data():
+    conn = connection()
+    cursor = conn.cursor()
 
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS server_data (
-    id SERIAL PRIMARY KEY,
-    nome TEXT,
-    player_left TEXT,
-    players_online INTEGER,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    server_status TEXT
-)
-''')
-conn.commit()
-conn.close()
+    try:
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS server_data (
+                id SERIAL PRIMARY KEY,
+                nome TEXT,
+                player_left TEXT,
+                players_online INTEGER,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                server_status TEXT
+            )
+        ''')
+        conn.commit()
+        print("[DATABASE] Tabela 'server_data' criada com sucesso.")
+    except Exception as e:
+        print(f"[DATABASE ERROR] Erro ao criar a tabela: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 def insert_server_data(player_name, server_online, players_online, player_left=None):
-    conn = psycopg2.connect(
-    host=DB_HOST,
-    port=DB_PORT,
-    dbname=DB_NAME,
-    user=DB_USER,
-    password=DB_PASSWORD
-    )
+    conn = connection()
     cursor = conn.cursor()
 
     br_tz = pytz.timezone('America/Sao_Paulo')
