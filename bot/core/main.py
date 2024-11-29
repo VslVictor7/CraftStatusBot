@@ -5,6 +5,7 @@ import time
 from scripts.mybot import MyBot
 from scripts.message_manager import update_message_periodically
 from utils.database import create_server_data
+from utils.log import log_events
 from commands import setup_commands
 from dotenv import load_dotenv
 
@@ -58,6 +59,7 @@ async def on_ready():
         channel = bot.get_channel(CHANNEL_ID)
         if channel:
             try:
+                bot.loop.create_task(log_events(bot))
                 message = await channel.fetch_message(MESSAGE_ID)
                 print("[BOT STARTED] Pronto para monitoramento de IP, Servidor e Jogadores.")
                 await update_message_periodically(channel, message, session)
