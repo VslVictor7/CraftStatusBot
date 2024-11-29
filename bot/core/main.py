@@ -5,7 +5,7 @@ import time
 from scripts.mybot import MyBot
 from scripts.message_manager import update_message_periodically
 from aniversario.birthday_checker import birthday_check_periodically, parse_birthdays
-from utils.birthday_database import create_birthday_data
+from aniversario.birthday_database import create_birthday_data
 from utils.database import create_server_data
 from commands import setup_commands
 from dotenv import load_dotenv
