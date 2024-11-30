@@ -6,7 +6,8 @@ services:
     container_name: discord-bot
     image: discord-bot:latest
     volumes:
-      - "D:/Minecraft Servers/Forge Oficial/world/stats:/app/world/stats"
+      - "D:/Minecraft Servers/Servidor/world/stats:/app/world/stats"
+      - "D:/Minecraft Servers/Servidor/logs/latest.log:/app/logs/latest.log"
       # Mudar diretorio para stats do mundo minecraft + /app/world/stats
     env_file:
       - .env
