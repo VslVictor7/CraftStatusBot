@@ -1,36 +1,42 @@
-import requests
-import discord
-import time
 import asyncio
 import os
-from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
 
-CHANNEL_ID = os.getenv("CHANNEL_LOGS")
+CHANNEL_ID = int(os.getenv("CHANNEL_TEST_ID"))
 LOG_FILE_PATH = os.getenv("SERVER_LOGS")
 
+previous_lines = []
 
-def log_events(bot):
+async def monitor_file(bot):
+    """Monitora o arquivo `latest.txt` e envia mensagens quando novos conteúdos são detectados."""
+    global previous_lines
 
-    @bot.event
-    async def on_message(message):
-        if message.author == bot.user:
-            return
+    await bot.wait_until_ready()
+    channel = bot.get_channel(CHANNEL_ID)
 
-        log_channel = bot.get_channel(CHANNEL_ID)
-        if log_channel:
-            await log_channel.send(f"Nova mensagem de {message.author}: {message.content}")
+    if not channel:
+        print("[BOT ERROR] Canal não detectado.")
+        return
 
-    @bot.event
-    async def on_member_join(member):
-        log_channel = bot.get_channel(CHANNEL_ID)
-        if log_channel:
-            await log_channel.send(f"{member} entrou no servidor!")
+    while True:
+        try:
+            with open(LOG_FILE_PATH, "r") as file:
+                lines = file.readlines()
 
-    @bot.event
-    async def on_member_remove(member):
-        log_channel = bot.get_channel(CHANNEL_ID)
-        if log_channel:
-            await log_channel.send(f"{member} saiu do servidor!")
+            # Identifica novas linhas adicionadas
+            new_lines = lines[len(previous_lines):]
+            previous_lines = lines  # Atualiza o estado do arquivo
+
+            for line in new_lines:
+                await channel.send(line.strip())
+                print(f"[BOT] Enviou nova linha: {line.strip()}")
+
+        except FileNotFoundError:
+            print(f"[BOT ERROR] Arquivo '{LOG_FILE_PATH}' não encontrado.")
+        except Exception as e:
+            print(f"[BOT ERROR] Erro ao monitorar o arquivo: {e}")
+
+        # Intervalo de verificação
+        await asyncio.sleep(5)  # Verifica a cada 5 segundos
