@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CHANNEL_ID = int(os.getenv("CHANNEL_TEST_ID"))
+CHANNEL_ID = int(os.getenv("CHANNEL_LOGS"))
 LOG_FILE_PATH = os.getenv("SERVER_LOGS")
 
 async def player_events(bot):
