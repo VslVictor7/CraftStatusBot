@@ -1,12 +1,13 @@
 import discord
 import os
 import aiohttp
-import time
 from scripts.mybot import MyBot
 from scripts.message_manager import update_message_periodically
 from aniversario.birthday_checker import birthday_check_periodically, parse_birthdays
 from aniversario.birthday_database import create_birthday_data
 from utils.database import create_server_data
+from utils.log import monitor_file
+from utils.player_events import player_events
 from commands import setup_commands
 from dotenv import load_dotenv
 
@@ -16,27 +17,10 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
 MESSAGE_ID = int(os.getenv('MESSAGE_ID'))
 FRIENDS_BIRTHDAYS = os.getenv('BIRTHDAYS')
-DISCORD_CHANNEL_ID = int(os.getenv('CHANNEL_TEST_ID'))
 
 # Rodar o bot.
 
 bot = MyBot()
-
-async def sync_commands(bot):
-    try:
-        start_time = time.time()
-        await bot.tree.sync()
-        end_time = time.time()
-
-        sync_duration = end_time - start_time
-
-        minutes = int(sync_duration // 60)
-        seconds = int(sync_duration % 60)
-
-        print(f"[BOT SYNC] Comandos sincronizados globalmente. Feito em {minutes} minutos e {seconds} segundos.")
-
-    except Exception as e:
-        print(f"[BOT ERROR] Falha ao sincronizar os comandos: {e}")
 
 @bot.event
 async def on_ready():
@@ -44,7 +28,7 @@ async def on_ready():
     print(f"[BOT] Logado como {bot.user.name} - {bot.user.id}")
 
     bot.loop.create_task(setup_commands(bot))
-    bot.loop.create_task(sync_commands(bot))
+    bot.loop.create_task(bot.sync_commands())
 
     activity = discord.Activity(type=discord.ActivityType.watching, name="Movimentação do nosso servidor")
     await bot.change_presence(status=discord.Status.online, activity=activity)
@@ -65,9 +49,15 @@ async def on_ready():
             try:
                 message = await channel.fetch_message(MESSAGE_ID)
                 print("[BOT STARTED] Pronto para monitoramento de IP, Servidor, Jogadores e Aniversariantes.")
+
                 parsed_birthdays = parse_birthdays(FRIENDS_BIRTHDAYS)
                 bot.loop.create_task(birthday_check_periodically(bot, parsed_birthdays))
+
+                bot.loop.create_task(monitor_file(bot))
+                bot.loop.create_task(player_events(bot))
+
                 await update_message_periodically(channel, message, session)
+
             except discord.DiscordException as e:
                 print(f"[BOT ERROR] Erro ao buscar mensagem: {e}")
                 await bot.close()
