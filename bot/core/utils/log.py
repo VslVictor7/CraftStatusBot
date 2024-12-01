@@ -4,13 +4,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CHANNEL_ID = int(os.getenv("CHANNEL_TEST_ID"))
+CHANNEL_ID = int(os.getenv("CHANNEL_LOGS"))
 LOG_FILE_PATH = os.getenv("SERVER_LOGS")
 
 previous_lines = []
 
 async def monitor_file(bot):
-    """Monitora o arquivo `latest.txt` e envia mensagens formatadas como uma caixa de código no Discord."""
     global previous_lines
 
     await bot.wait_until_ready()
