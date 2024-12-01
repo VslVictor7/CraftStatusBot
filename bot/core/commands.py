@@ -136,30 +136,35 @@ async def setup_commands(bot):
     async def player_information(interaction: discord.Interaction, username: str):
 
         try:
-
             uuid = shortcut.get_uuid_from_username(username)
 
-            stats_path = f"{JSON_PATH}{uuid}.json"
+            if not uuid:
+                raise ValueError(f"Nome de usuário '{username}' não encontrado ou inválido.")
 
+            stats_path = f"{JSON_PATH}{uuid}.json"
             stats_message = player_json.player_stats(stats_path, username)
+
+            if not stats_message:
+                raise ValueError(f"Não foi possível gerar estatísticas para o jogador '{username}'. Certifique-se de escrever o nome de usuário corretamente!")
 
             await interaction.response.send_message(embed=stats_message)
 
         except FileNotFoundError:
-            await interaction.followup.send(
+            await interaction.response.send_message(
                 f"Arquivo de estatísticas para {username} não encontrado. Certifique-se de escrever corretamente o nome de usuário!",
                 ephemeral=True
             )
-        except json.JSONDecodeError:
-            await interaction.followup.send(
-                f"O arquivo de estatísticas de {username} está corrompido ou não é válido.",
+        except RuntimeError as e:
+            await interaction.response.send_message(
+                f"Ocorreu um erro ao acessar a API Mojang: {e}",
                 ephemeral=True
             )
         except Exception as e:
-            await interaction.followup.send(
-                f"Ocorreu um erro ao buscar as estatísticas: {e}",
+            await interaction.response.send_message(
+                f"Ocorreu um erro inesperado: {e}",
                 ephemeral=True
             )
+
 
     @bot.tree.command(name="help", description="Exibe a lista de comandos disponíveis.")
     async def help_command(interaction: discord.Interaction):
