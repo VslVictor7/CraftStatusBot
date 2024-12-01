@@ -1,7 +1,8 @@
 import discord
 import os
 import pytz
-import requests
+import time
+import asyncio
 from discord.ext import commands
 from dotenv import load_dotenv
 from mcstatus import JavaServer
@@ -17,9 +18,6 @@ class MyBot(commands.Bot):
         self.uptime_start = None
         self.server = JavaServer(IP,JavaServer.DEFAULT_PORT)
 
-    async def setup_hook(self):
-        await self.tree.sync()
-
     async def get_server_uptime(self):
         try:
             status = self.server.status()
@@ -33,3 +31,18 @@ class MyBot(commands.Bot):
         except Exception as e:
             print(f"Erro ao tentar acessar o servidor: {e}")
             return False, 0
+
+    async def sync_commands(self):
+        try:
+            await self.tree.sync()
+            print("[BOT SYNC] Comandos sincronizados globalmente.")
+
+        except Exception as e:
+            print(f"[BOT ERROR] Falha ao sincronizar os comandos: {e}")
+        except discord.errors.HTTPException as e:
+            if e.code == 429:
+                retry_after = e.retry_after
+                print(f"[BOT ERROR] Rate limitado. Tentando novamente em  {retry_after} segundos.")
+                await asyncio.sleep(retry_after)
+            else:
+                print(f"[BOT ERROR] Falha ao sincronizar os comandos: {e}")
