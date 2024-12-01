@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: discord-bot
+    container_name: bot
     image: discord-bot:latest
     volumes:
       - "D:/Minecraft Servers/Servidor/world/stats:/app/world/stats"
