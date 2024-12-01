@@ -20,8 +20,7 @@ async def monitor_file(bot):
         print("[BOT ERROR] Canal não detectado.")
         return
 
-    # Timer inicial antes de começar o monitoramento
-    initial_delay = 10  # Aguarda 10 segundos antes de iniciar
+    initial_delay = 20
     print(f"[BOT] Aguardando {initial_delay} segundos para enviar logs do servidor...")
     await asyncio.sleep(initial_delay)
 
@@ -46,7 +45,7 @@ async def monitor_file(bot):
 
                 for chunk in chunks:
                     await channel.send(f"{code_block}{chunk}{footer}")
-                    print(f"[BOT] Enviou um chunk de mensagens.")
+                    print(f"[BOT] Chunnk de logs do servidor enviados.")
 
         except FileNotFoundError:
             print(f"[BOT ERROR] Arquivo '{LOG_FILE_PATH}' não encontrado.")

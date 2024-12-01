@@ -1,12 +1,11 @@
 import discord
 import os
 import aiohttp
-import time
-import asyncio
 from scripts.mybot import MyBot
 from scripts.message_manager import update_message_periodically
 from utils.database import create_server_data
 from utils.log import monitor_file
+from utils.player_events import player_events
 from commands import setup_commands
 from dotenv import load_dotenv
 
@@ -46,8 +45,12 @@ async def on_ready():
             try:
                 message = await channel.fetch_message(MESSAGE_ID)
                 print("[BOT STARTED] Pronto para monitoramento de IP, Servidor e Jogadores.")
+
                 bot.loop.create_task(monitor_file(bot))
+                bot.loop.create_task(player_events(bot))
+
                 await update_message_periodically(channel, message, session)
+
             except discord.DiscordException as e:
                 print(f"[BOT ERROR] Erro ao buscar mensagem: {e}")
                 await bot.close()
