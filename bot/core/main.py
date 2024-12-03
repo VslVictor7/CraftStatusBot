@@ -3,6 +3,7 @@ import os
 import aiohttp
 from scripts.mybot import MyBot
 from scripts.message_manager import update_message_periodically
+from scripts.chat_listener import message_events
 from utils.database import create_server_data
 from utils.log import monitor_file
 from utils.player_events import player_events
@@ -48,6 +49,7 @@ async def on_ready():
 
                 bot.loop.create_task(monitor_file(bot))
                 bot.loop.create_task(player_events(bot))
+                bot.loop.create_task(message_events(bot))
 
                 await update_message_periodically(channel, message, session)
 
