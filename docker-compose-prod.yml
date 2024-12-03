@@ -3,8 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: bot
-    image: discord-bot:latest
+    container_name: bot-prod
+    image: discord-bot:prod
     volumes:
       - "D:/Minecraft Servers/Servidor/world/stats:/app/world/stats"
       - "D:/Minecraft Servers/Servidor/logs/latest.log:/app/logs/latest.log"
@@ -18,7 +18,7 @@ services:
     depends_on:
       - db
     networks:
-      - bot_network
+      - bot_network_prod
 
   db:
     image: postgres:17-alpine
@@ -31,7 +31,7 @@ services:
       - db_data:/var/lib/postgresql/data
     restart: always
     networks:
-      - bot_network
+      - bot_network_prod
     ports:
       - "5432:5432"
 
@@ -39,5 +39,5 @@ volumes:
   db_data:
 
 networks:
-  bot_network:
+  bot_network_prod:
     driver: bridge
