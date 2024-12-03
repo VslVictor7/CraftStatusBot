@@ -1,5 +1,7 @@
 log.txt
 .env
+.env.dev
+.env.prod
 .venv
 venv
 __pycache__
