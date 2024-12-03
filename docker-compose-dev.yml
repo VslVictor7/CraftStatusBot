@@ -1,0 +1,39 @@
+services:
+  discord-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bot-dev
+    image: discord-bot:dev
+    volumes:
+      - "D:/Minecraft Servers/Servidor/world/stats:/app/world/stats"
+      - "D:/Minecraft Servers/Servidor/logs/latest.log:/app/logs/latest.log"
+    env_file:
+      - .env.dev  # Arquivo de variáveis de ambiente específicas para desenvolvimento
+    tty: true
+    stdin_open: true
+    depends_on:
+      - db
+    networks:
+      - bot_network_dev
+
+  db:
+    image: postgres:17-alpine
+    container_name: bot-database-dev
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - db_data_dev:/var/lib/postgresql/data
+    networks:
+      - bot_network_dev
+    ports:
+      - "5433:5432"  # Mude a porta para não conflitar com a de produção
+
+volumes:
+  db_data_dev:
+
+networks:
+  bot_network_dev:
+    driver: bridge
