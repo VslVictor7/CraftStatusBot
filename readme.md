@@ -1,4 +1,4 @@
-# Minecraft Server Status Bot
+# Status Manager Bot
 
 - Um bot do Discord funcional feito por mim mesmo para cobrir um conceito nicho que me atende. Ele possui a principal funcionalidade que é de monitorar um servidor minecraft, mostrando o ip publico da maquina que está rodando o servidor JAVA, o numero de jogadores, nome deles e se o servidor está online.
 
