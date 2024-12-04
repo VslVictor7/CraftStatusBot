@@ -4,8 +4,7 @@ import aiohttp
 from scripts.mybot import MyBot
 from scripts.message_manager import update_message_periodically
 from aniversario.birthday_checker import birthday_check_periodically, parse_birthdays
-from aniversario.birthday_database import create_birthday_data
-from utils.database import create_server_data
+from utils.database import create_server_data, create_birthday_data
 from utils.log import monitor_file
 from utils.player_events import player_events
 from commands import setup_commands

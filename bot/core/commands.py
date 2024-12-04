@@ -1,13 +1,12 @@
 import discord
 import os
-import json
 import pytz
 from dotenv import load_dotenv
 from datetime import datetime
 from mcstatus import JavaServer
 from utils import player_json
 from musica import lyrics_finder
-from utils import shortcut
+from utils import player_json
 
 load_dotenv()
 
@@ -136,7 +135,7 @@ async def setup_commands(bot):
     async def player_information(interaction: discord.Interaction, username: str):
 
         try:
-            uuid = shortcut.get_uuid_from_username(username)
+            uuid = player_json.get_uuid_from_username(username)
 
             if not uuid:
                 raise ValueError(f"Nome de usuário '{username}' não encontrado ou inválido.")
