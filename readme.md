@@ -59,7 +59,9 @@ python -m pip install --upgrade pip
 
 2. Enviar mensagem inicial do bot:
 
-- O aqruivo .env deve ser configurado corretamente para que a etapa da mensagem placeholder funcione.
+- Diretório do arquivo python: bot/core/utils/bot_sender.py
+
+- O arquivo .env deve ser configurado corretamente para que a etapa da mensagem placeholder funcione.
   
 - Execute o script bot_sender.py para enviar uma mensagem placeholder que será usada como base para atualizar a mensagem com um embed mostrando as informações do servidor Minecraft.
 ```bash
