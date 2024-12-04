@@ -1,11 +1,12 @@
 import discord
+import os
 from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
 
-TOKEN = "token com aspas, é uma STR"
-CHANNEL_ID = 'id deve ser sem aspas, é um INT'
+TOKEN = os.getenv('DISCORD_TOKEN')
+CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
 
 intents = discord.Intents.default()
 intents.messages = True
