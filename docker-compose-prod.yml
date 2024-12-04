@@ -11,7 +11,7 @@ services:
       # Mudar diretorio para stats do mundo minecraft : /app/world/stats
       # Mudar diretorio para logs do servidor minecraft : /app/logs/latest.log
     env_file:
-      - .env.prod
+      - .env
     restart: always
     tty: true
     stdin_open: true

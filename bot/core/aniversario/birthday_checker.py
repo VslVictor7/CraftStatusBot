@@ -35,6 +35,11 @@ async def send_birthday_messages(bot, birthdays):
     print("[BIRTHDAYS] Lista de aniversariantes analisada, nenhum aniversário foi detectado hoje.")
 
 async def birthday_check_periodically(bot, birthdays, interval=18000):
+
+    if not birthdays:
+        print("[BIRTHDAYS] Nenhum aniversário listado. Saindo da função.")
+        return
+
     while True:
         await send_birthday_messages(bot, birthdays)
         await asyncio.sleep(interval)
