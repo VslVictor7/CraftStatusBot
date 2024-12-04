@@ -23,5 +23,4 @@ async def on_ready():
     else:
         print('Canal não encontrado.')
 
-# Execute o bot
 bot.run(TOKEN)

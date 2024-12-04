@@ -16,7 +16,7 @@ async def monitor_file(bot):
     channel = bot.get_channel(CHANNEL_ID)
 
     if not channel:
-        print("[BOT ERROR] Canal não detectado.")
+        print("[BOT ERROR] Canal não detectado para envio de logs. Saindo da função.")
         return
 
     initial_delay = 20
