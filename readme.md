@@ -54,7 +54,7 @@ python -m pip install --upgrade pip
 
 1. **Configurar o arquivo .env**:
 
-- Duplique o arquivo .example-env e renomeie-o para .env (Ou .env.prod se for utilizar do docker-compose-prod).
+- Duplique o arquivo .example-env e renomeie-o para .env
 - Substitua os valores de token, IDs e outros campos conforme necessário.
 
 2. Enviar mensagem inicial do bot:
@@ -62,7 +62,7 @@ python -m pip install --upgrade pip
 - Diretório do arquivo python: bot/core/utils/bot_sender.py
 
 - O arquivo .env deve ser configurado corretamente para que a etapa da mensagem placeholder funcione.
-  
+
 - Execute o script bot_sender.py para enviar uma mensagem placeholder que será usada como base para atualizar a mensagem com um embed mostrando as informações do servidor Minecraft.
 ```bash
 python bot_sender.py
@@ -92,17 +92,17 @@ E por fim, caso for rodar em um docker container, leia abaixo:
 
 - Certifique-se de que está do diretorio do Dockerfile e dockercompose:
 
-- Certifique-se que .env.prod e requirements.txt também estejam no mesmo diretorio descrito acima:
+- Certifique-se que .env e requirements.txt também estejam no mesmo diretorio descrito acima:
 
 - após isso, crie a imagem com:
 
 ```bash
-docker build -t discord-bot .
+docker build -t discord-bot:prod .
 ```
 rode o container com:
 
 ```bash
-docker-compose -f docker-compose-prod.yml up --build
+docker-compose -f docker-compose-prod.yml -p bot-prod up -d
 ```
 
 ## Considerações Importantes

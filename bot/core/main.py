@@ -3,6 +3,8 @@ import os
 import aiohttp
 from scripts.mybot import MyBot
 from scripts.message_manager import update_message_periodically
+from aniversario.birthday_checker import birthday_check_periodically, parse_birthdays
+from aniversario.birthday_database import create_birthday_data
 from utils.database import create_server_data
 from utils.log import monitor_file
 from utils.player_events import player_events
@@ -14,6 +16,7 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
 MESSAGE_ID = int(os.getenv('MESSAGE_ID'))
+FRIENDS_BIRTHDAYS = os.getenv('BIRTHDAYS')
 
 # Rodar o bot.
 
@@ -38,13 +41,17 @@ async def on_ready():
         print("[BOT ERROR] Não foi possível verificar o uptime do servidor.")
 
     create_server_data()
+    create_birthday_data()
 
     async with aiohttp.ClientSession() as session:
         channel = bot.get_channel(CHANNEL_ID)
         if channel:
             try:
                 message = await channel.fetch_message(MESSAGE_ID)
-                print("[BOT STARTED] Pronto para monitoramento de IP, Servidor e Jogadores.")
+                print("[BOT STARTED] Pronto para monitoramento de IP, Servidor, Jogadores e Aniversariantes.")
+
+                parsed_birthdays = parse_birthdays(FRIENDS_BIRTHDAYS)
+                bot.loop.create_task(birthday_check_periodically(bot, parsed_birthdays))
 
                 bot.loop.create_task(monitor_file(bot))
                 bot.loop.create_task(player_events(bot))
