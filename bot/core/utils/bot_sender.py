@@ -19,7 +19,7 @@ async def on_ready():
 
     channel = bot.get_channel(CHANNEL_ID)
     if channel is not None:
-        await channel.send('Mensagem placeholder para meu IP.')
+        await channel.send('Mensagem placeholder para atualização de campo Embed.')
     else:
         print('Canal não encontrado.')
 
