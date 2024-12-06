@@ -44,7 +44,7 @@ async def monitor_file(bot):
 
                 for chunk in chunks:
                     await channel.send(f"{code_block}{chunk}{footer}")
-                    print(f"[BOT] Chunnk de logs do servidor enviados.")
+                    print(f"[BOT] Chunk de logs do servidor enviados.")
 
         except FileNotFoundError:
             print(f"[BOT ERROR] Arquivo '{LOG_FILE_PATH}' não encontrado.")
