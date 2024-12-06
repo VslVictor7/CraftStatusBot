@@ -45,3 +45,13 @@ class MyBot(commands.Bot):
                 await asyncio.sleep(retry_after)
             else:
                 print(f"[BOT ERROR] Falha ao sincronizar os comandos: {e}")
+
+    async def uptime_start_count(self):
+        await self.wait_until_ready()
+
+        is_online, uptime_start = await self.get_server_uptime()
+        if is_online:
+            self.uptime_start = uptime_start
+            print(f"[BOT] Uptime do servidor iniciado e registrado as: {self.uptime_start}")
+        else:
+            print("[BOT ERROR] Não foi possível verificar o uptime do servidor.")

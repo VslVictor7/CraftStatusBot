@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CHANNEL_ID = int(os.getenv("CHANNEL_LOGS"))
+CHANNEL_ID = int(os.getenv("PLAYER_EVENT_LOGS"))
 LOG_FILE_PATH = os.getenv("SERVER_LOGS")
 
 async def player_events(bot):
@@ -14,7 +14,7 @@ async def player_events(bot):
     channel = bot.get_channel(CHANNEL_ID)
 
     if not channel:
-        print("[BOT ERROR] Canal não detectado.")
+        print("[BOT ERROR] Canal não detectado para envio de player events. Saindo da função.")
         return
 
     processed_lines = set()
@@ -40,7 +40,7 @@ async def player_events(bot):
                 elif "left the game" in line:
                     player_name = extract_player_name(line)
                     if player_name:
-                        embed = create_embed(player_name, f"{player_name} saiu no servidor", 0xff0000)
+                        embed = create_embed(player_name, f"{player_name} saiu do servidor", 0xff0000)
                         await asyncio.sleep(2)
                         await channel.send(embed=embed)
 
@@ -53,7 +53,6 @@ async def player_events(bot):
 
 
 def extract_player_name(log_line):
-    """Extrai o nome do jogador da linha de log."""
     try:
         # Exemplo: "VictorVsl7 joined the game" ou "VictorVsl7 left the game"
         if "joined the game" in log_line or "left the game" in log_line:

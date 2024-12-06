@@ -1,7 +1,7 @@
 from datetime import datetime
 import os, asyncio
 from dotenv import load_dotenv
-from aniversario.birthday_database import has_sent_birthday_message, mark_birthday_sent
+from utils.database import has_sent_birthday_message, mark_birthday_sent
 
 load_dotenv()
 

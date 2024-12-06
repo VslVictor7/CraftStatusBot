@@ -55,62 +55,67 @@ def create_embed(ip, server_online, players_online, version, player_names):
 
 async def update_message_periodically(channel, message, session, interval=3):
 
-    def get_left_players(player_names):
-        if last_player_names:
-            left_players = set(last_player_names) - set(player_names)
-            return left_players
-        else:
-            left_players = set()
-            return left_players
-
-    def update_last_state(current_ip, server_online, players_online, version, player_names):
+    async def get_current_status():
+        current_ip = await get_public_ipv4(session)
+        server_online, players_online, version, player_names = await get_server_status(bot)
         return current_ip, server_online, players_online, version, player_names
 
-    def update_database(player_name, server_online, players_online, player_left=None):
-        if player_left:
-            for player in player_left:
+    def get_left_players(current_players, previous_players):
+        return set(previous_players or []) - set(current_players or [])
+
+    def update_database(player_name, server_online, players_online, left_players=None):
+        if left_players:
+            for player in left_players:
                 database.insert_server_data(player_name, server_online, players_online, player_left=player)
         else:
             database.insert_server_data(player_name, server_online, players_online)
 
-    async def handle_message_update(message, embed):
+    async def update_discord_message(message, embed):
         try:
             sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
             current_time = datetime.now(sao_paulo_tz)
             await message.edit(embed=embed, content="")
-            print(f"[TEXT] Mensagem de Servidor Minecraft Atualizado. - {current_time}")
+            print(f"[BOT] Mensagem do servidor atualizada as: {current_time}.")
         except discord.DiscordException as e:
-            print(f"[TEXT ERROR] Erro ao atualizar mensagem: {e}")
+            print(f"[ERROR] Falha ao atualizar mensagem: {e}")
 
-    last_status, last_ip, last_players_online, last_version, last_player_names = None, None, None, None, None
+    def has_status_changed(current, last):
+        return current != last
+
+    last_status = {
+        "ip": None,
+        "online": None,
+        "players_online": None,
+        "version": None,
+        "player_names": None,
+    }
 
     while True:
+        try:
+            current_ip, server_online, players_online, version, player_names = await get_current_status()
 
-        current_ip = await get_public_ipv4(session)
-        server_online, players_online, version, player_names = await get_server_status(bot)
+            if has_status_changed(
+                (current_ip, server_online, players_online, version, player_names),
+                (last_status["ip"], last_status["online"], last_status["players_online"], last_status["version"], last_status["player_names"])
+            ):
+                if "Anonymous Player" not in (player_names or []):
 
-        left_players = get_left_players(player_names)
+                    left_players = get_left_players(player_names, last_status["player_names"])
+                    player_name = player_names[0] if player_names else None
+                    update_database(player_name, server_online, players_online, left_players)
 
-        if "Anonymous Player" not in player_names:
+                    embed = create_embed(current_ip, server_online, players_online, version, player_names)
+                    await update_discord_message(message, embed)
 
-            player_name = player_names[0] if player_names else None
+                    last_status.update({
+                        "ip": current_ip,
+                        "online": server_online,
+                        "players_online": players_online,
+                        "version": version,
+                        "player_names": player_names,
+                    })
 
-            if (current_ip != last_ip or server_online != last_status or players_online != last_players_online
-                or version != last_version or player_names != last_player_names):
-
-                # Atualizar banco de dados.
-                update_database(player_name, server_online, players_online, left_players)
-
-                # Criar embed com conteúdo.
-                embed = create_embed(current_ip, server_online, players_online, version, player_names)
-
-                # Atualizar mensagem.
-                await handle_message_update(message, embed)
-
-                # Atualizar último estado.
-
-                last_ip, last_status, last_players_online, last_version, last_player_names = update_last_state(
-                    current_ip, server_online, players_online, version, player_names
-                )
-
-        await asyncio.sleep(interval)
+            await asyncio.sleep(interval)
+        except Exception as e:
+            print(f"[ERROR] Ocorreu um erro inesperado ao atualizar a mensagem do servidor: {e}")
+            await asyncio.sleep(interval)
