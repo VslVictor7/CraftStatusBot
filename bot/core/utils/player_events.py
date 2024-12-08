@@ -26,7 +26,7 @@ async def player_events(bot):
             with open(LOG_FILE_PATH, "r") as file:
                 current_file_size = os.path.getsize(LOG_FILE_PATH)
                 if current_file_size < last_file_size:
-                    print("[INFO] Arquivo de log reescrito. Resetando a posição.")
+                    print("[LOG INFO] Arquivo de log reescrito. Resetando a posição.")
                     file_position = 0
 
                 last_file_size = current_file_size
@@ -38,7 +38,7 @@ async def player_events(bot):
                 for line in lines:
                     if not server_started and "Done" in line:
                         server_started = True
-                        print("[INFO] Servidor iniciado. Iniciando o monitoramento dos eventos dos jogadores.")
+                        print("[LOG INFO] Servidor iniciado. Iniciando o monitoramento dos eventos dos jogadores.")
                         continue
 
                     if server_started:
@@ -46,7 +46,7 @@ async def player_events(bot):
 
                     if "Stopping the server" in line:
                         server_started = False
-                        print("[INFO] Servidor parado. Parando o monitoramento dos eventos dos jogadores.")
+                        print("[LOG INFO] Servidor parado. Parando o monitoramento dos eventos dos jogadores.")
 
         except FileNotFoundError:
             print(f"[BOT ERROR] Arquivo '{LOG_FILE_PATH}' não encontrado.")
