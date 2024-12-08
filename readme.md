@@ -32,12 +32,12 @@
 2. **Crie uma Máquina Virtual** (venv):
 
 ```bash
-  python -m venv venv
+python -m venv venv
 ```
 
 3. **Ativar Máquina Virtual**:
 ```bash
-  source .venv/scripts/activate
+source .venv/scripts/activate
 ```
 
 4. **Atualizar o pip**
@@ -47,7 +47,7 @@ python -m pip install --upgrade pip
 
 5. **Instalar requirements.txt**
 ```bash
-  pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Configuração
