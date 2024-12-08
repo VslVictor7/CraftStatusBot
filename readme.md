@@ -1,114 +1,115 @@
 # Status Manager Bot
 
-- Um bot do Discord funcional feito por mim mesmo para cobrir um conceito nicho que me atende. Ele possui a principal funcionalidade que é de monitorar um servidor minecraft, mostrando o ip publico da maquina que está rodando o servidor JAVA, o numero de jogadores, nome deles e se o servidor está online.
+- A functional Discord bot created by myself to address a niche concept that suits my needs. Its main functionality is monitoring a Minecraft server, displaying the public IP of the machine running the JAVA server, the number of players, their names, and whether the server is online.
 
-- Funcionalidade principal de suporte: LOG do servidor minecraft em um chat do discord para melhor monitoramento remoto, além de mostrar em embeds os jogadores que saíram e entraram no servidor (Isso também é registrado no banco de dados).
+- Main support functionality: Minecraft server LOG in a Discord chat for better remote monitoring, as well as showing in embeds the players who joined and left the server (this data is also recorded in the database).
 
-- Funcionalidades Secundárias: API do GENIUS para busca de letras de musicas, comando para mostrar estatisticas dos jogadores que já jogaram no servidor, limpar chat do servidor e Dm (dm do bot),.
+- Secondary functionalities: GENIUS API for searching song lyrics, a command to display statistics of players who have played on the server, clearing server and DM (bot DM) chats.
 
-## Índice
+## Table of Contents
 
-- [Pré-requisitos](#pré-requisitos)
-- [Instalação](#instalação)
-- [Configuração](#configuração)
-- [Execução](#execução)
-- [Considerações Importantes](#considerações-importantes)
+- [Pre-requisites](#pre-requisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Execution](#execution)
+- [Important Notes](#important-notes)
 
-## Pré-requisitos
+## Pre-requisites
 
-- Python 3.8 ou maior
+- Python 3.8 or higher
 - PostgreSQL
-- Docker (opcional)
+- Docker (optional)
 
-## Instalação
+## Installation
 
-1. **Clone o repositório** (caso ainda não tenha feito):
+1. **Clone the repository** (if you haven’t done so already):
 ```bash
    git clone <https://github.com/VslVictor7/Status-Manager-Bot.git>
 
    cd Status-Manager-Bot
 ```
 
-2. **Crie uma Máquina Virtual** (venv):
+2. **Create a Virtual Environment** (venv):
 
 ```bash
 python -m venv venv
 ```
 
-3. **Ativar Máquina Virtual**:
+3. **Activate the Virtual Environment:**:
 ```bash
 source .venv/scripts/activate
 ```
 
-4. **Atualizar o pip**
+4. **Upgrade pip**
 ```bash
 python -m pip install --upgrade pip
 ```
 
-5. **Instalar requirements.txt**
+5. **Install requirements.txt**
 ```bash
 pip install -r requirements.txt
 ```
 
 ## Configuração
 
-1. **Configurar o arquivo .env**:
+1. **Configure the .env file**:
 
-- Duplique o arquivo .example-env e renomeie-o para .env
-- Substitua os valores de token, IDs e outros campos conforme necessário.
+- Duplicate the .example-env file and rename it to .env
 
-2. Enviar mensagem inicial do bot:
+- Replace the values for token, IDs, and other fields as needed.
 
-- Diretório do arquivo python: bot/core/utils/bot_sender.py
+2. Send the bot's initial message:
 
-- O arquivo .env deve ser configurado corretamente para que a etapa da mensagem placeholder funcione.
+- Python file directory: bot/core/utils/bot_sender.py
 
-- Execute o script bot_sender.py para enviar uma mensagem placeholder que será usada como base para atualizar a mensagem com um embed mostrando as informações do servidor Minecraft.
+- The .env file must be configured correctly for the placeholder message step to work.
+
+- Run the bot_sender.py script to send a placeholder message that will be used as a base to update the message with an embed showing Minecraft server information.
 ```bash
 python bot_sender.py
 ```
-- Não se preocupe, você pode rodar o script normalmente e de forma independente. Contanto que esteja no diretório do arquivo, utilize de 'py bot_sender.py' para rodar o script.
+- Don’t worry, you can run the script independently. As long as you're in the file directory, use 'py bot_sender.py' to run the script.
 
-## Execução
+## Executing:
 
-- Após configurar o .env e também obter uma mensagem placeholder, execute o bot por meio dos arquivos:
+- After configuring the .env file and obtaining a placeholder message, run the bot through the following files:
 
-run_message_manager.vbs (Para não ter nenhum terminal aberto ao rodar o bot, interessante caso queira roda-lo em segundo plano)
-
-ou
-
-script.bat (Caso queira ver o terminal normalmente.)
+run_message_manager.vbs (To run the bot without keeping any terminal open, useful for running it in the background)
 
 ou
 
-- Caso queira rodar diretamente, execute o main.py:
+script.bat (If you want to see the terminal output normally.)
+
+ou
+
+- To run directly, execute main.py:
 ```bash
 python main.py
 ```
 
-E por fim, caso for rodar em um docker container, leia abaixo:
+Finally, if you plan to run it in a Docker container, read below:
 
-## Executando com Docker Container
+## Running with Docker Container
 
-- Certifique-se de que está do diretorio do Dockerfile e dockercompose:
+- Make sure you are in the directory of the Dockerfile and docker-compose files.
 
-- Certifique-se que .env e requirements.txt também estejam no mesmo diretorio descrito acima:
+- Ensure the .env and requirements.txt files are also in the directory mentioned above.
 
-- após isso, crie a imagem com:
+- After that, build the image with:
 
 ```bash
 docker build -t discord-bot:prod .
 ```
-rode o container com:
+Run the container with:
 
 ```bash
 docker-compose -f docker-compose-prod.yml -p bot-prod up -d
 ```
 
-## Considerações Importantes
+## Important Notes
 
-- É NECESSÁRIO UTILIZAR DE POSTGRESQL PARA QUE O BOT RODE O BANCO DE DADOS.
+- IT IS NECESSARY TO USE POSTGRESQL FOR THE BOT TO RUN THE DATABASE.
 
-- Arquivo .gitignore: Inclua o nome da pasta da sua venv (por exemplo, venv/ ou .venv/) no .gitignore para evitar conflitos de commits.
+- .gitignore File: Include the name of your venv folder (e.g., venv/ or .venv/) in the .gitignore to avoid commit conflicts.
 
-- Substituições Necessárias: Certifique-se de substituir os tokens e IDs no arquivo .env para garantir o funcionamento correto do bot.
+- Necessary Substitutions: Make sure to replace the tokens and IDs in the .env file to ensure the bot functions correctly.
