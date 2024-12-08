@@ -24,9 +24,18 @@ def player_stats(path, username):
 
         play_time = custom_stats.get("minecraft:play_time", 0) // 20
         jumps = custom_stats.get("minecraft:jump", 0)
-        walked_cm = custom_stats.get("minecraft:walk_one_cm", 0)
         deaths = custom_stats.get("minecraft:deaths", 0)
         time_since_death = custom_stats.get("minecraft:time_since_death", 0) // 20
+        damage_dealt = custom_stats.get("minecraft:damage_dealt", 0)
+        damage_taken = custom_stats.get("minecraft:damage_taken", 0)
+
+        walked_cm = custom_stats.get("minecraft:walk_one_cm", 0)
+        sprinted_cm = custom_stats.get("minecraft:sprint_one_cm", 0)
+        boat_cm = custom_stats.get("minecraft:boat_one_cm", 0)
+        elytra_cm = custom_stats.get("minecraft:aviate_one_cm", 0)
+        horse_cm = custom_stats.get("minecraft:horse_one_cm", 0)
+        minecart_cm = custom_stats.get("minecraft:minecart_one_cm", 0)
+
 
         total_mined = sum(mined_stats.values())
         item_broken = sum(item_broken_stats.values())
@@ -43,9 +52,10 @@ def player_stats(path, username):
             name="Informações do Jogador",
             value=(
                 f"⏳ **Tempo jogado**: {play_time // 3600}h {play_time % 3600 // 60}m {play_time % 60}s\n"
-                f"🏃‍♂️ **Distância percorrida**: {walked_cm // 100000} km e {(walked_cm % 100000) // 100} metros\n"
+                f"🚶‍♂️ **Distância andando**: {walked_cm // 100000} km e {(walked_cm % 100000) // 100} metros\n"
+                f"🏃‍♂️ **Distância correndo**: {sprinted_cm // 100000} km e {(sprinted_cm % 100000) // 100} metros\n"
                 f"⬆️ **Saltos**: {jumps}\n"
-                f"💀 **Mortes**: {deaths}\n"
+                f"💀 **Mortes**: {deaths} vezes\n"
                 f"⏱️ **Tempo desde a última morte**: {time_since_death // 3600}h {time_since_death % 3600 // 60}m {time_since_death % 60}s"
             ),
             inline=False
@@ -65,10 +75,23 @@ def player_stats(path, username):
         )
 
         embed.add_field(
-            name="Mobs",
+            name="Ações",
             value=(
                 f"⚔️ **Mobs mortos**: {mobs_killed}\n"
-                f"💀 **Morte contra Mobs**: {mobs_killed_player}"
+                f"💀 **Morreu contra Mobs**: {mobs_killed_player} vezes\n"
+                f"💥 **Dano causado**: {damage_dealt}\n"
+                f"💔 **Dano sofrido**: {damage_taken}"
+            ),
+            inline=False
+        )
+
+        embed.add_field(
+            name="Transportes",
+            value=(
+                f"🚤 **Distância de barco**: {boat_cm // 100000} km e {(boat_cm % 100000) // 100} metros\n"
+                f"🐎 **Distância de cavalo**: {horse_cm // 100000} km e {(horse_cm % 100000) // 100} metros\n"
+                f"🕊️ **Distância de elytra**: {elytra_cm // 100000} km e {(elytra_cm % 100000) // 100} metros\n"
+                f"🚆 **Distância de minecart**: {minecart_cm // 100000} km e {(minecart_cm % 100000) // 100} metros\n"
             ),
             inline=False
         )

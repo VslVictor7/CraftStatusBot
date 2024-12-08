@@ -7,10 +7,9 @@ load_dotenv()
 CHANNEL_ID = int(os.getenv("CHANNEL_LOGS"))
 LOG_FILE_PATH = os.getenv("SERVER_LOGS")
 
-previous_lines = []
 
 async def monitor_file(bot):
-    global previous_lines
+    previous_lines = []
 
     await bot.wait_until_ready()
     channel = bot.get_channel(CHANNEL_ID)
@@ -20,7 +19,7 @@ async def monitor_file(bot):
         return
 
     initial_delay = 20
-    print(f"[BOT] Aguardando {initial_delay} segundos para enviar logs do servidor...")
+    print(f"[LOG INFO] Aguardando {initial_delay} segundos para enviar logs do servidor...")
     await asyncio.sleep(initial_delay)
 
     while True:
@@ -44,7 +43,7 @@ async def monitor_file(bot):
 
                 for chunk in chunks:
                     await channel.send(f"{code_block}{chunk}{footer}")
-                    print(f"[BOT] Chunk de logs do servidor enviados.")
+                    print(f"[LOG INFO] Chunk de logs do servidor enviados.")
 
         except FileNotFoundError:
             print(f"[BOT ERROR] Arquivo '{LOG_FILE_PATH}' não encontrado.")
