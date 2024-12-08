@@ -9,3 +9,4 @@ __pycache__/
 bot_database.db
 readme.md
 .gitignore
+.env.example
