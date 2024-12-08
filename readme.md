@@ -11,7 +11,7 @@
 - [Pre-requisites](#pre-requisites)
 - [Installation](#installation)
 - [Configuration](#configuration)
-- [Execution](#execution)
+- [Executing](#executing)
 - [Important Notes](#important-notes)
 
 ## Pre-requisites
@@ -50,7 +50,7 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## Configuração
+## Configuration
 
 1. **Configure the .env file**:
 
