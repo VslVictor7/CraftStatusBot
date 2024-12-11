@@ -10,3 +10,5 @@ bot_database.db
 readme.md
 .gitignore
 .env.example
+.env.dev
+.env

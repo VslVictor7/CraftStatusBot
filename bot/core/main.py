@@ -3,8 +3,7 @@ import os
 import aiohttp
 from scripts.mybot import MyBot
 from scripts.message_manager import update_message_periodically
-from aniversario.birthday_checker import birthday_check_periodically, parse_birthdays
-from utils.database import create_server_data, create_birthday_data
+from utils.database import create_server_data
 from utils.log import monitor_file
 from utils.player_events import player_events
 from commands import setup_commands
@@ -32,7 +31,6 @@ async def on_ready():
     await background_tasks()
 
     create_server_data()
-    create_birthday_data()
 
     async with aiohttp.ClientSession() as session:
         channel = bot.get_channel(CHANNEL_ID)
@@ -54,12 +52,9 @@ async def on_ready():
 async def background_tasks():
     await bot.wait_until_ready()
 
-    parsed_birthdays = parse_birthdays(FRIENDS_BIRTHDAYS)
-
     bot.loop.create_task(setup_commands(bot))
     bot.loop.create_task(bot.sync_commands())
     bot.loop.create_task(bot.uptime_start_count())
-    bot.loop.create_task(birthday_check_periodically(bot, parsed_birthdays))
     bot.loop.create_task(monitor_file(bot))
     bot.loop.create_task(player_events(bot))
 
