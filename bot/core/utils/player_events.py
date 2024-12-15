@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CHANNEL_ID = int(os.getenv("PLAYER_EVENT_LOGS_CHANNEL"))
+CHANNEL_ID = int(os.getenv("DISCORD_CHANNEL_CHAT_EVENTS_ID"))
 LOG_FILE_PATH = os.getenv("SERVER_LOGS")
 
 async def player_events(bot):
@@ -16,6 +16,8 @@ async def player_events(bot):
     if not channel:
         print("[BOT ERROR] Canal não detectado para envio de player events. Saindo da função.")
         return
+
+    webhook = await ensure_webhook(channel)
 
     server_started = False
     file_position = 0
@@ -42,7 +44,7 @@ async def player_events(bot):
                         continue
 
                     if server_started:
-                        await process_player_events(line, channel)
+                        await process_player_events(line, channel, webhook)
 
                     if "Stopping the server" in line:
                         server_started = False
@@ -56,7 +58,15 @@ async def player_events(bot):
         await asyncio.sleep(3)
 
 
-async def process_player_events(log_line, channel):
+async def ensure_webhook(channel):
+    webhooks = await channel.webhooks()
+    webhook = discord.utils.get(webhooks, name="Minecraft Chat Webhook")
+    if webhook is None:
+        webhook = await channel.create_webhook(name="Minecraft Chat Webhook")
+        print("[BOT INFO] Webhook criado com sucesso.")
+    return webhook
+
+async def process_player_events(log_line, channel, webhook):
     event_map = {
         "joined the game": ("entrou no servidor", 0x00ff00),
         "left the game": ("saiu do servidor", 0xff0000),
@@ -72,8 +82,13 @@ async def process_player_events(log_line, channel):
 
                 embed = create_embed(player_name, f"{player_name} {message}", color)
                 await channel.send(embed=embed)
-                break
+                return
 
+        if "<" in log_line and ">" in log_line:
+            player_name, message = extract_player_message(log_line)
+            if player_name and message:
+                if "[Not Secure]" not in log_line and "[Rcon]" not in log_line:
+                  await send_message_as_user(webhook, player_name, message)
     except Exception as e:
         error_message = f"Erro ao processar evento de jogadores no LOG: {str(e)}"
         await channel.send(error_message)
@@ -86,6 +101,26 @@ def extract_player_name(log_line):
         return player_name
     except IndexError:
         return None
+
+def extract_player_message(log_line):
+    try:
+        start = log_line.index("<") + 1
+        end = log_line.index(">")
+        player_name = log_line[start:end].strip()
+        message = log_line[end + 1:].strip()
+        return player_name, message
+    except ValueError:
+        return None, None
+
+async def send_message_as_user(webhook, username, message):
+    try:
+        await webhook.send(
+            content=message,
+            username=username,
+            avatar_url=f"https://mineskin.eu/helm/{username}/30"
+        )
+    except Exception as e:
+        print(f"[BOT ERROR] Falha ao enviar mensagem como usuário: {e}")
 
 def create_embed(player_name, title, color):
     url = f"https://mineskin.eu/helm/{player_name}/30"
