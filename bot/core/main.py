@@ -38,7 +38,7 @@ async def on_ready():
         if channel:
             try:
                 message = await channel.fetch_message(MESSAGE_ID)
-                print("[BOT STARTED] Pronto para monitoramento de IP, Servidor, Jogadores e Aniversariantes.")
+                print("[BOT STARTED] Pronto para monitoramento de IP, Servidor, Jogadores.")
 
                 await update_message_periodically(channel, message, session)
 
