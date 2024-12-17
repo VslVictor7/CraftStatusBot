@@ -57,7 +57,7 @@ async def player_events(bot):
         except Exception as e:
             print(f"[BOT ERROR] Erro ao monitorar o arquivo: {e}")
 
-        await asyncio.sleep(1)
+        await asyncio.sleep(3)
 
 async def process_player_events(log_line, channel):
     event_map = {

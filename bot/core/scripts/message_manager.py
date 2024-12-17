@@ -37,10 +37,7 @@ def create_embed(ip, server_online, players_online, version, player_names):
         inline=False
     )
 
-    if player_names:
-        embed.add_field(name="📝 Nomes", value=", ".join(player_names), inline=False)
-    else:
-        embed.add_field(name="📝 Nomes", value="Nenhum", inline=False)
+    embed.add_field(name="📝 Nomes", value=", ".join(player_names) if player_names else "Nenhum", inline=False)
 
     embed.add_field(name="🌐 Versão", value=version, inline=False)
 
