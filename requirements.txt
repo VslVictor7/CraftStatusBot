@@ -19,6 +19,7 @@ propcache==0.2.1
 psycopg2==2.9.10
 python-dotenv==1.0.1
 pytz==2024.2
+rcon==2.4.9
 requests==2.32.3
 soupsieve==2.6
 urllib3==2.2.3
