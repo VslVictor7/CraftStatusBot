@@ -25,7 +25,7 @@ async def message_on_server(bot):
         display_name = message.author.display_name
         content = message.content
 
-        minecraft_message = f"{display_name} >> {content}"
+        minecraft_message = f"{display_name} -> {content}"
 
         sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
         current_time = datetime.now(sao_paulo_tz)
