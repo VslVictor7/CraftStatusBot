@@ -17,7 +17,6 @@
 ## Pre-requisites
 
 - Python 3.8 or higher
-- PostgreSQL
 - Docker (optional)
 
 ## Installation
@@ -107,8 +106,6 @@ docker-compose -f docker-compose-prod.yml -p bot-prod up -d
 ```
 
 ## Important Notes
-
-- IT IS NECESSARY TO USE POSTGRESQL FOR THE BOT TO RUN THE DATABASE.
 
 - .gitignore File: Include the name of your venv folder (e.g., venv/ or .venv/) in the .gitignore to avoid commit conflicts.
 

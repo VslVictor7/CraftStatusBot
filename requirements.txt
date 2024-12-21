@@ -16,7 +16,6 @@ mcrcon==0.7.0
 mcstatus @ git+https://github.com/py-mine/mcstatus.git@fc3b96f614f44cbc74207022aa54c95c0bd7e44f
 multidict==6.1.0
 propcache==0.2.1
-psycopg2==2.9.10
 python-dotenv==1.0.1
 pytz==2024.2
 rcon==2.4.9

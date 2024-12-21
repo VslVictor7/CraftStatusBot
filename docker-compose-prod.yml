@@ -15,29 +15,3 @@ services:
     restart: always
     tty: true
     stdin_open: true
-    depends_on:
-      - db
-    networks:
-      - bot_network_prod
-
-  db:
-    image: postgres:17-alpine
-    container_name: bot-database
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    restart: always
-    networks:
-      - bot_network_prod
-    ports:
-      - "5432:5432"
-
-volumes:
-  db_data:
-
-networks:
-  bot_network_prod:
-    driver: bridge
