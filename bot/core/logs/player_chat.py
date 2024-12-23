@@ -70,6 +70,17 @@ async def process_user_messages(log_line, webhook):
         if "Disconnecting VANILLA connection attempt" in log_line or "rejected vanilla connections" in log_line:
             return
 
+        ignore_patterns = [
+            "lost connection",
+            "id=<null>",
+            "legacy=false",
+            "lost connection: Disconnected",
+            "<init>"
+        ]
+
+        if any(pattern in log_line for pattern in ignore_patterns):
+            return
+
         player_name, message = extract_player_message(log_line)
 
         if player_name and message:
