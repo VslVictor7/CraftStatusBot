@@ -8,6 +8,7 @@ from utils.chat_events import message_on_server
 from logs.player_chat import chat_messages
 from logs.player_events import start_player_events
 from logs.advancements import advancements
+from logs.death_monitor import monitor_deaths
 from commands import setup_commands
 from dotenv import load_dotenv
 
@@ -57,6 +58,7 @@ async def background_tasks():
     bot.loop.create_task(start_player_events(bot))
     bot.loop.create_task(advancements(bot))
     bot.loop.create_task(chat_messages(bot))
+    bot.loop.create_task(monitor_deaths(bot))
     #bot.loop.create_task(monitor_file(bot))
 
 
