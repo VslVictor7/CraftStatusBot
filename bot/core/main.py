@@ -1,6 +1,7 @@
 import discord
 import os
 import aiohttp
+import asyncio
 from scripts.mybot import MyBot
 from scripts.message_manager import update_message_periodically
 from logs.server_log import monitor_file
@@ -26,6 +27,10 @@ async def on_ready():
 
     activity = discord.Activity(type=discord.ActivityType.watching, name="Movimentação do nosso servidor")
     await bot.change_presence(status=discord.Status.online, activity=activity)
+
+    interval = 30
+    print(f"[BOT] Esperando {interval} segundos antes de iniciar as tarefas...")
+    await asyncio.sleep(interval)
 
     await background_tasks()
 
