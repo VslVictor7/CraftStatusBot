@@ -1,26 +1,27 @@
 import discord
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 
 async def process_advancements_messages(log_line, channel):
-    translator = Translator()
     try:
         player_name, message, event_name = extract_player_message(log_line)
 
         if player_name and message and event_name:
+
             if "has reached the goal" in message:
-                event_translated = translator.translate(event_name, src='en', dest='pt').text
+                event_translated = GoogleTranslator(source='en', target='pt').translate(event_name)
                 await send_player_event(channel, player_name, "alcançou o objetivo:", event_name, event_translated, 0xFFA500)
 
             elif "has made the advancement" in message:
-                event_translated = translator.translate(event_name, src='en', dest='pt').text
+                event_translated = GoogleTranslator(source='en', target='pt').translate(event_name)
                 await send_player_event(channel, player_name, "obteve o avanço:", event_name, event_translated, 0x0000FF)
 
             elif "has completed the challenge" in message:
-                event_translated = translator.translate(event_name, src='en', dest='pt').text
+                event_translated = GoogleTranslator(source='en', target='pt').translate(event_name)
                 await send_player_event(channel, player_name, "completou o desafio:", event_name, event_translated, 0x800080)
 
     except Exception as e:
         print(f"Erro ao processar evento de usuários mandando mensagens no discord: {e}")
+
 
 def extract_player_message(log_line):
     try:
