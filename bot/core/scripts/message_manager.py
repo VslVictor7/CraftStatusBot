@@ -24,7 +24,7 @@ async def get_server_status(bot):
     except:
         return False, 0, "Desconhecido", []
 
-async def update_message_periodically(channel, message, session, interval=0.1):
+async def update_message_periodically(message, session, interval=0.1):
 
     async def get_current_status():
         current_ip = await get_public_ipv4(session)

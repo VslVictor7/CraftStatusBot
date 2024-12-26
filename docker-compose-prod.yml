@@ -3,8 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: bot-prod
-    image: discord-bot:prod
+    container_name: status-manager-production
+    image: status-manager-production
     volumes:
       - "D:/Minecraft Servers/Container-forge-server/Forge/world/stats:/data/world/stats"
       - "D:/Minecraft Servers/Container-forge-server/Forge/logs/latest.log:/data/logs/latest.log"
