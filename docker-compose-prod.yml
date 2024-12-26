@@ -3,11 +3,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: bot-prod
-    image: discord-bot:prod
+    container_name: status-manager-production
+    image: status-manager-production
     volumes:
-      - "D:/Minecraft Servers/Server-Container/Servidor/world/stats:/data/world/stats"
-      - "D:/Minecraft Servers/Server-Container/Servidor/logs/latest.log:/data/logs/latest.log"
+      - "D:/Minecraft Servers/Container-forge-server/Forge/world/stats:/data/world/stats"
+      - "D:/Minecraft Servers/Container-forge-server/Forge/logs/latest.log:/data/logs/latest.log"
       # Mudar diretorio para stats do mundo minecraft : /data/world/stats
       # Mudar diretorio para logs do servidor minecraft : /data/logs/latest.log
     env_file:
@@ -15,29 +15,3 @@ services:
     restart: always
     tty: true
     stdin_open: true
-    depends_on:
-      - db
-    networks:
-      - bot_network_prod
-
-  db:
-    image: postgres:17-alpine
-    container_name: bot-database
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    restart: always
-    networks:
-      - bot_network_prod
-    ports:
-      - "5432:5432"
-
-volumes:
-  db_data:
-
-networks:
-  bot_network_prod:
-    driver: bridge

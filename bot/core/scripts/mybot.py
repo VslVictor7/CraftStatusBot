@@ -10,12 +10,13 @@ from datetime import datetime
 load_dotenv()
 
 IP = os.getenv('MINECRAFT_SERVER')
+PORT = int(os.getenv('MINECRAFT_PORT'))
 
 class MyBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix="!", intents=discord.Intents.all())
         self.uptime_start = None
-        self.server = JavaServer(IP,JavaServer.DEFAULT_PORT)
+        self.server = JavaServer(IP,PORT)
 
     async def get_server_uptime(self):
         try:
