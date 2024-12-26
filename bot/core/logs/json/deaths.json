@@ -1,4 +1,10 @@
 {
+    "{player} was killed by {entity} using {item}": "foi morto por {entity} usando {item}",
+    "{player} was impaled by {entity} using {item}": "foi empalado por {entity} usando {item}",
+    "{player} was slain by {entity} using {item}": "foi morto por {entity} usando {item}",
+    "{player} was shot by {entity} using {item}": "foi alvejado por {entity} usando {item}",
+    "{player} was blown up by {entity} using {item}": "foi explodido por {entity} usando {item}",
+
     "{player} was killed by {entity}": "foi morto por {entity}",
     "{player} was impaled by {entity}": "foi empalado por {entity}",
     "{player} was slain by {entity}": "foi morto por {entity}",
@@ -18,12 +24,6 @@
     "{player} didn't want to live in the same world as {entity}": "não quis viver no mesmo mundo que {entity}",
     "{player} was struck by lightning whilst fighting {entity}": "foi atingido por um raio enquanto lutava contra {entity}",
     "{player} walked into danger zone due to {entity}": "andou em uma zona de perigo por conta de {entity}",
-
-    "{player} was killed by {entity} using {item}": "foi morto por {entity} usando {item}",
-    "{player} was impaled by {entity} using {item}": "foi empalado por {entity} usando {item}",
-    "{player} was slain by {entity} using {item}": "foi morto por {entity} usando {item}",
-    "{player} was shot by {entity} using {item}": "foi alvejado por {entity} usando {item}",
-    "{player} was blown up by {entity} using {item}": "foi explodido por {entity} usando {item}",
 
     "{player} was pricked to death": "foi perfurado até a morte",
     "{player} drowned": "se afogou",
