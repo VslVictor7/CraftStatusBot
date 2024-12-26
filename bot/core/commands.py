@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from datetime import datetime
 from mcstatus import JavaServer
 from utils import player_json
-from musica import lyrics_finder
 from utils import player_json
 
 load_dotenv()
@@ -116,21 +115,6 @@ async def setup_commands(bot):
             embed = create_embed("Latência do Servidor", latency_text, 0x7289DA)
             await interaction.response.send_message(embed=embed)
 
-    @bot.tree.command(name="letra", description="Busca a letra de uma música no Genius")
-    async def fetch_lyrics(interaction: discord.Interaction, song_title: str):
-        await interaction.response.defer()
-        final_title, lyrics = lyrics_finder.get_song_lyrics(song_title)
-
-        if final_title == "Nenhuma música encontrada.":
-            await interaction.followup.send(final_title)
-            return
-
-        partes_lyricas = lyrics_finder.split_lyrics(lyrics)
-        for parte in partes_lyricas:
-            embed = create_embed(f"Letra de {final_title}", parte, 0x7289DA)
-            await interaction.followup.send(embed=embed)
-
-
     @bot.tree.command(name="stats", description="Mostra estatísticas do jogador Minecraft.")
     async def player_information(interaction: discord.Interaction, username: str):
 
@@ -180,11 +164,6 @@ async def setup_commands(bot):
         embed.add_field(
             name="/ping",
             value="Verifica o ping do servidor Minecraft.",
-            inline=False
-        )
-        embed.add_field(
-            name="/letra <título da música>",
-            value="Busca a letra de uma música no Genius.",
             inline=False
         )
         embed.add_field(
