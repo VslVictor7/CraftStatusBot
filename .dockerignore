@@ -12,4 +12,5 @@ readme.md
 .env.example
 .env.dev
 .env
+dev.env
 commands.txt

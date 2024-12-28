@@ -1,6 +1,6 @@
 log.txt
 .env
-.env.dev
+dev.env
 .env.prod
 .venv
 venv
