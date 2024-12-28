@@ -46,9 +46,12 @@ async def process_death_event(log_line, channel):
         print(f"[BOT ERROR] Erro ao processar evento de morte: {e}")
 
 async def send_player_event(channel, player_name, event_message, color):
-    embed = discord.Embed(color=color)
-    embed.set_author(
-        name=f"{player_name} {event_message}",
-        icon_url=f"https://mineskin.eu/helm/{player_name}"
-    )
-    await channel.send(embed=embed)
+    try:
+        embed = discord.Embed(color=color)
+        embed.set_author(
+            name=f"{player_name} {event_message}",
+            icon_url=f"https://mineskin.eu/helm/{player_name}"
+        )
+        await channel.send(embed=embed)
+    except Exception as e:
+        print(f"[BOT ERROR] Erro ao enviar evento de morte: {e}")

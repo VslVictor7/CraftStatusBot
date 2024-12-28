@@ -2,7 +2,6 @@ import asyncio
 import threading
 import os
 import discord
-import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from .player_chat import process_user_messages
@@ -39,22 +38,20 @@ class LogHandler(FileSystemEventHandler):
                 self.file_position = file.tell()
 
                 for line in lines:
-                    if "Done" in line:
-                        print("[LOG INFO] Servidor iniciado. Iniciando monitoramento.")
-                    elif "Stopping server" in line:
-                        print("[LOG INFO] Servidor parado.")
-                    else:
-                        await self.process_event(line)
+                    await self.process_event(line)
 
         except Exception as e:
             print(f"[LOG ERROR] Erro ao processar arquivo de log: {e}")
 
     async def process_event(self, line):
-        await asyncio.gather(
-            process_death_event(line, self.channel),
-            process_user_messages(self.webhook, line),
-            process_advancements_messages(line, self.channel),
-        )
+        try:
+            await asyncio.gather(
+                process_death_event(line, self.channel),
+                process_user_messages(self.webhook, line),
+                process_advancements_messages(line, self.channel),
+            )
+        except Exception as e:
+            print(f"[LOG ERROR] Erro ao processar eventos que utilizam do log: {e}")
 
 async def log_handling(bot):
     await bot.wait_until_ready()
