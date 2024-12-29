@@ -126,13 +126,13 @@ async def setup_commands(bot):
             if SERVER_MODE == "1":
                 uuid = offline_players.get(username)
                 if not uuid:
-                    await interaction.response.send_message(f"Jogador '{username}' não encontrado no modo offline.")
+                    await interaction.response.send_message(f"Jogador '{username}' não encontrado no modo offline.", ephemeral=True)
                     return
 
             else:
                 uuid = player_json.get_uuid_from_username(username)
                 if not uuid:
-                    await interaction.response.send_message(f"Nome de usuário '{username}' não encontrado ou inválido.")
+                    await interaction.response.send_message(f"Nome de usuário '{username}' não encontrado ou inválido.", ephemeral=True)
                     return
 
             stats_path = f"{JSON_PATH}{uuid}.json"
@@ -166,7 +166,7 @@ async def setup_commands(bot):
         if embed:
             await interaction.response.send_message(embed=embed)
         else:
-            await interaction.response.send_message("Não há jogadores no ranking ou ocorreu um erro.")
+            await interaction.response.send_message("Não há jogadores no ranking ou ocorreu um erro.", ephemeral=True)
 
     @bot.tree.command(name="help", description="Exibe a lista de comandos disponíveis.")
     async def help_command(interaction: discord.Interaction):
@@ -212,7 +212,7 @@ async def setup_commands(bot):
 
 def load_json(file_name):
     try:
-        file_path = os.path.join(os.path.dirname(__file__), 'json', file_name)
+        file_path = os.path.join(os.path.dirname(__file__), 'utils', 'json', file_name)
 
         with open(file_path, 'r', encoding='utf-8') as file:
             return json.load(file)
