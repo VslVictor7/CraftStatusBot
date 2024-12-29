@@ -1,16 +1,20 @@
 import discord
 import os
 import pytz
+import json
 from dotenv import load_dotenv
 from datetime import datetime
 from mcstatus import JavaServer
 from utils import player_json
 from utils import player_json
+from utils import ranking_players
 
 load_dotenv()
 
 JSON_PATH = os.getenv('JSON_PATH')
 IP_ADRESS = os.getenv('MINECRAFT_SERVER')
+PORT = os.getenv('MINECRAFT_PORT')
+SERVER_MODE = os.getenv('SERVER_MODE', '0')
 
 def create_embed(title, description, color):
     embed = discord.Embed(
@@ -39,10 +43,8 @@ async def setup_commands(bot):
 
     @bot.tree.command(name="limpar_dms", description="Apaga mensagens do bot na DM atual.")
     async def limpar_dms(interaction: discord.Interaction):
-        # Verifica se está em um canal de mensagem direta (DM)
         if isinstance(interaction.channel, discord.DMChannel):
-            await interaction.response.defer(ephemeral=True)  # Defere a resposta (indica que vai demorar um pouco)
-
+            await interaction.response.defer(ephemeral=True)
             count = 0
             async for message in interaction.channel.history(limit=100):
                 if message.author == bot.user:
@@ -104,7 +106,7 @@ async def setup_commands(bot):
     @bot.tree.command(name="ping", description="Verifica o ping do servidor Minecraft")
     async def ping(interaction: discord.Interaction):
         try:
-            server = JavaServer.lookup(f"{IP_ADRESS}:{JavaServer.DEFAULT_PORT}")
+            server = JavaServer.lookup(f"{IP_ADRESS}:{PORT}")
             latency = server.ping()
             latency = round(latency, 2)
             latency_text = f"{latency} ms"
@@ -119,10 +121,19 @@ async def setup_commands(bot):
     async def player_information(interaction: discord.Interaction, username: str):
 
         try:
-            uuid = player_json.get_uuid_from_username(username)
+            uuid = None
 
-            if not uuid:
-                raise ValueError(f"Nome de usuário '{username}' não encontrado ou inválido.")
+            if SERVER_MODE == "1":
+                uuid = offline_players.get(username)
+                if not uuid:
+                    await interaction.response.send_message(f"Jogador '{username}' não encontrado no modo offline.")
+                    return
+
+            else:
+                uuid = player_json.get_uuid_from_username(username)
+                if not uuid:
+                    await interaction.response.send_message(f"Nome de usuário '{username}' não encontrado ou inválido.")
+                    return
 
             stats_path = f"{JSON_PATH}{uuid}.json"
             stats_message = player_json.player_stats(stats_path, username)
@@ -148,6 +159,14 @@ async def setup_commands(bot):
                 ephemeral=True
             )
 
+    @bot.tree.command(name="ranking", description="Mostra ranking do jogador que tem o maior tempo de jogo do servidor.")
+    async def player_ranking(interaction: discord.Interaction):
+        embed = await ranking_players.raking_players()
+
+        if embed:
+            await interaction.response.send_message(embed=embed)
+        else:
+            await interaction.response.send_message("Não há jogadores no ranking ou ocorreu um erro.")
 
     @bot.tree.command(name="help", description="Exibe a lista de comandos disponíveis.")
     async def help_command(interaction: discord.Interaction):
@@ -189,3 +208,19 @@ async def setup_commands(bot):
         embed.set_footer(text="Utilize os comandos para explorar as funcionalidades do bot.")
 
         await interaction.response.send_message(embed=embed)
+
+
+def load_json(file_name):
+    try:
+        file_path = os.path.join(os.path.dirname(__file__), 'json', file_name)
+
+        with open(file_path, 'r', encoding='utf-8') as file:
+            return json.load(file)
+    except FileNotFoundError as e:
+        print(f"[BOT ERROR] Arquivo não encontrado: {e}")
+        return {}
+    except json.JSONDecodeError as e:
+        print(f"[BOT ERROR] Erro ao decodificar o arquivo: {e}")
+        return {}
+
+offline_players = load_json('players.json')

@@ -2,7 +2,7 @@ async def process_user_messages(webhook, log_line):
     try:
         if "<" not in log_line or ">" not in log_line:
             return
-        if "[Not Secure]" in log_line or "[Rcon]" in log_line:
+        if "[Rcon]" in log_line:
             return
         if "Disconnecting VANILLA connection attempt" in log_line or "rejected vanilla connections" in log_line:
             return
