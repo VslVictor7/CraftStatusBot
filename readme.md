@@ -105,6 +105,29 @@ Run the container with:
 docker-compose -f docker-compose-prod.yml -p bot-prod up -d
 ```
 
+## 'Offline mode' servers:
+
+- For offline servers, there is a variable in the .env.example that you can output a number "1" to set it to run in a offline server.
+
+- It tracks the local UUID files, so it is important to read the .env.example with caution.
+
+- Another thing, you need to create a "players.json" file inside bot/core/utils/json and map the player names and their respective UUID's.
+
+- Example of "players.json":
+
+```bash
+{
+   "test":"530fa97a-357f-3c19-94d3-0c5c65c18fe8",
+   "Awesome-gamer-NAME":"487f52ba-919b-39c1-8a46-1e37aef66614",
+   "Player1-nameEXAMPle":"0377e3e3-c767-330c-b352-70f60f5e7b83",
+   "JorjinGamer":"86c5cd29-ecd6-3611-8e9a-c937807f9807"
+}
+```
+
+- Be aware that the names are case sensitive, you must type it right as well as the UUID's.
+
+- Type the UUID's in lower case as showed previously. As well as in the exact format showed.
+
 ## Important Notes
 
 - .gitignore File: Include the name of your venv folder (e.g., venv/ or .venv/) in the .gitignore to avoid commit conflicts.
