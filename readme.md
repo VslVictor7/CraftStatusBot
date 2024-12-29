@@ -2,7 +2,7 @@
 
 - A functional Discord bot created by myself to address a niche concept that suits my needs. Its main functionality is monitoring a Minecraft server, displaying the public IP of the machine running the JAVA server, the number of players, their names, and whether the server is online.
 
-- Main support functionality: Minecraft server LOG in a Discord chat for better remote monitoring, as well as showing in embeds the players who joined and left the server (this data is also recorded in the database).
+- Main support functionality: Minecraft server LOG in a Discord chat for better remote monitoring, show in embeds the players who joined and left the server, achievement logs are shown too.
 
 - It is recommended to start the bot together with your main minecraft server is ON (Right about when the server is on succesfully, you can start the bot). The bot reads the latest.log file and would send everything again in the chat specified, so attention is advised (I'm looking into better solutions to this problem, any guidance would be appreciated).
 
