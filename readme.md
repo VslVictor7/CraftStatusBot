@@ -6,6 +6,8 @@
 
 - It is recommended to start the bot together with your main minecraft server is ON (Right about when the server is on succesfully, you can start the bot). The bot reads the latest.log file and would send everything again in the chat specified, so attention is advised (I'm looking into better solutions to this problem, any guidance would be appreciated).
 
+- Be aware of the risks of using RCON. Do not map or port-foward the port of your RCON!
+
 ## Table of Contents
 
 - [Pre-requisites](#pre-requisites)
@@ -97,12 +99,12 @@ Finally, if you plan to run it in a Docker container, read below:
 - After that, build the image with:
 
 ```bash
-docker build -t discord-bot:prod .
+docker build -t discord-bot .
 ```
 Run the container with:
 
 ```bash
-docker-compose -f docker-compose-prod.yml -p bot-prod up -d
+docker-compose -f docker-compose-prod.yml -p discord-bot up -d
 ```
 
 ## 'Offline mode' servers:
