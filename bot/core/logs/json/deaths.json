@@ -1,15 +1,5 @@
 {
-    "{player} was killed by {entity} using {item}": "foi morto por {entity} usando {item}",
-    "{player} was impaled by {entity} using {item}": "foi empalado por {entity} usando {item}",
-    "{player} was slain by {entity} using {item}": "foi morto por {entity} usando {item}",
-    "{player} was shot by {entity} using {item}": "foi alvejado por {entity} usando {item}",
-    "{player} was blown up by {entity} using {item}": "foi explodido por {entity} usando {item}",
-
-    "{player} was killed by {entity}": "foi morto por {entity}",
-    "{player} was impaled by {entity}": "foi empalado por {entity}",
-    "{player} was slain by {entity}": "foi morto por {entity}",
-    "{player} was shot by {entity}": "foi alvejado por {entity}",
-    "{player} was blown up by {entity}": "foi explodido por {entity}",
+    "{player} was killed by {entity} using magic": "foi morto por {entity} usando magia",
     "{player} walked into a cactus whilst trying to escape {entity}": "andou em um cacto tentando escapar de {entity}",
     "{player} drowned whilst trying to escape {entity}": "se afogou tentando escapar de {entity}",
     "{player} experienced kinetic energy whilst trying to escape {entity}": "experimentou energia cinética tentando escapar de {entity}",
@@ -17,6 +7,8 @@
     "{player} walked into fire whilst fighting {entity}": "andou no fogo enquanto lutava contra {entity}",
     "{player} tried to swim in lava to escape {entity}": "tentou nadar na lava para escapar de {entity}",
     "{player} was killed by magic whilst trying to escape {entity}": "foi morto por magia tentando escapar de {entity}",
+    "{player} was killed by magic while trying to escape {entity}": "foi morto por magia tentando escapar de {entity}",
+    "{player} was impaled on a stalagmite while fighting {entity}": "foi empalado em uma estalagmite enquanto lutava contra {entity}",
     "{player} was frozen to death by {entity}": "foi congelado até a morte por {entity}",
     "{player} starved to death whilst fighting {entity}": "morreu de fome enquanto lutava contra {entity}",
     "{player} suffocated in a wall whilst fighting {entity}": "sufocou em uma parede enquanto lutava contra {entity}",
@@ -24,7 +16,16 @@
     "{player} didn't want to live in the same world as {entity}": "não quis viver no mesmo mundo que {entity}",
     "{player} was struck by lightning whilst fighting {entity}": "foi atingido por um raio enquanto lutava contra {entity}",
     "{player} walked into danger zone due to {entity}": "andou em uma zona de perigo por conta de {entity}",
+    "{player} left the confines of this world whilst fighting {entity}": "deixou os limites deste mundo enquanto lutava contra {entity}",
+    "{player} withered away whilst fighting {entity}": "definhou enquanto lutava contra {entity}",
+    "{player} was doomed to fall by {entity}":"estava condenado a cair por {entity}",
+    "{player} was killed by {entity}": "foi morto por {entity}",
+    "{player} was impaled by {entity}": "foi empalado por {entity}",
+    "{player} was slain by {entity}": "foi morto por {entity}",
+    "{player} was shot by {entity}": "foi alvejado por {entity}",
+    "{player} was blown up by {entity}": "foi explodido por {entity}",
 
+    "{player} was doomed to fall": "estava condenado a cair",
     "{player} was pricked to death": "foi perfurado até a morte",
     "{player} drowned": "se afogou",
     "{player} experienced kinetic energy": "experimentou energia cinética",
@@ -49,6 +50,7 @@
     "{player} was struck by lightning": "foi atingido por um raio",
     "{player} discovered the floor was lava": "descobriu que o chão era lava",
     "{player} was killed by magic": "foi morto por magia",
+    "{player} was killed by even more magic": "foi morto por ainda mais magia",
     "{player} froze to death": "morreu congelado",
     "{player} starved to death": "morreu de fome",
     "{player} suffocated in a wall": "sufocou em uma parede",
@@ -58,6 +60,15 @@
     "{player} withered away": "definhou",
     "{player} was obliterated by a sonically-charged shriek": "foi obliterado por um grito sônico carregado",
     "{player} was stung to death": "foi picado até a morte",
-    "{player} was killed by Witch using magic":"foi morto por uma Bruxa usando magia",
-    "{player} was shot by a skull from Wither":"foi alvejado por um crânio do Wither"
+    "{player} was shot by a skull from Wither":"foi alvejado por um crânio do Wither",
+    "{player} was a bit too silly": "foi um pouco bobo demais",
+    "{player} left the confines of this world": "deixou os limites deste mundo",
+
+    "{player} was killed by {entity} using {item}": "foi morto por {entity} usando {item}",
+    "{player} was impaled by {entity} using {item}": "foi empalado por {entity} usando {item}",
+    "{player} was slain by {entity} using {item}": "foi morto por {entity} usando {item}",
+    "{player} was shot by {entity} using {item}": "foi alvejado por {entity} usando {item}",
+    "{player} was blown up by {entity} using {item}": "foi explodido por {entity} usando {item}",
+    "{player} was doomed to fall by {entity} using {item}": "estava condenado a cair por {entity} usando {item}"
+
 }

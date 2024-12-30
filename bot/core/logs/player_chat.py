@@ -1,8 +1,8 @@
 async def process_user_messages(webhook, log_line):
     try:
-        if not ("<" in log_line and ">" in log_line):
+        if "<" not in log_line or ">" not in log_line:
             return
-        if "[Not Secure]" in log_line or "[Rcon]" in log_line:
+        if "[Rcon]" in log_line:
             return
         if "Disconnecting VANILLA connection attempt" in log_line or "rejected vanilla connections" in log_line:
             return
@@ -43,5 +43,6 @@ def extract_player_message(log_line):
         player_name = log_line[start:end].strip()
         message = log_line[end + 1:].strip()
         return player_name, message
-    except ValueError:
+    except ValueError as e:
+        print(f"[BOT] Erro ao extrair nome do jogador e mensagem: {e}")
         return None, None

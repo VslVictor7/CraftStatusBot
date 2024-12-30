@@ -1,8 +1,9 @@
 log.txt
 .env
-.env.dev
+dev.env
 .env.prod
 .venv
+1.env
 venv
 __pycache__
 .pyc
@@ -10,3 +11,5 @@ __pycache__
 __pycache__/
 bot_database.db
 commands.txt
+teste.py
+players.json

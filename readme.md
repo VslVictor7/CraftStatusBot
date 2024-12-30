@@ -2,11 +2,11 @@
 
 - A functional Discord bot created by myself to address a niche concept that suits my needs. Its main functionality is monitoring a Minecraft server, displaying the public IP of the machine running the JAVA server, the number of players, their names, and whether the server is online.
 
-- Main support functionality: Minecraft server LOG in a Discord chat for better remote monitoring, as well as showing in embeds the players who joined and left the server (this data is also recorded in the database).
-
-- Secondary functionalities: GENIUS API for searching song lyrics, a command to display statistics of players who have played on the server, clearing server and DM (bot DM) chats.
+- Main support functionality: Minecraft server LOG in a Discord chat for better remote monitoring, show in embeds the players who joined and left the server, achievement logs are shown too.
 
 - It is recommended to start the bot together with your main minecraft server is ON (Right about when the server is on succesfully, you can start the bot). The bot reads the latest.log file and would send everything again in the chat specified, so attention is advised (I'm looking into better solutions to this problem, any guidance would be appreciated).
+
+- Be aware of the risks of using RCON. Do not map or port-foward the port of your RCON!
 
 ## Table of Contents
 
@@ -99,13 +99,36 @@ Finally, if you plan to run it in a Docker container, read below:
 - After that, build the image with:
 
 ```bash
-docker build -t discord-bot:prod .
+docker build -t discord-bot .
 ```
 Run the container with:
 
 ```bash
-docker-compose -f docker-compose-prod.yml -p bot-prod up -d
+docker-compose -f docker-compose-prod.yml -p discord-bot up -d
 ```
+
+## 'Offline mode' servers:
+
+- For offline servers, there is a variable in the .env.example that you can output a number "1" to set it to run in a offline server.
+
+- It tracks the local UUID files, so it is important to read the .env.example with caution.
+
+- Another thing, you need to create a "players.json" file inside bot/core/utils/json and map the player names and their respective UUID's.
+
+- Example of "players.json":
+
+```bash
+{
+   "test":"530fa97a-357f-3c19-94d3-0c5c65c18fe8",
+   "Awesome-gamer-NAME":"487f52ba-919b-39c1-8a46-1e37aef66614",
+   "Player1-nameEXAMPle":"0377e3e3-c767-330c-b352-70f60f5e7b83",
+   "JorjinGamer":"86c5cd29-ecd6-3611-8e9a-c937807f9807"
+}
+```
+
+- Be aware that the names are case sensitive, you must type it right as well as the UUID's.
+
+- Type the UUID's in lower case as showed previously. As well as in the exact format showed.
 
 ## Important Notes
 
