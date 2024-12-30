@@ -25,16 +25,18 @@ async def process_death_event(log_line, channel):
             search_pattern = death_pattern.replace("{player}", "(?P<player>\\S+)")
 
             if "{entity}" in search_pattern:
-                search_pattern = search_pattern.replace("{entity}", "(?P<entity>\\S+)")
+                search_pattern = search_pattern.replace("{entity}", "(?P<entity>[\w\s]+)")
             if "{item}" in search_pattern:
-                search_pattern = search_pattern.replace("{item}", "(?P<item>.+?)")
+                search_pattern = search_pattern.replace("{item}", "(?P<item>[\w\s]+)")
 
             match = re.search(search_pattern, log_line)
             if match:
                 player = match.group("player")
                 raw_entity = match.groupdict().get("entity") or "desconhecido"
-                entity = mobs.get(raw_entity, raw_entity)
-                item = match.groupdict().get("item") or "desconhecido"
+                raw_item = match.groupdict().get("item") or "desconhecido"
+
+                entity = mobs.get(raw_entity.strip(), raw_entity)
+                item = mobs.get(raw_item.strip(), raw_item)
 
                 translated = translated_message
                 translated = translated.replace("{entity}", entity)
