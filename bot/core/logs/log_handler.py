@@ -14,11 +14,40 @@ load_dotenv()
 LOG_FILE_PATH = os.getenv("SERVER_LOGS")
 CHANNEL_ID = int(os.getenv("DISCORD_CHANNEL_CHAT_EVENTS_ID"))
 
-class LogHandler(FileSystemEventHandler):
-    def __init__(self, webhook, loop, bot, channel):
-        self.webhook = webhook
+async def log_handling(bot):
+    await bot.wait_until_ready()
+    channel = bot.get_channel(CHANNEL_ID)
+
+    if not channel:
+        print("[BOT ERROR] Canal não encontrado para envio de eventos de morte.")
+        return
+
+    webhook = await ensure_webhook(channel)
+
+    start_watchdog(webhook, channel)
+
+
+def start_watchdog(webhook, channel):
+    loop = asyncio.get_event_loop()
+
+    handlers = [
+        DeathLogHandler(loop, channel),
+        UserMessageLogHandler(loop, channel, webhook),
+        AdvancementLogHandler(loop, channel),
+    ]
+
+    observer = Observer()
+    for handler in handlers:
+        observer.schedule(handler, path=(LOG_FILE_PATH), recursive=False)
+
+    observer.start()
+    print("[LOG INFO] Monitorando o arquivo de log com múltiplos handlers...")
+    observer_thread = threading.Thread(target=observer.join)
+    observer_thread.start()
+
+class BaseLogHandler(FileSystemEventHandler):
+    def __init__(self, loop, channel):
         self.loop = loop
-        self.bot = bot
         self.channel = channel
         self.file_position = 0
 
@@ -32,49 +61,42 @@ class LogHandler(FileSystemEventHandler):
     async def process_changes(self):
         try:
             with open(LOG_FILE_PATH, "r") as file:
-
                 file.seek(self.file_position)
                 lines = file.readlines()
                 self.file_position = file.tell()
 
                 for line in lines:
                     await self.process_event(line)
-
         except Exception as e:
             print(f"[LOG ERROR] Erro ao processar arquivo de log: {e}")
 
     async def process_event(self, line):
+        raise NotImplementedError("Esta classe base não implementa o processamento de eventos.")
+
+class DeathLogHandler(BaseLogHandler):
+    async def process_event(self, line):
         try:
-            await asyncio.gather(
-                process_death_event(line, self.channel),
-                process_user_messages(self.webhook, line),
-                process_advancements_messages(line, self.channel),
-            )
+            await process_death_event(line, self.channel)
         except Exception as e:
-            print(f"[LOG ERROR] Erro ao processar eventos que utilizam do log: {e}")
+            print(f"[LOG ERROR] Erro no processamento de eventos de morte: {e}")
 
-async def log_handling(bot):
-    await bot.wait_until_ready()
-    channel = bot.get_channel(CHANNEL_ID)
+class UserMessageLogHandler(BaseLogHandler):
+    def __init__(self, loop, channel, webhook):
+        super().__init__(loop, channel)
+        self.webhook = webhook
 
-    if not channel:
-        print("[BOT ERROR] Canal não encontrado para envio de eventos de morte.")
-        return
+    async def process_event(self, line):
+        try:
+            await process_user_messages(self.webhook, line)
+        except Exception as e:
+            print(f"[LOG ERROR] Erro no processamento de mensagens de usuários: {e}")
 
-    webhook = await ensure_webhook(channel)
-
-    start_watchdog(webhook, bot, channel)
-
-
-def start_watchdog(webhook, bot, channel):
-    loop = asyncio.get_event_loop()
-    event_handler = LogHandler(webhook, loop, bot, channel)
-    observer = Observer()
-    observer.schedule(event_handler, path=(LOG_FILE_PATH), recursive=False)
-    observer.start()
-    print("[LOG INFO] Monitorando o arquivo de log...")
-    observer_thread = threading.Thread(target=observer.join)
-    observer_thread.start()
+class AdvancementLogHandler(BaseLogHandler):
+    async def process_event(self, line):
+        try:
+            await process_advancements_messages(line, self.channel)
+        except Exception as e:
+            print(f"[LOG ERROR] Erro no processamento de conquistas: {e}")
 
 
 async def ensure_webhook(channel):
