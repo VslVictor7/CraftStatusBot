@@ -21,13 +21,18 @@ mobs = load_json('mobs.json')
 
 async def process_death_event(log_line, channel):
     try:
+        if "[net.minecraft.server.MinecraftServer/]" not in log_line:
+            return
+        if any(coord in log_line for coord in ["x=", "y=", "z="]):
+            return
+
         for death_pattern, translated_message in death_messages.items():
-            search_pattern = death_pattern.replace("{player}", "(?P<player>\\S+)")
+            search_pattern = death_pattern.replace("{player}", r"(?P<player>\S+)")
 
             if "{entity}" in search_pattern:
-                search_pattern = search_pattern.replace("{entity}", "(?P<entity>[\w\s]+)")
+                search_pattern = search_pattern.replace("{entity}", r"(?P<entity>[\w\s]+)")
             if "{item}" in search_pattern:
-                search_pattern = search_pattern.replace("{item}", "(?P<item>[\w\s]+)")
+                search_pattern = search_pattern.replace("{item}", r"(?P<item>[\w\s]+)")
 
             match = re.search(search_pattern, log_line)
             if match:
@@ -51,7 +56,7 @@ async def send_player_event(channel, player_name, event_message, color):
     try:
         embed = discord.Embed(color=color)
         embed.set_author(
-            name=f"{player_name} {event_message}",
+            name=f"{player_name} {event_message}".strip("'\""),
             icon_url=f"https://mineskin.eu/helm/{player_name}"
         )
         await channel.send(embed=embed)

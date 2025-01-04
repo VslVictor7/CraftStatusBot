@@ -7,6 +7,7 @@ from watchdog.events import FileSystemEventHandler
 from .player_chat import process_user_messages
 from .death_monitor import process_death_event
 from .advancements import process_advancements_messages
+from .mobs_death_monitor import process_mobs_death_event
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -32,8 +33,9 @@ def start_watchdog(webhook, channel):
 
     handlers = [
         DeathLogHandler(loop, channel),
-        UserMessageLogHandler(loop, channel, webhook),
+        MobDeathLogHandler(loop, channel),
         AdvancementLogHandler(loop, channel),
+        UserMessageLogHandler(loop, channel, webhook),
     ]
 
     observer = Observer()
@@ -77,6 +79,13 @@ class DeathLogHandler(BaseLogHandler):
     async def process_event(self, line):
         try:
             await process_death_event(line, self.channel)
+        except Exception as e:
+            print(f"[LOG ERROR] Erro no processamento de eventos de morte: {e}")
+
+class MobDeathLogHandler(BaseLogHandler):
+    async def process_event(self, line):
+        try:
+            await process_mobs_death_event(line, self.channel)
         except Exception as e:
             print(f"[LOG ERROR] Erro no processamento de eventos de morte: {e}")
 
