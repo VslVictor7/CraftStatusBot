@@ -8,7 +8,7 @@
     "{player} tried to swim in lava to escape {entity}": "tentou nadar na lava para escapar de {entity}",
     "{player} was killed by magic whilst trying to escape {entity}": "morreu por magia tentando escapar de {entity}",
     "{player} was killed by magic while trying to escape {entity}": "morreu por magia tentando escapar de {entity}",
-    "{player} was impaled on a stalagmite while fighting {entity}": "foi empalado(a) em uma estalagmite enquanto lutava contra {entity}",
+    "{player} was impaled on a stalagmite whilst fighting {entity}": "foi empalado(a) em uma estalagmite enquanto lutava contra {entity}",
     "{player} was frozen to death by {entity}": "foi congelado(a) até a morte por {entity}",
     "{player} starved to death whilst fighting {entity}": "morreu de fome enquanto lutava contra {entity}",
     "{player} suffocated in a wall whilst fighting {entity}": "sufocou em uma parede enquanto lutava contra {entity}",

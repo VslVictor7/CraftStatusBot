@@ -2,6 +2,7 @@ import discord
 import os
 import aiohttp
 import asyncio
+import requests
 from scripts.mybot import MyBot
 from scripts.message_manager import update_message_periodically
 from logs.server_log import monitor_file
@@ -17,7 +18,6 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
 MESSAGE_ID = int(os.getenv('MESSAGE_ID'))
-FRIENDS_BIRTHDAYS = os.getenv('BIRTHDAYS')
 
 bot = MyBot()
 
