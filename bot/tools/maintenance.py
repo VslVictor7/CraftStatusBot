@@ -6,7 +6,7 @@ from discord.ext import commands
 
 from dotenv import load_dotenv
 
-load_dotenv('.env')
+load_dotenv()
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
