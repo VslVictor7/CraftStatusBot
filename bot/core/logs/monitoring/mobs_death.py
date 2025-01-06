@@ -1,9 +1,8 @@
 import re
 import os
 import discord
-import json
-import requests
 import aiohttp
+from logs.api_call import fetch_data_from_api
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -11,34 +10,28 @@ load_dotenv()
 
 API_PORT = int(os.getenv("API_PORT"))
 
-def load_json(file_name):
-    try:
-        file_path = os.path.join(os.path.dirname(__file__), 'json', file_name)
-
-        with open(file_path, 'r', encoding='utf-8') as file:
-            return json.load(file)
-    except FileNotFoundError as e:
-        print(f"[BOT ERROR] Arquivo não encontrado: {e}")
-        return {}
-    except json.JSONDecodeError as e:
-        print(f"[BOT ERROR] Erro ao decodificar o arquivo: {e}")
-        return {}
-
-death_messages = load_json('deaths.json')
-mobs = load_json('mobs.json')
-
 async def process_mobs_death_event(line, channel):
     try:
-        print(line)
         if "[net.minecraft.world.entity.LivingEntity/]" not in line and "[net.minecraft.world.entity.npc.Villager/]" not in line:
+            return
+
+        ignore_patterns = [
+            "[Rcon]", "[Not Secure]", "Disconnecting VANILLA connection attempt",
+            "rejected vanilla connections", "lost connection", "id=<null>", "legacy=false",
+            "lost connection: Disconnected", "<init>", "<", ">"
+        ]
+
+
+        if any(pattern in line for pattern in ignore_patterns):
             return
 
         pattern = r"Named entity '?(?P<mob>[A-Za-z]+)'?|\bVillager\b"
         match_mob = re.search(pattern, line)
-        print(pattern)
 
         if match_mob:
             captured_value = match_mob.group("mob") or "Villager"
+
+            death_messages, mobs = await api_fetching(captured_value)
 
             for death_pattern, translated_message in death_messages.items():
                 search_pattern = death_pattern.replace("{player}", r"(?P<player>[\w\s]+(?:\d+)?)")
@@ -52,19 +45,11 @@ async def process_mobs_death_event(line, channel):
                 if match:
                     placeholder = match.group("player")
 
-                    try:
-                        response = requests.get(f'http://endpoint:{API_PORT}/images/{captured_value}')
-                        mob_data = response.json()
-                        icon_url = mob_data.get('url')
-                        print(f"[BOT INFO] URL da imagem: {icon_url}")
-                        print(captured_value)
-                    except Exception as e:
-                        print(f"[BOT ERROR] Erro ao fazer requisição para a API: {e}")
-                        return
-
                     temp_dir = Path("temp_cache")
                     temp_dir.mkdir(exist_ok=True)
                     icon_path = temp_dir / f"{captured_value}.png"
+
+                    icon_url = await api_icon_fetching(captured_value)
 
                     await download_image(icon_url, icon_path)
 
@@ -111,3 +96,21 @@ async def download_image(url, save_path):
     except Exception as e:
         print(f"[BOT ERROR] Erro ao baixar a imagem: {e}")
         return False
+
+async def api_fetching():
+    try:
+        death_messages = await fetch_data_from_api(f"http://endpoint:{API_PORT}/deaths")
+        mobs_list = await fetch_data_from_api(f"http://endpoint:{API_PORT}/mobs")
+        return death_messages, mobs_list
+    except Exception as e:
+        print(f"[BOT ERROR] Erro ao fazer requisição para a API: {e}")
+        return
+
+async def api_icon_fetching(mob):
+    try:
+        mob_data = await fetch_data_from_api(f'http://endpoint:{API_PORT}/images/{mob}')
+        icon_url = mob_data.get('url')
+        return icon_url
+    except Exception as e:
+        print(f"[BOT ERROR] Erro ao fazer requisição para a API: {e}")
+        return "desconhecido"

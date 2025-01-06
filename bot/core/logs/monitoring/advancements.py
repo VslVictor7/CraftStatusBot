@@ -3,25 +3,32 @@ from deep_translator import GoogleTranslator
 
 async def process_advancements_messages(log_line, channel):
     try:
+        if "[net.minecraft.server.MinecraftServer/]" not in log_line:
+            return
+
+        ignore_patterns = [
+            "[Rcon]", "[Not Secure]", "Disconnecting VANILLA connection attempt",
+            "rejected vanilla connections", "lost connection", "id=<null>", "legacy=false",
+            "lost connection: Disconnected", "<init>", "<", ">"
+        ]
+
+        if any(pattern in log_line for pattern in ignore_patterns):
+            return
+
         player_name, message, event_name = extract_player_message(log_line)
 
         if player_name and message and event_name:
 
             if "has reached the goal" in message:
-                event_translated = GoogleTranslator(source='en', target='pt').translate(event_name)
-                await send_player_event(channel, player_name, "alcançou um objetivo:", event_name, event_translated, 0xFFA500)
-
+                await event_translation(channel, player_name, event_name, 0xFFA500, "alcançou um objetivo:")
             elif "has made the advancement" in message:
-                event_translated = GoogleTranslator(source='en', target='pt').translate(event_name)
-                await send_player_event(channel, player_name, "obteve um avanço:", event_name, event_translated, 0x0000FF)
-
+                await event_translation(channel, player_name, event_name, 0x0000FF, "obteve um avanço:")
             elif "has completed the challenge" in message:
-                event_translated = GoogleTranslator(source='en', target='pt').translate(event_name)
-                await send_player_event(channel, player_name, "completou um desafio:", event_name, event_translated, 0x800080)
+                await event_translation(channel, player_name, event_name, 0x800080, "completou um desafio:")
 
+        return
     except Exception as e:
         print(f"Erro ao processar evento de usuários mandando mensagens no discord: {e}")
-
 
 def extract_player_message(log_line):
     try:
@@ -40,6 +47,12 @@ def extract_player_message(log_line):
     except ValueError:
         return None, None, None
 
+
+async def event_translation(channel, player_name, event_name, color, action):
+    event_translated = GoogleTranslator(source='en', target='pt').translate(event_name)
+    await send_player_event(channel, player_name, action, event_name, event_translated, color)
+
+
 async def send_player_event(channel, player_name, event_message, event_name, event_translated, color):
     try:
         embed = discord.Embed(color=color)
@@ -50,13 +63,3 @@ async def send_player_event(channel, player_name, event_message, event_name, eve
         await channel.send(embed=embed)
     except Exception as e:
         print(f"[BOT ERROR] Falha ao enviar evento do jogador como embed: {e}")
-
-async def send_message_as_user(channel, username, message):
-    try:
-        await channel.send(
-            content=message,
-            username=username,
-            avatar_url=f"https://mineskin.eu/helm/{username}"
-        )
-    except Exception as e:
-        print(f"[BOT ERROR] Falha ao enviar mensagem como usuário: {e}")
