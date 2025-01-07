@@ -3,6 +3,7 @@ log.txt
 dev.env
 .env.prod
 .venv
+.env.dev
 1.env
 venv
 __pycache__
@@ -11,5 +12,6 @@ __pycache__
 __pycache__/
 bot_database.db
 commands.txt
-teste.py
 players.json
+1.txt
+placeholder.txt

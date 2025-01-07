@@ -2,17 +2,11 @@ async def process_user_messages(webhook, log_line):
     try:
         if "<" not in log_line or ">" not in log_line:
             return
-        if "[Rcon]" in log_line:
-            return
-        if "Disconnecting VANILLA connection attempt" in log_line or "rejected vanilla connections" in log_line:
-            return
 
         ignore_patterns = [
-            "lost connection",
-            "id=<null>",
-            "legacy=false",
-            "lost connection: Disconnected",
-            "<init>"
+            "[Rcon]", "Disconnecting VANILLA connection attempt",
+            "rejected vanilla connections", "lost connection", "id=<null>", "legacy=false",
+            "lost connection: Disconnected", "<init>"
         ]
 
         if any(pattern in log_line for pattern in ignore_patterns):
@@ -22,6 +16,7 @@ async def process_user_messages(webhook, log_line):
 
         if player_name and message:
             await send_message_as_user(webhook, player_name, message)
+        return
     except Exception as e:
         print(f"Erro ao processar evento de usuários mandando mensagens no discord: {e}")
 

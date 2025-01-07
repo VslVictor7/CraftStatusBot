@@ -1,33 +1,37 @@
 import re
-import os
 import discord
-import json
+import os
+from logs.api_call import fetch_data_from_api
+from dotenv import load_dotenv
 
-def load_json(file_name):
-    try:
-        file_path = os.path.join(os.path.dirname(__file__), 'json', file_name)
+load_dotenv()
 
-        with open(file_path, 'r', encoding='utf-8') as file:
-            return json.load(file)
-    except FileNotFoundError as e:
-        print(f"[BOT ERROR] Arquivo não encontrado: {e}")
-        return {}
-    except json.JSONDecodeError as e:
-        print(f"[BOT ERROR] Erro ao decodificar o arquivo: {e}")
-        return {}
-
-death_messages = load_json('deaths.json')
-mobs = load_json('mobs.json')
+API_PORT = int(os.getenv("API_PORT"))
 
 async def process_death_event(log_line, channel):
     try:
+        if "[net.minecraft.server.MinecraftServer/]" not in log_line:
+            return
+
+        ignore_patterns = [
+            "[Rcon]", "[Not Secure]", "Disconnecting VANILLA connection attempt",
+            "rejected vanilla connections", "lost connection", "id=<null>", "legacy=false",
+            "lost connection: Disconnected", "<init>", "<", ">", "x=", "y=", "z="
+        ]
+
+        if any(pattern in log_line for pattern in ignore_patterns):
+            return
+
+        death_messages = await fetch_data_from_api(f"http://endpoint:{API_PORT}/deaths")
+        mobs = await fetch_data_from_api(f"http://endpoint:{API_PORT}/mobs")
+
         for death_pattern, translated_message in death_messages.items():
-            search_pattern = death_pattern.replace("{player}", "(?P<player>\\S+)")
+            search_pattern = death_pattern.replace("{player}", r"(?P<player>\S+)")
 
             if "{entity}" in search_pattern:
-                search_pattern = search_pattern.replace("{entity}", "(?P<entity>[\w\s]+)")
+                search_pattern = search_pattern.replace("{entity}", r"(?P<entity>[\w\s]+)")
             if "{item}" in search_pattern:
-                search_pattern = search_pattern.replace("{item}", "(?P<item>[\w\s]+)")
+                search_pattern = search_pattern.replace("{item}", r"(?P<item>[\w\s]+)")
 
             match = re.search(search_pattern, log_line)
             if match:
@@ -51,7 +55,7 @@ async def send_player_event(channel, player_name, event_message, color):
     try:
         embed = discord.Embed(color=color)
         embed.set_author(
-            name=f"{player_name} {event_message}",
+            name=f"{player_name} {event_message}".strip("'\""),
             icon_url=f"https://mineskin.eu/helm/{player_name}"
         )
         await channel.send(embed=embed)
