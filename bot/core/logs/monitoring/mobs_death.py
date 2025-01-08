@@ -12,8 +12,6 @@ API_PORT = int(os.getenv("API_PORT"))
 
 async def process_mobs_death_event(line, channel):
     try:
-        if "[net.minecraft.world.entity.LivingEntity/]" not in line and "[net.minecraft.world.entity.npc.Villager/]" not in line:
-            return
 
         ignore_patterns = [
             "[Rcon]", "[Not Secure]", "Disconnecting VANILLA connection attempt",
@@ -31,7 +29,7 @@ async def process_mobs_death_event(line, channel):
         if match_mob:
             captured_value = match_mob.group("mob") or "Villager"
 
-            death_messages, mobs = await api_fetching(captured_value)
+            death_messages, mobs = await api_fetching()
 
             for death_pattern, translated_message in death_messages.items():
                 search_pattern = death_pattern.replace("{player}", r"(?P<player>[\w\s]+(?:\d+)?)")

@@ -10,9 +10,6 @@ API_PORT = int(os.getenv("API_PORT"))
 
 async def process_death_event(log_line, channel):
     try:
-        if "[net.minecraft.server.MinecraftServer/]" not in log_line:
-            return
-
         ignore_patterns = [
             "[Rcon]", "[Not Secure]", "Disconnecting VANILLA connection attempt",
             "rejected vanilla connections", "lost connection", "id=<null>", "legacy=false",

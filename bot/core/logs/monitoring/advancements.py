@@ -3,8 +3,6 @@ from deep_translator import GoogleTranslator
 
 async def process_advancements_messages(log_line, channel):
     try:
-        if "[net.minecraft.server.MinecraftServer/]" not in log_line:
-            return
 
         ignore_patterns = [
             "[Rcon]", "[Not Secure]", "Disconnecting VANILLA connection attempt",
