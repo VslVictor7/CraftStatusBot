@@ -45,9 +45,10 @@ async def process_mobs_death_event(line, channel):
 
                     temp_dir = Path("temp_cache")
                     temp_dir.mkdir(exist_ok=True)
-                    icon_path = temp_dir / f"{captured_value}.png"
+                    sanitized_value = captured_value.replace("Entity", "").strip()
+                    icon_path = temp_dir / f"{sanitized_value}.png"
 
-                    icon_url = await api_icon_fetching(captured_value)
+                    icon_url = await api_icon_fetching(sanitized_value)
 
                     await download_image(icon_url, icon_path)
 
