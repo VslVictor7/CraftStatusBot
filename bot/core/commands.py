@@ -191,6 +191,11 @@ async def setup_commands(bot):
             inline=False
         )
         embed.add_field(
+            name="/ranking",
+            value="Mostra estatísticas do jogadores em formato de ranking para mostrar os top 5 jogadores com mais tempo de jogo.",
+            inline=False
+        )
+        embed.add_field(
             name="/help",
             value="Exibe esta lista de comandos.",
             inline=False
