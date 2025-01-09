@@ -122,12 +122,12 @@ async def setup_commands(bot):
 
         try:
             uuid = None
-
             if SERVER_MODE == "1":
-                uuid = offline_players.get(username)
-                if not uuid:
+                player_data = offline_players.get(username)
+                if not player_data:
                     await interaction.response.send_message(f"Jogador '{username}' não encontrado no modo offline.", ephemeral=True)
                     return
+                uuid = player_data.get("uuid")
 
             else:
                 uuid = player_json.get_uuid_from_username(username)
