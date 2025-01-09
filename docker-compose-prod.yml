@@ -19,7 +19,7 @@ services:
       - /data/world/stats:/world/stats
     restart: always
     networks:
-      - request
+      - connection-gartic
 
 volumes:
   server-gartic:
