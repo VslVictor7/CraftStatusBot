@@ -1,11 +1,13 @@
 {
     "test": {
         "uuid": "530fa97a-357f-3c19-94d3-0c5c65c18fe8",
-        "original": true
+        "original": true,
+        "skin": null
     },
 
     "test1": {
         "uuid": "889dcaa5-928a-37e4-9220-e2da97df0d9b",
-        "original": false
+        "original": false,
+        "skin": "https://mineskin.eu/helm/c2e45a26339547ff86c0b3dd0c2aa2d2"
     }
 }
