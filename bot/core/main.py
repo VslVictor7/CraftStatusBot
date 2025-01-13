@@ -23,12 +23,14 @@ bot = MyBot()
 @bot.event
 async def on_ready():
 
-    print(f"[BOT] Logado como {bot.user.name} - {bot.user.id}")
+    bot_name = bot.user.name
+
+    print(f"[BOT] Logado como {bot_name} - {bot.user.id}")
 
     activity = discord.Activity(type=discord.ActivityType.watching, name="Movimentação do nosso servidor")
     await bot.change_presence(status=discord.Status.online, activity=activity)
 
-    interval = 50
+    interval = 60
     print(f"[BOT] Esperando {interval} segundos antes de iniciar as tarefas...")
     await asyncio.sleep(interval)
 
@@ -43,7 +45,7 @@ async def on_ready():
                 message = await channel.fetch_message(MESSAGE_ID)
                 print("[BOT STARTED] Pronto para monitoramento de IP, Servidor, Jogadores.")
 
-                await update_message_periodically(message, session)
+                await update_message_periodically(message, session, bot_name, bot)
 
             except discord.DiscordException as e:
                 print(f"[BOT ERROR] Erro ao buscar mensagem: {e}")

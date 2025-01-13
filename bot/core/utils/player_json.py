@@ -28,6 +28,7 @@ def player_stats(path, username):
         time_since_death = custom_stats.get("minecraft:time_since_death", 0) // 20
         damage_dealt = custom_stats.get("minecraft:damage_dealt", 0)
         damage_taken = custom_stats.get("minecraft:damage_taken", 0)
+        fish_caught = custom_stats.get("minecraft:fish_caught", 0)
 
         walked_cm = custom_stats.get("minecraft:walk_one_cm", 0)
         sprinted_cm = custom_stats.get("minecraft:sprint_one_cm", 0)
@@ -69,7 +70,7 @@ def player_stats(path, username):
                 f"🛠️ **Itens craftados**: {item_crafted}\n"
                 f"🔧 **Itens usados**: {item_used}\n"
                 f"📦 **Itens coletados**: {item_picked_up}\n"
-                f"📤 **Itens descartados**: {item_dropped}"
+                f"📤 **Itens dropados**: {item_dropped}\n"
             ),
             inline=False
         )
@@ -80,7 +81,8 @@ def player_stats(path, username):
                 f"⚔️ **Mobs mortos**: {mobs_killed}\n"
                 f"💀 **Morreu contra Mobs**: {mobs_killed_player} vezes\n"
                 f"💥 **Dano causado**: {damage_dealt}\n"
-                f"💔 **Dano sofrido**: {damage_taken}"
+                f"💔 **Dano sofrido**: {damage_taken}\n"
+                f"🐟 **Peixes pescados**: {fish_caught}"
             ),
             inline=False
         )

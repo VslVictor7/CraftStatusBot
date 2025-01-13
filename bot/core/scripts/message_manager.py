@@ -1,13 +1,13 @@
-import discord, asyncio, pytz, os
-from .mybot import MyBot
+import discord
+import asyncio
+import pytz
+import os
 from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
 
 PORT = int(os.getenv('MINECRAFT_PORT'))
-
-bot = MyBot()
 
 async def get_public_ipv4(session):
     async with session.get("https://api.ipify.org?format=json") as response:
@@ -24,7 +24,7 @@ async def get_server_status(bot):
     except:
         return False, 0, "Desconhecido", []
 
-async def update_message_periodically(message, session, interval=0.1):
+async def update_message_periodically(message, session, bot_name, bot, interval=0.1):
 
     async def get_current_status():
         current_ip = await get_public_ipv4(session)
@@ -45,9 +45,9 @@ async def update_message_periodically(message, session, interval=0.1):
             return True
         if current["server_online"] != last["server_online"]:
             return True
-        if current["players_online"] != last["players_online"]:
-            return True
         if set(current["player_names"]) != set(last["player_names"]):
+            return True
+        if current["players_online"] != last["players_online"]:
             return True
 
         return False
@@ -70,7 +70,7 @@ async def update_message_periodically(message, session, interval=0.1):
             ):
                 if "Anonymous Player" not in (player_names or []):
 
-                    embed = create_embed(current_ip, server_online, players_online, version, player_names)
+                    embed = create_embed(current_ip, server_online, players_online, version, player_names, bot_name)
                     await update_discord_message(message, embed)
 
                     last_status.update({
@@ -89,7 +89,7 @@ async def update_message_periodically(message, session, interval=0.1):
             print(f"[ERROR] Falha ao atualizar mensagem: {e}")
             await asyncio.sleep(interval)
 
-def create_embed(ip, server_online, players_online, version, player_names):
+def create_embed(ip, server_online, players_online, version, player_names, bot_name):
     sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
     current_time = datetime.now(sao_paulo_tz)
 
@@ -112,7 +112,7 @@ def create_embed(ip, server_online, players_online, version, player_names):
     embed.timestamp = current_time
 
     embed.set_footer(
-        text="CraftMonitor"
+        text=bot_name
     )
 
     return embed

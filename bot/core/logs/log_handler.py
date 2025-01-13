@@ -1,9 +1,6 @@
 import asyncio
-import threading
 import os
 import discord
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 from .monitoring.player_chat import process_user_messages
 from .monitoring.player_death import process_death_event
 from .monitoring.advancements import process_advancements_messages
@@ -22,111 +19,47 @@ async def log_handling(bot):
     if not channel:
         print("[BOT ERROR] Canal não encontrado para envio de eventos de morte.")
         return
+    if not os.path.exists(LOG_FILE_PATH):
+        print(f"[LOG ERROR] Arquivo de log não encontrado: {LOG_FILE_PATH}")
+        return
 
     webhook = await ensure_webhook(channel)
 
-    start_watchdog(webhook, channel)
+    await monitor_log_file(webhook, channel)
 
 
-def start_watchdog(webhook, channel):
+async def monitor_log_file(webhook, channel):
     try:
-        loop = asyncio.get_event_loop()
+        with open(LOG_FILE_PATH, "r") as file:
+            file.seek(0, os.SEEK_END)
 
-        handlers = [
-            DeathLogHandler(loop, channel),
-            MobDeathLogHandler(loop, channel),
-            AdvancementLogHandler(loop, channel),
-            UserMessageLogHandler(loop, channel, webhook),
-        ]
+            while True:
+                line = file.readline()
+                if not line:
+                    await asyncio.sleep(0.1)
+                    continue
 
-        observer = Observer()
-        for handler in handlers:
-            observer.schedule(handler, path=(LOG_FILE_PATH), recursive=False)
+                await process_line(line, webhook, channel)
 
-        def start_observer():
-            try:
-                observer.start()
-                print("[LOG INFO] Monitorando o arquivo de log com múltiplos handlers...")
-                observer.join()
-            except Exception as e:
-                print(f"[LOG ERROR] Erro no observer: {e}")
+    except FileNotFoundError:
+        print(f"[LOG ERROR] Arquivo de log não encontrado: {LOG_FILE_PATH}")
+    except Exception as e:
+        print(f"[LOG ERROR] Erro no monitoramento do arquivo de log: {e}")
 
-        observer_thread = threading.Thread(target=start_observer, name="ObserverThread")
-        observer_thread.daemon = True
-        observer_thread.start()
+
+async def process_line(line, webhook, channel):
+    try:
+        tasks = []
+
+        tasks.append(process_death_event(line, channel))
+        tasks.append(process_mobs_death_event(line, channel))
+        tasks.append(process_advancements_messages(line, channel))
+        tasks.append(process_user_messages(webhook, line))
+
+        await asyncio.gather(*tasks)
 
     except Exception as e:
-        print(f"[LOG ERROR] Erro ao iniciar o monitoramento de logs: {e}")
-    except KeyboardInterrupt:
-        print("[LOG INFO] Encerrando o monitoramento...")
-        observer.stop()
-        observer_thread.join()
-class BaseLogHandler(FileSystemEventHandler):
-    def __init__(self, loop, channel):
-        try:
-            self.loop = loop
-            self.channel = channel
-            self.file_position = 0
-        except Exception as e:
-            print(f"[LOG ERROR] Erro no init do log handling: {e}")
-
-    def on_modified(self, event):
-        try:
-            if event.src_path == LOG_FILE_PATH:
-                asyncio.run_coroutine_threadsafe(self.process_changes(), self.loop)
-        except Exception as e:
-            print(f"[LOG ERROR] Erro ao processar mudanças no arquivo de log: {e}")
-
-    async def process_changes(self):
-        try:
-            with open(LOG_FILE_PATH, "r") as file:
-                file.seek(self.file_position)
-                lines = file.readlines()
-                self.file_position = file.tell()
-
-                for line in lines:
-                    await self.process_event(line)
-        except Exception as e:
-            print(f"[LOG ERROR] Erro ao processar arquivo de log: {e}")
-
-    async def process_event(self, line):
-        try:
-            raise NotImplementedError("Esta classe base não implementa o processamento de eventos.")
-        except Exception as e:
-            print(f"[LOG ERROR] Erro ao processar eventos: {e}")
-
-class DeathLogHandler(BaseLogHandler):
-    async def process_event(self, line):
-        try:
-            await process_death_event(line, self.channel)
-        except Exception as e:
-            print(f"[LOG ERROR] Erro no processamento de eventos de morte de jogadores: {e}")
-
-class MobDeathLogHandler(BaseLogHandler):
-    async def process_event(self, line):
-        try:
-            await process_mobs_death_event(line, self.channel)
-        except Exception as e:
-            print(f"[LOG ERROR] Erro no processamento de eventos de morte de mobs: {e}")
-
-class UserMessageLogHandler(BaseLogHandler):
-    def __init__(self, loop, channel, webhook):
-        super().__init__(loop, channel)
-        self.webhook = webhook
-
-    async def process_event(self, line):
-        try:
-            await process_user_messages(self.webhook, line)
-        except Exception as e:
-            print(f"[LOG ERROR] Erro no processamento de mensagens de usuários: {e}")
-
-class AdvancementLogHandler(BaseLogHandler):
-    async def process_event(self, line):
-        try:
-            await process_advancements_messages(line, self.channel)
-        except Exception as e:
-            print(f"[LOG ERROR] Erro no processamento de conquistas: {e}")
-
+        print(f"[LOG ERROR] Erro ao processar a linha: {e}")
 
 async def ensure_webhook(channel):
     try:
