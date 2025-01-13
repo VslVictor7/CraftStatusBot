@@ -70,6 +70,15 @@ async def send_player_event(channel, player_name, event_message, event_name, eve
         if SERVER_MODE != "0":
             for username, player_data in offline_players.items():
                 if username == player_name and player_data["original"] == False:
+                    skin_url = player_data["skin"]
+                    if skin_url:
+                        embed = discord.Embed(color=color)
+                        embed.set_author(
+                            name=f'{player_name} {event_message} {event_name} ({event_translated})',
+                            icon_url=skin_url
+                        )
+                        await channel.send(embed=embed)
+                        return
                     uuid = default_uuid
         embed = discord.Embed(color=color)
         embed.set_author(

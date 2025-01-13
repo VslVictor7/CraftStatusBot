@@ -1,4 +1,5 @@
 import os
+import aiohttp
 from dotenv import load_dotenv
 from .offline_player_loader import load_json
 
@@ -41,6 +42,15 @@ async def send_message_as_user(webhook, username, message):
         if SERVER_MODE != "0":
             for player_name, player_data in offline_players.items():
                 if player_name == username and player_data["original"] == False:
+
+                    skin_url = player_data["skin"]
+                    if skin_url:
+                        await webhook.send(
+                            content=message,
+                            username=username,
+                            avatar_url=skin_url
+                        )
+                        return
                     uuid = default_uuid
         await webhook.send(
             content=message,
@@ -60,3 +70,18 @@ def extract_player_message(log_line):
     except ValueError as e:
         print(f"[BOT] Erro ao extrair nome do jogador e mensagem: {e}")
         return None, None
+
+async def download_image(url, save_path):
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    image_data = await response.read()
+                    with open(save_path, "wb") as f:
+                        f.write(image_data)
+                    return True
+                else:
+                    return False
+    except Exception as e:
+        print(f"[BOT ERROR] Erro ao baixar a imagem: {e}")
+        return False
