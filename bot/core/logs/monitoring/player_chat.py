@@ -5,6 +5,7 @@ from .offline_player_loader import load_json
 
 load_dotenv()
 
+IMAGE_DOMAIN = os.getenv('IMAGE_DOMAIN')
 SERVER_MODE = os.getenv('SERVER_MODE', '0')
 
 offline_players = load_json('players.json')
@@ -45,6 +46,7 @@ async def send_message_as_user(webhook, username, message):
 
                     skin_url = player_data["skin"]
                     if skin_url:
+                        skin_url = f"{IMAGE_DOMAIN}{skin_url}"
                         await webhook.send(
                             content=message,
                             username=username,
