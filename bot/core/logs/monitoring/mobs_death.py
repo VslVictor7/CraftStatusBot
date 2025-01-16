@@ -37,7 +37,7 @@ async def process_mobs_death_event(line, channel):
                 if "{entity}" in search_pattern:
                     search_pattern = search_pattern.replace("{entity}", r"(?P<entity>[\w\s]+)")
                 if "{item}" in search_pattern:
-                    search_pattern = search_pattern.replace("{item}", r"(?P<item>[\w\s]+)")
+                    search_pattern = search_pattern.replace("{item}", r"\[(?P<item>[^\[\]]+)\]")
 
                 match = re.search(search_pattern, line)
                 if match:
