@@ -19,3 +19,5 @@ teste.py
 offline-uuid.py
 placeholder.txt
 1.txt
+*.pyd
+venv/
