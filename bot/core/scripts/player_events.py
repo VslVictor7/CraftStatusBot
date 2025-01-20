@@ -11,6 +11,7 @@ DISCORD_CHANNEL_ID = int(os.getenv("DISCORD_CHANNEL_CHAT_EVENTS_ID"))
 RCON_HOST = os.getenv("RCON_HOST")
 RCON_PASSWORD = os.getenv("RCON_PASSWORD")
 RCON_PORT = int(os.getenv("RCON_PORT"))
+IMAGE_DOMAIN = os.getenv("IMAGE_DOMAIN")
 SERVER_MODE = os.getenv("SERVER_MODE", "0")
 
 previous_players = set()
@@ -65,6 +66,7 @@ async def send_player_event(channel, player_name, event_message, color):
             if player_name == username and player_data["original"] == False:
                 skin_url = player_data["skin"]
                 if skin_url:
+                    skin_url = f"{IMAGE_DOMAIN}{skin_url}"
                     embed = discord.Embed(color=color)
                     embed.set_author(
                         name=f"{player_name} {event_message}",

@@ -9,6 +9,7 @@ load_dotenv()
 
 API_PORT = int(os.getenv("API_PORT"))
 SERVER_MODE = os.getenv("SERVER_MODE", "0")
+IMAGE_DOMAIN = os.getenv("IMAGE_DOMAIN")
 
 offline_players = load_json("players.json")
 default_uuid = "c2e45a26339547ff86c0b3dd0c2aa2d2"
@@ -33,7 +34,7 @@ async def process_death_event(log_line, channel):
             if "{entity}" in search_pattern:
                 search_pattern = search_pattern.replace("{entity}", r"(?P<entity>[\w\s]+)")
             if "{item}" in search_pattern:
-                search_pattern = search_pattern.replace("{item}", r"(?P<item>[\w\s]+)")
+                search_pattern = search_pattern.replace("{item}", r"\[(?P<item>[^\[\]]+)\]")
 
             match = re.search(search_pattern, log_line)
             if match:
@@ -61,6 +62,7 @@ async def send_player_event(channel, player_name, event_message, color):
                 if player_name == username and player_data["original"] == False:
                     skin_url = player_data["skin"]
                     if skin_url:
+                        skin_url = f"{IMAGE_DOMAIN}{skin_url}"
                         embed = discord.Embed(color=color)
                         embed.set_author(
                             name=f"{player_name} {event_message}".strip("'\""),
