@@ -2,8 +2,18 @@ import json
 import os
 import discord
 import requests
+import aiohttp
+from dotenv import load_dotenv
 
-def player_stats(path, username):
+load_dotenv()
+
+API_PORT = int(os.getenv('API_PORT'))
+
+async def player_stats(path, username):
+    embed = await player_stats_formation(path, username)
+    return embed
+
+async def player_stats_formation(path, username):
 
     if not os.path.exists(path):
         print(f"Erro: O arquivo de estatísticas para {username} não foi encontrado.")
@@ -36,6 +46,11 @@ def player_stats(path, username):
         elytra_cm = custom_stats.get("minecraft:aviate_one_cm", 0)
         horse_cm = custom_stats.get("minecraft:horse_one_cm", 0)
         minecart_cm = custom_stats.get("minecraft:minecart_one_cm", 0)
+        
+
+        most_killed_mob = max(mobs_killed, key=mobs_killed.get)
+        most_killed_count = mobs_killed[most_killed_mob]
+        translation_mob = await api_fetch(most_killed_mob)
 
 
         total_mined = sum(mined_stats.values())
@@ -78,6 +93,7 @@ def player_stats(path, username):
         embed.add_field(
             name="Ações",
             value=(
+                f"🗡️ **Mob mais morto:**: {translation_mob}: {most_killed_count} vezes\n"
                 f"⚔️ **Mobs mortos**: {mobs_killed}\n"
                 f"💀 **Morreu contra Mobs**: {mobs_killed_player} vezes\n"
                 f"💥 **Dano causado**: {damage_dealt}\n"
@@ -116,3 +132,28 @@ def get_uuid_from_username(username):
 
     except requests.exceptions.RequestException as e:
         raise RuntimeError(f"Erro ao acessar a API Mojang: {e}")
+    
+async def api_fetch(most_killed_mob):
+
+    mob_name = most_killed_mob.split(":")[1].replace("_", " ")
+    mob_data = await fetch_data_from_api(f"http://endpoint:{API_PORT}/images/{mob_name}")
+    mobs = await fetch_data_from_api(f"http://endpoint:{API_PORT}/mobs")
+
+    entity_name = mob_data.get('name')
+    full_name = entity_name.replace("_", " ")
+
+    entity = mobs.get(full_name.strip(), full_name)
+    return entity
+
+async def fetch_data_from_api(url):
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    return await response.json()
+                else:
+                    print(f"[BOT ERROR] Erro ao buscar dados da API: {response.status}")
+                    return {}
+    except Exception as e:
+        print(f"[BOT ERROR] Erro ao buscar dados da API: {e}")
+        return {}
