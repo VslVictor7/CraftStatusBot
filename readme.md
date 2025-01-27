@@ -93,17 +93,19 @@ pip install -r requirements.txt
 
 ## Configuration
 
-1. **Configure the .env file**:
+1. **Configuration of the .env file**:
 
 - Duplicate the .example-env file and rename it to .env
 
-- Replace the values for token, IDs, and other fields as needed.
+`DISCORD_TOKEN=`: This is explained by itself.
+
+`CHANNEL_ID=`: ID of the channel where it will be sent a placeholder message to be edited later on, continue to understand what i mean.
 
 2. Send the bot's initial message:
 
 - Python file directory: bot/core/utils/bot_sender.py
 
-- The .env file must be configured correctly for the placeholder message step to work.
+- with both the token and channel_id collected, you can now run the script 'bot_sender.py'.
 
 - Run the bot_sender.py script to send a placeholder message that will be used as a base to update the message with an embed showing Minecraft server information.
 ```bash
@@ -111,6 +113,29 @@ python bot_sender.py
 ```
 - Don’t worry, you can run the script independently. As long as you're in the file directory, use 'py bot_sender.py' to run the script.
 
+3. Finishing .env configuration.
+
+With the two steps out of they way, we can now continue to configure the env file.
+
+`MESSAGE_ID=`: ID of the placeholder message we literally just sent. collect it and put it here.
+
+`JSON_PATH=`: path of the 'stats' folder. It is present inside a minecraft server in the 'world' folder. you just need to copy the path of the stats folder, nothing else.
+
+`SERVER_LOGS=`: Beta feature im still working on. Ignore this and let it blank.
+
+`DISCORD_CHANNEL_CHAT_EVENTS_ID=`: This will be the ID of the channel to show every event currently set within the bot. So, people joining and leaving the server, deaths of players, players chatting, deaths of mobs, Advancements and Discord user messages appearing inside the server. It is advised to create a new channel just for this one.
+
+`MINECRAFT_SERVER=`: IP of your server. It will only accept: SRV records and Local ip's. IF you're running your server in a docker container, you need to insert the local ip address of the machine running the container (192.168.15.1 for example). If its not running in a docker container, you can just leave it there with "localhost".
+
+`MINECRAFT_PORT=`: This is explained by itself.
+
+`SERVER_MODE=`: Leave this to "0" or blank if your minecraft server is running the setting: "online-mode=true". if your server is "false", set the variable to "1", futhermore it will be explained what you should do IF you want to make everything look preatier in offline mode.
+
+`RCON_HOST=`
+`RCON_PORT=`
+`RCON_PASSWORD=`: These are important to make the joining and leaving the server events and discord users sending messages to work. if you're running the server in a container, set the host to be the name of your minecraft server SERVICE, the name is within your compose file. If your server is not running in a container, set the host to be the IP of your minecraft server (explained what can work in the variable `MINECRAFT_SERVER`).
+
+`API_PORT=`: And finally, the API port. This is the API that will search for mob icons and death messages, so set the port to whatever you want, as long as it matches to the api.
 
 ## 'Offline mode' servers (Ignore section if your server is "online-mode:true"):
 
