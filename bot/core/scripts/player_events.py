@@ -11,7 +11,7 @@ DISCORD_CHANNEL_ID = int(os.getenv("DISCORD_CHANNEL_CHAT_EVENTS_ID"))
 RCON_HOST = os.getenv("RCON_HOST")
 RCON_PASSWORD = os.getenv("RCON_PASSWORD")
 RCON_PORT = int(os.getenv("RCON_PORT"))
-IMAGE_DOMAIN = os.getenv("IMAGE_DOMAIN")
+IMAGE_DOMAIN = os.getenv("IMAGE_DOMAIN", "")
 SERVER_MODE = os.getenv("SERVER_MODE", "0")
 
 previous_players = set()
@@ -34,7 +34,7 @@ async def check_player_events(channel):
     initial = True
     while True:
         try:
-            with MCRcon(RCON_HOST, RCON_PASSWORD, port=RCON_PORT) as mcr:
+            with MCRcon(RCON_HOST, RCON_PASSWORD, RCON_PORT) as mcr:
                 while True:
                     response = mcr.command("list")
                     players = extract_player_list(response)
