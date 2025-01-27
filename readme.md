@@ -150,7 +150,7 @@ python bot_sender.py
 
 - Go to the directory present in "bot/tools/offline-uuid.py", that's a function to see what is the UUID of a set String. It should look like this:
 
-![Screenshot](bot/images/uuid-offline.png)
+![Screenshot](bot/images/offline-uuid.png)
 
 - In the line present in "final = get_offline_uuid("test")" change the string "test" to the username you want to get the uuid. For isntance:
 
