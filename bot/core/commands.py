@@ -41,25 +41,6 @@ async def setup_commands(bot):
         else:
             await interaction.response.send_message("O servidor está offline no momento.", ephemeral=True)
 
-    @bot.tree.command(name="limpar_dms", description="Apaga mensagens do bot na DM atual.")
-    async def limpar_dms(interaction: discord.Interaction):
-        if isinstance(interaction.channel, discord.DMChannel):
-            await interaction.response.defer(ephemeral=True)
-            count = 0
-            async for message in interaction.channel.history(limit=100):
-                if message.author == bot.user:
-                    await message.delete()
-                    count += 1
-
-            # Envia a resposta final
-            await interaction.followup.send(f"{count} mensagens apagadas.")
-        else:
-            # Resposta caso o comando não esteja em uma DM
-            await interaction.response.send_message(
-                "Este comando só funciona em mensagens diretas (DMs).",
-                ephemeral=True,
-            )
-
     @bot.tree.command(name="limpar", description="Apaga mensagens do canal atual no servidor.")
     async def limpar(interaction: discord.Interaction, quantidade: int):
         if isinstance(interaction.channel, discord.TextChannel):
@@ -203,11 +184,6 @@ async def setup_commands(bot):
         embed.add_field(
             name="/limpar",
             value="Limpa o chat do canal onde o comando vai ser feito.",
-            inline=False
-        )
-        embed.add_field(
-            name="/limpar_dms",
-            value="Limpa a dm do bot, comando deve ser feito na dm e não chat normal.",
             inline=False
         )
         embed.set_footer(text="Utilize os comandos para explorar as funcionalidades do bot.")
