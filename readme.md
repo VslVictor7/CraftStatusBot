@@ -8,6 +8,32 @@
 
 - Be aware of the risks of using RCON. Do not map or port-foward the port of your RCON!
 
+## How things should look!
+
+Server will show all of its data in real time, how many players, their names, if the server is online, etc.
+
+![Tela Inicial](bot/images/server_online.png)
+![Tela Inicial](bot/images/server_offline.png)
+
+---
+
+Advancements/goals/challenges will be shown with their respective color!
+
+![goal](bot/images/goal1.png)
+![goal](bot/images/goal2.png)
+
+---
+
+Deaths of players, named entities and villagers will be shown!
+
+![morte](bot/images/named_entity_death.png)
+![morte](bot/images/villager_death.png)
+![morte](bot/images/player_death.png)
+
+---
+
+# Now, lets get started!
+
 ## Table of Contents
 
 - [Pre-requisites](#pre-requisites)
