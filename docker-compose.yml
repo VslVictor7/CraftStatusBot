@@ -1,0 +1,28 @@
+services:
+  discord-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bot-desenvolvimento
+    image: discord-bot:dev
+    env_file:
+      - .env
+    tty: true
+    stdin_open: true
+    environment:
+      RCON_PASSWORD: ${RCON_PASSWORD}
+      RCON_PORT: ${RCON_PORT}
+    volumes:
+      - server_test:/data:ro
+      - /data/logs/latest.log:/logs/latest.log
+      - /data/world/stats:/world/stats
+    networks:
+      - request
+
+volumes:
+  server_test:
+    external: true
+
+networks:
+  request:
+    external: true
