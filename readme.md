@@ -17,6 +17,18 @@ Server will show all of its data in real time, how many players, their names, if
 
 ---
 
+Communication between discord server and minecraft server through RCON:
+
+![uses](bot/images/normal_use.png)
+
+---
+
+Players joining and leaving the server!
+
+![activity](bot/images/server_activity.png)
+
+---
+
 Advancements/goals/challenges will be shown with their respective color!
 
 ![goal](bot/images/goal1.png)
