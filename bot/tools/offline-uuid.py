@@ -15,12 +15,4 @@ def get_offline_uuid(username):
 
 final = get_offline_uuid("test")
 
-if final == "530fa97a-357f-3c19-94d3-0c5c65c18fe8":
-    print(True)
-    print(final)
-else:
-    print(False)
-    print(final)
-
-
-
+print(final)
