@@ -172,6 +172,8 @@ py offline-uuid.py
 86c5cd29-ecd6-3611-8e9a-c937807f9807
 ```
 
+- Collect each UUID for each player as you wish and add them in "players.json"
+
 ## Docker configuration (Ignore section if you're not using docker)
 
 - You might need to tweak some things depending on how you're planning to run the bot.
@@ -241,9 +243,11 @@ services:
       RCON_PASSWORD: ${RCON_PASSWORD}
       RCON_PORT: ${RCON_PORT}
     volumes:
-      - "C:path/to/your/server/world/stats:/data/world/stats"
-      - "C:path/to/your/server/logs/latest.log:/data/logs/latest.log"
+      - "C:/path/to/your/server/world/stats:/data/world/stats"
+      - "C:/path/to/your/server/logs/latest.log:/data/logs/latest.log"
 ```
+The above example uses a windows path, change it according to your system.
+
 - That should be your compose file! Now keep going down to see how to run!
 
 ## Executing:
