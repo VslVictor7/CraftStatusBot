@@ -32,13 +32,19 @@ async def monitor_log_file(webhook, channel):
     try:
         with open(LOG_FILE_PATH, "r") as file:
             file.seek(0, os.SEEK_END)
-
             while True:
                 line = file.readline()
                 if not line:
+                    try:
+                        file = open(LOG_FILE_PATH, "r")
+                        file.seek(0, os.SEEK_END)
+                    except Exception as e:
+                        print(f"Erro ao tentar reabrir o arquivo: {e}")
+                        await asyncio.sleep(0.1)
+                        continue
+
                     await asyncio.sleep(0.1)
                     continue
-
                 await process_line(line, webhook, channel)
 
     except FileNotFoundError:

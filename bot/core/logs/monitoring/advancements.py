@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SERVER_MODE = os.getenv('SERVER_MODE', '0')
+IMAGE_DOMAIN = os.getenv('IMAGE_DOMAIN')
 
 offline_players = load_json('players.json')
 default_uuid = "c2e45a26339547ff86c0b3dd0c2aa2d2"
@@ -72,6 +73,7 @@ async def send_player_event(channel, player_name, event_message, event_name, eve
                 if username == player_name and player_data["original"] == False:
                     skin_url = player_data["skin"]
                     if skin_url:
+                        skin_url = f"{IMAGE_DOMAIN}{skin_url}"
                         embed = discord.Embed(color=color)
                         embed.set_author(
                             name=f'{player_name} {event_message} {event_name} ({event_translated})',
