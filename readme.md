@@ -15,6 +15,8 @@ Server will show all of its data in real time, how many players, their names, if
 ![Tela Inicial](bot/images/server_online.png)
 ![Tela Inicial](bot/images/server_offline.png)
 
+![Tela Inicial](bot/images/real_time.jpg)
+
 ---
 
 Communication between discord server and minecraft server through RCON:
