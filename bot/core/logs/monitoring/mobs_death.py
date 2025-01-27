@@ -2,6 +2,7 @@ import re
 import os
 import discord
 import aiohttp
+from deep_translator import GoogleTranslator
 from logs.api_call import fetch_data_from_api
 from pathlib import Path
 from dotenv import load_dotenv
@@ -128,7 +129,8 @@ def formating(name, event_message, line):
         print(event_message)
         x, y, z = match.groups()
         formatted = f"{name} {event_message}"
-        coords = f"Morto em (x: {x}, y: {y}, z: {z})"
+        #formatted = GoogleTranslator(source='pt', target='').translate(formatted)
+        coords = f"(x: {x}, y: {y}, z: {z})"
         return formatted, coords
     else:
         print("Não foram encontrados valores de x, y, z no line.")

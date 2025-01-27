@@ -117,7 +117,7 @@ async def setup_commands(bot):
                     return
 
             stats_path = f"{JSON_PATH}{uuid}.json"
-            stats_message = player_json.player_stats(stats_path, username)
+            stats_message = await player_json.player_stats(stats_path, username)
 
             if not stats_message:
                 raise ValueError(f"Não foi possível gerar estatísticas para o jogador '{username}'. Certifique-se de escrever o nome de usuário corretamente!")
