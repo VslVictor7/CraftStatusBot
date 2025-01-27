@@ -44,10 +44,11 @@ async def process_death_event(log_line, channel):
 
                 entity = mobs.get(raw_entity.strip(), raw_entity)
                 item = mobs.get(raw_item.strip(), raw_item)
+                contained_item = f"[{item}]"
 
                 translated = translated_message
                 translated = translated.replace("{entity}", entity)
-                translated = translated.replace("{item}", item)
+                translated = translated.replace("{item}", contained_item)
 
                 await send_player_event(channel, player, translated, 0x000000)
                 return

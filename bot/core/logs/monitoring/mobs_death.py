@@ -2,6 +2,7 @@ import re
 import os
 import discord
 import aiohttp
+from deep_translator import GoogleTranslator
 from logs.api_call import fetch_data_from_api
 from pathlib import Path
 from dotenv import load_dotenv
@@ -58,24 +59,29 @@ async def process_mobs_death_event(line, channel):
                     named = mobs.get(placeholder.strip(), placeholder)
                     entity = mobs.get(raw_entity.strip(), raw_entity)
                     item = mobs.get(raw_item.strip(), raw_item)
+                    contained_item = f"[{item}]"
 
                     translated = translated_message
                     translated = translated.replace("{entity}", entity)
-                    translated = translated.replace("{item}", item)
+                    translated = translated.replace("{item}", contained_item)
 
-                    await send_player_event(channel, named, translated, 0x000000, icon_path)
+                    await send_player_event(channel, named, translated, 0x000000, icon_path, line)
                     os.remove(icon_path)
                     return
     except Exception as e:
         print(f"[BOT ERROR] Erro ao processar evento de morte: {e}")
 
-async def send_player_event(channel, name, event_message, color, icon_path):
+async def send_player_event(channel, name, event_message, color, icon_path, line):
     try:
+        formatted_text, coords = formating(name, event_message, line)
         file = discord.File(icon_path, filename=os.path.basename(icon_path))
         embed = discord.Embed(color=color)
         embed.set_author(
-            name=f"{name} {event_message}".strip("'\""),
+            name=formatted_text,
             icon_url=f"attachment://{os.path.basename(icon_path)}"
+        )
+        embed.set_footer(
+            text=coords
         )
         await channel.send(file=file,embed=embed)
     except Exception as e:
@@ -113,3 +119,18 @@ async def api_icon_fetching(mob):
     except Exception as e:
         print(f"[BOT ERROR] Erro ao fazer requisição para a API: {e}")
         return "desconhecido"
+    
+def formating(name, event_message, line):
+
+    pattern = r"x=(-?\d+\.\d+), y=(-?\d+\.\d+), z=(-?\d+\.\d+)"
+    match = re.search(pattern, line)
+
+    if match:
+        print(event_message)
+        x, y, z = match.groups()
+        formatted = f"{name} {event_message}"
+        #formatted = GoogleTranslator(source='pt', target='').translate(formatted)
+        coords = f"(x: {x}, y: {y}, z: {z})"
+        return formatted, coords
+    else:
+        print("Não foram encontrados valores de x, y, z no line.")
