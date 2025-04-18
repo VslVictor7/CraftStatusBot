@@ -60,6 +60,7 @@ Deaths of players, named entities and villagers will be shown!
 
 - Python 3.8 or higher
 - Docker (optional)
+- Running the Helper API: (https://github.com/VslVictor7/helper-api)
 
 ## Installation
 
