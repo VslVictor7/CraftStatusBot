@@ -5,6 +5,7 @@ __pycache__
 *.pyc
 __pycache__/
 /bot/images
+/bot/tools/
 *.pyo
 *.git/
 bot_database.db
@@ -22,4 +23,3 @@ placeholder.txt
 1.txt
 *.pyd
 venv/
-tools/

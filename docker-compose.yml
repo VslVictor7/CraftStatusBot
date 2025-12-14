@@ -11,7 +11,7 @@ services:
     volumes:
       - /data/logs/latest.log:/logs/latest.log:ro
       - /data/world/stats:/world/stats:ro
-      - ./players.json:/app/bot/core/utils/json/players.json:ro
+      - ./players.json:/app/bot/core/utils/json/players.json:ro # Only map it if SERVER_MODE=1
     networks:
       - request
 
