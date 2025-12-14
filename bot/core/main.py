@@ -4,11 +4,10 @@ import aiohttp
 import asyncio
 from scripts.mybot import MyBot
 from scripts.message_manager import update_message_periodically
-from logs.monitoring.server_log import monitor_file
-from utils.chat_events import message_on_server
-from utils import ranking_players
-from logs.log_handler import log_handling
 from scripts.player_events import start_player_events
+from utils.chat_events import message_on_server
+from logs.log_handler import log_handling
+from utils import ranking_players
 from commands import setup_commands
 from dotenv import load_dotenv
 
@@ -22,9 +21,7 @@ bot = MyBot()
 
 @bot.event
 async def on_ready():
-
     bot_name = bot.user.name
-
     print(f"[BOT] Logado como {bot_name} - {bot.user.id}")
 
     activity = discord.Activity(type=discord.ActivityType.watching, name="Movimentação do nosso servidor")
@@ -45,7 +42,7 @@ async def on_ready():
                 message = await channel.fetch_message(MESSAGE_ID)
                 print("[BOT STARTED] Pronto para monitoramento de IP, Servidor, Jogadores.")
 
-                await update_message_periodically(message, session, bot_name, bot)
+                await update_message_periodically(message, bot_name, bot)
 
             except discord.DiscordException as e:
                 print(f"[BOT ERROR] Erro ao buscar mensagem: {e}")

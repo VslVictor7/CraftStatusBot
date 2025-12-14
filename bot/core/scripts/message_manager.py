@@ -8,10 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 PORT = int(os.getenv('MINECRAFT_PORT'))
-
-async def get_public_ipv4(session):
-    async with session.get("https://api.ipify.org?format=json") as response:
-        return (await response.json()).get("ip")
+DOMAIN = os.getenv('MINECRAFT_DOMAIN')
 
 async def get_server_status(bot):
     try:
@@ -24,12 +21,11 @@ async def get_server_status(bot):
     except:
         return False, 0, "Desconhecido", []
 
-async def update_message_periodically(message, session, bot_name, bot, interval=0.1):
+async def update_message_periodically(message, bot_name, bot, interval=0.1):
 
     async def get_current_status():
-        current_ip = await get_public_ipv4(session)
         server_online, players_online, version, player_names = await get_server_status(bot)
-        return current_ip, server_online, players_online, version, player_names
+        return server_online, players_online, version, player_names
 
     async def update_discord_message(message, embed):
         try:
@@ -41,8 +37,6 @@ async def update_message_periodically(message, session, bot_name, bot, interval=
             print(f"[ERROR] Falha ao atualizar mensagem: {e}")
 
     def has_status_changed(current, last):
-        if current["ip"] != last["ip"]:
-            return True
         if current["server_online"] != last["server_online"]:
             return True
         if set(current["player_names"]) != set(last["player_names"]):
@@ -53,7 +47,6 @@ async def update_message_periodically(message, session, bot_name, bot, interval=
         return False
 
     last_status = {
-        "ip": None,
         "server_online": None,
         "players_online": None,
         "version": None,
@@ -62,19 +55,18 @@ async def update_message_periodically(message, session, bot_name, bot, interval=
 
     while True:
         try:
-            current_ip, server_online, players_online, version, player_names = await get_current_status()
+            server_online, players_online, version, player_names = await get_current_status()
 
             if has_status_changed(
-                {"ip": current_ip, "server_online": server_online, "players_online": players_online, "version": version, "player_names": player_names},
+                {"server_online": server_online, "players_online": players_online, "version": version, "player_names": player_names},
                 last_status
             ):
                 if "Anonymous Player" not in (player_names or []):
 
-                    embed = create_embed(current_ip, server_online, players_online, version, player_names, bot_name)
+                    embed = create_embed(server_online, players_online, version, player_names, bot_name)
                     await update_discord_message(message, embed)
 
                     last_status.update({
-                        "ip": current_ip,
                         "server_online": server_online,
                         "players_online": players_online,
                         "version": version,
@@ -89,7 +81,7 @@ async def update_message_periodically(message, session, bot_name, bot, interval=
             print(f"[ERROR] Falha ao atualizar mensagem: {e}")
             await asyncio.sleep(interval)
 
-def create_embed(ip, server_online, players_online, version, player_names, bot_name):
+def create_embed(server_online, players_online, version, player_names, bot_name):
     sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
     current_time = datetime.now(sao_paulo_tz)
 
@@ -97,7 +89,7 @@ def create_embed(ip, server_online, players_online, version, player_names, bot_n
         title="Status do Servidor Minecraft",
         color=0x00ff00 if server_online else 0xff0000
     )
-    embed.add_field(name="🖥️ IP", value=f"{ip}:{PORT}" if server_online else "Nenhum", inline=False)
+    embed.add_field(name="🖥️ IP", value=DOMAIN if server_online else "Nenhum", inline=False)
     embed.add_field(name="📶 Status", value="🟢 Online" if server_online else "🔴 Offline", inline=False)
     embed.add_field(
         name="👥 Jogadores Online",
