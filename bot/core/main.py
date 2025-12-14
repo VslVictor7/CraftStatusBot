@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 TOKEN = os.getenv('DISCORD_TOKEN')
+START_COUNTDOWN = int(os.getenv('START_COUNTDOWN', 60))
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
 MESSAGE_ID = int(os.getenv('MESSAGE_ID'))
 
@@ -27,7 +28,7 @@ async def on_ready():
     activity = discord.Activity(type=discord.ActivityType.watching, name="Movimentação do nosso servidor")
     await bot.change_presence(status=discord.Status.online, activity=activity)
 
-    interval = 60
+    interval = START_COUNTDOWN
     print(f"[BOT] Esperando {interval} segundos antes de iniciar as tarefas...")
     await asyncio.sleep(interval)
 
