@@ -9,8 +9,8 @@ services:
     tty: true
     stdin_open: true
     volumes:
-      - /data/logs/latest.log:/logs/latest.log:ro
-      - /data/world/stats:/world/stats:ro
+      - /data/logs/latest.log:/logs/latest.log:ro # Onde o latest.log do seu servidor se encontra
+      - /data/world/stats:/world/stats:ro # Onde a pasta stats do seu servidor se encontra
       - ./players.json:/app/bot/core/utils/json/players.json:ro # Only map it if SERVER_MODE=1
     networks:
       - request

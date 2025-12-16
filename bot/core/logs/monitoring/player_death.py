@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-API_PORT = int(os.getenv("API_PORT"))
+API_URL = os.getenv("API_URL")
 SERVER_MODE = os.getenv("SERVER_MODE", "0")
 IMAGE_DOMAIN = os.getenv("IMAGE_DOMAIN")
 
@@ -25,8 +25,8 @@ async def process_death_event(log_line, channel):
         if any(pattern in log_line for pattern in ignore_patterns):
             return
 
-        death_messages = await fetch_data_from_api(f"http://endpoint:{API_PORT}/deaths")
-        mobs = await fetch_data_from_api(f"http://endpoint:{API_PORT}/mobs")
+        death_messages = await fetch_data_from_api(f"{API_URL}/deaths")
+        mobs = await fetch_data_from_api(f"{API_URL}/mobs")
 
         for death_pattern, translated_message in death_messages.items():
             search_pattern = death_pattern.replace("{player}", r"(?P<player>\S+)")

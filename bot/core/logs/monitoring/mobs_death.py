@@ -2,14 +2,13 @@ import re
 import os
 import discord
 import aiohttp
-from deep_translator import GoogleTranslator
 from logs.api_call import fetch_data_from_api
 from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
 
-API_PORT = int(os.getenv("API_PORT"))
+API_URL = os.getenv("API_URL")
 
 async def process_mobs_death_event(line, channel):
     try:
@@ -104,8 +103,8 @@ async def download_image(url, save_path):
 
 async def api_fetching():
     try:
-        death_messages = await fetch_data_from_api(f"http://endpoint:{API_PORT}/deaths")
-        mobs_list = await fetch_data_from_api(f"http://endpoint:{API_PORT}/mobs")
+        death_messages = await fetch_data_from_api(f"{API_URL}/deaths")
+        mobs_list = await fetch_data_from_api(f"{API_URL}/mobs")
         return death_messages, mobs_list
     except Exception as e:
         print(f"[BOT ERROR] Erro ao fazer requisição para a API: {e}")
@@ -113,7 +112,7 @@ async def api_fetching():
 
 async def api_icon_fetching(mob):
     try:
-        mob_data = await fetch_data_from_api(f'http://endpoint:{API_PORT}/images/{mob}')
+        mob_data = await fetch_data_from_api(f'{API_URL}/images/{mob}')
         icon_url = mob_data.get('url')
         return icon_url
     except Exception as e:
@@ -129,7 +128,6 @@ def formating(name, event_message, line):
         print(event_message)
         x, y, z = match.groups()
         formatted = f"{name} {event_message}"
-        #formatted = GoogleTranslator(source='pt', target='').translate(formatted)
         coords = f"(x: {x}, y: {y}, z: {z})"
         return formatted, coords
     else:

@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-API_PORT = int(os.getenv('API_PORT'))
+API_URL = os.getenv('API_URL')
 
 async def player_stats(path, username):
     embed = await player_stats_formation(path, username)
@@ -136,8 +136,8 @@ def get_uuid_from_username(username):
 async def api_fetch(most_killed_mob):
 
     mob_name = most_killed_mob.split(":")[1].replace("_", " ")
-    mob_data = await fetch_data_from_api(f"http://endpoint:{API_PORT}/images/{mob_name}")
-    mobs = await fetch_data_from_api(f"http://endpoint:{API_PORT}/mobs")
+    mob_data = await fetch_data_from_api(f"{API_URL}/images/{mob_name}")
+    mobs = await fetch_data_from_api(f"{API_URL}/mobs")
 
     entity_name = mob_data.get('name')
     full_name = entity_name.replace("_", " ")
