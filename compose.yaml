@@ -1,9 +1,7 @@
 services:
-  discord-bot:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: bot-desenvolvimento
+  craftstatusbot:
+    image: victorvsl7/craftstatusbot:latest
+    container_name: craftstatusbot
     env_file:
       - .env
     tty: true

@@ -23,3 +23,5 @@ placeholder.txt
 1.txt
 *.pyd
 venv/
+docker-compose.yml
+compose.yaml
