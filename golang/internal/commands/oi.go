@@ -2,29 +2,29 @@ package commands
 
 import "github.com/bwmarrin/discordgo"
 
-type Ping struct{}
+type Hello struct{}
 
-func (p *Ping) Name() string {
-	return "ping"
+func (h *Hello) Name() string {
+	return "hello"
 }
 
-func (p *Ping) Command() *discordgo.ApplicationCommand {
+func (h *Hello) Command() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
-		Name:        p.Name(),
-		Description: "Responde com pong",
+		Name:        "hello",
+		Description: "Diz olá",
 	}
 }
 
-func (p *Ping) Handler(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (h *Hello) Handler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
-			Content: "pong",
+			Content: "Ola noob",
 		},
 	})
 }
 
 func init() {
-	cmd := &Ping{}
+	cmd := &Hello{}
 	RegisteredCommands[cmd.Name()] = cmd
 }
