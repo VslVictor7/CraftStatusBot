@@ -1,4 +1,4 @@
-package handshake
+package connections
 
 import (
 	"bufio"

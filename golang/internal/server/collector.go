@@ -4,7 +4,7 @@ import (
 	"sort"
 	"time"
 
-	"discord-bot-go/internal/handshake"
+	"discord-bot-go/internal/connections"
 )
 
 type ServerSnapshot struct {
@@ -17,7 +17,7 @@ type ServerSnapshot struct {
 
 func CollectSnapshot(serverAddr string) (*ServerSnapshot, error) {
 
-	res, err := handshake.ResolveServerStatus(serverAddr, 5*time.Minute)
+	res, err := connections.ResolveServerStatus(serverAddr, 5*time.Minute)
 	if err != nil {
 		return &ServerSnapshot{
 			Online:      false,
@@ -25,7 +25,7 @@ func CollectSnapshot(serverAddr string) (*ServerSnapshot, error) {
 		}, err
 	}
 
-	status, err := handshake.Ping(res, 3*time.Second)
+	status, err := connections.Ping(res, 3*time.Second)
 	if err != nil {
 		return &ServerSnapshot{
 			Online:      false,

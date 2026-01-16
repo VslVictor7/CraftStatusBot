@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"discord-bot-go/internal/commands"
+	"discord-bot-go/internal/connections"
+	"discord-bot-go/internal/presentation"
 	"discord-bot-go/internal/server"
 
 	"github.com/bwmarrin/discordgo"
@@ -15,13 +17,19 @@ import (
 )
 
 func main() {
-
 	godotenv.Load()
 
 	token := os.Getenv("DISCORD_TOKEN")
-	channel_id := os.Getenv("CHANNEL_ID")
-	message_id := os.Getenv("MESSAGE_ID")
-	events_channel_id := os.Getenv("EVENTS_CHANNEL_ID")
+
+	serverAddr := os.Getenv("HOST")
+
+	statusChannelID := os.Getenv("CHANNEL_ID")
+	statusMessageID := os.Getenv("MESSAGE_ID")
+
+	eventsChannelID := os.Getenv("EVENTS_CHANNEL_ID")
+
+	rconAddr := os.Getenv("RCON_ADDR")
+	rconPassword := os.Getenv("RCON_PASSWORD")
 
 	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
@@ -29,17 +37,22 @@ func main() {
 		return
 	}
 
-	dg.Identify.Intents = discordgo.IntentsGuilds
+	dg.Identify.Intents =
+		discordgo.IntentsGuilds |
+			discordgo.IntentsGuildMessages |
+			discordgo.IntentsMessageContent
 
 	dg.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		if i.Type != discordgo.InteractionApplicationCommand {
 			return
 		}
+
 		cmdName := i.ApplicationCommandData().Name
 		cmd, ok := commands.RegisteredCommands[cmdName]
 		if !ok {
 			return
 		}
+
 		cmd.Handler(s, i)
 	})
 
@@ -49,7 +62,6 @@ func main() {
 	}
 
 	for name, cmd := range commands.RegisteredCommands {
-		fmt.Println("registrando comandos")
 		_, err := dg.ApplicationCommandCreate(
 			dg.State.User.ID,
 			"",
@@ -60,31 +72,49 @@ func main() {
 		}
 	}
 
+	rconChat := &connections.Chat{
+		Addr:     rconAddr,
+		Password: rconPassword,
+	}
+
+	if err := rconChat.Connect(); err != nil {
+		fmt.Println("Erro ao conectar no RCON:", err)
+		return
+	}
+	defer rconChat.Close()
+
+	chatBridge := &presentation.DiscordChatBridge{
+		Session:   dg,
+		ChannelID: eventsChannelID,
+		RconChat:  rconChat,
+	}
+	chatBridge.Register()
+
 	monitor := &server.ServerMonitor{
-		ServerAddr: "localhost:25565",
+		ServerAddr: serverAddr,
 		Interval:   2 * time.Second,
 
 		StatusEmbed: &server.StatusEmbed{
 			Session:   dg,
-			ChannelID: channel_id,
-			MessageID: message_id,
+			ChannelID: statusChannelID,
+			MessageID: statusMessageID,
 			BotName:   dg.State.User.Username,
 		},
 
 		PlayerEvents: &server.PlayerEvents{
 			Session:   dg,
-			ChannelID: events_channel_id,
+			ChannelID: eventsChannelID,
 		},
 	}
 
 	monitor.Start()
 
-	fmt.Println("bot ta rodando")
+	fmt.Println("Bot rodando")
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 	<-stop
 
-	fmt.Println("desligando")
+	fmt.Println("Desligando bot")
 	_ = dg.Close()
 }
