@@ -1,24 +1,30 @@
 # ======================
 # STAGE 1 — BUILD
 # ======================
-FROM python:3.14.2-alpine AS builder
+FROM golang:1.25.5-alpine AS app-builder
 
-WORKDIR /build
+# Dependências mínimas
+RUN apk add --no-cache ca-certificates
 
-COPY requirements.txt .
+WORKDIR /app
 
-RUN apk add --no-cache gcc musl-dev libffi-dev && \
-    python -m pip install --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir --prefix=/install -r requirements.txt
+COPY . .
+
+RUN go mod download
+
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GOARCH=amd64
+
+RUN go build -ldflags="-s -w" -o bot ./cmd/bot
 
 # ======================
 # STAGE 2 — PROD
 # ======================
-FROM python:3.14.2-alpine
+FROM scratch
 
-WORKDIR /app
+COPY --from=app-builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+# the test program:
+COPY --from=app-builder /app/bot /bot
 
-COPY --from=builder /install /usr/local
-COPY . .
-
-CMD ["python", "bot/core/main.py"]
+ENTRYPOINT ["/bot"]

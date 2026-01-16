@@ -1,18 +1,11 @@
 services:
   craftstatusbot:
-    image: victorvsl7/craftstatusbot:latest
+    build: .
     container_name: craftstatusbot
     env_file:
       - .env
-    tty: true
-    stdin_open: true
-    volumes:
-      - /data/logs/latest.log:/logs/latest.log:ro # Onde o latest.log do seu servidor se encontra
-      - /data/world/stats:/world/stats:ro # Onde a pasta stats do seu servidor se encontra
-      - ./players.json:/app/bot/core/utils/json/players.json:ro # Only map it if SERVER_MODE=1
-    networks:
-      - request
-
-networks:
-  request:
-    external: true
+    #volumes:
+    #  - /data/logs/latest.log:/latest.log:ro # Onde o latest.log do seu servidor se encontra
+    #  - /data/world/stats:/stats:ro # Onde a pasta stats do seu servidor se encontra
+    #  - ./players.json:/app/bot/core/utils/json/players.json:ro
+    # Only map it if SERVER_MODE=1

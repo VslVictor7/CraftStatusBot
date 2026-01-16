@@ -1,17 +1,56 @@
+# Golang project .gitignore
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, coverage and output
+*.test
+*.out
+coverage.out
 log.txt
+
+# Build directories
+bin/
+_build/
+
+# Dependency directories (vendoring)
+vendor/
+
+# Environment files and secrets
 .env
 dev.env
 .env.prod
-.venv
-.env.dev
 1.env
-venv
-__pycache__
-.pyc
-*.pyc
+
+# Python artifacts (if present)
+.venv
+venv/
 __pycache__/
+*.pyc
+
+# Project DB, scripts and placeholders
 bot_database.db
 commands.txt
-1.txt
 placeholder.txt
 password.py
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+
+# Misc
+.dockerignore
+.gitignore
