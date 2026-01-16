@@ -16,6 +16,9 @@ func main() {
 	token := os.Getenv("DISCORD_TOKEN")
 	rconAddr := os.Getenv("RCON_ADDR")
 	rconPassword := os.Getenv("RCON_PASSWORD")
+	statusChannelID := os.Getenv("CHANNEL_ID")
+	statusMessageID := os.Getenv("MESSAGE_ID")
+	serverAddr := os.Getenv("HOST")
 	eventsChannelID := os.Getenv("EVENTS_CHANNEL_ID")
 	logPath := os.Getenv("SERVER_LOG_PATH")
 
@@ -39,6 +42,11 @@ func main() {
 		RconChat:  rcon,
 	}
 	chatBridge.Register()
+
+	if err := startServerStatusWatcher(dg, eventsChannelID, statusChannelID, statusMessageID, serverAddr); err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	if err := startMCWatcher(dg, eventsChannelID, logPath); err != nil {
 		fmt.Println(err)

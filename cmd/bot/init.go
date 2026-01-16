@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"discord-bot-go/internal/commands"
 	"discord-bot-go/internal/connections"
 	"discord-bot-go/internal/log"
 	"discord-bot-go/internal/presentation"
+	"discord-bot-go/internal/server"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -61,6 +63,26 @@ func initRcon(addr, password string) (*connections.Chat, error) {
 	return rcon, nil
 }
 
+func startServerStatusWatcher(dg *discordgo.Session, eventsChannelID, statusChannelID, statusMessageID, serverAddr string) error {
+	monitor := &server.ServerMonitor{
+		ServerAddr: serverAddr,
+		Interval:   2 * time.Second,
+
+		StatusEmbed: &server.StatusEmbed{
+			Session:   dg,
+			ChannelID: statusChannelID,
+			MessageID: statusMessageID,
+			BotName:   dg.State.User.Username,
+		},
+		PlayerEvents: &server.PlayerEvents{
+			Session:   dg,
+			ChannelID: eventsChannelID,
+		},
+	}
+	monitor.Start()
+	return nil
+}
+
 func startMCWatcher(dg *discordgo.Session, eventsChannelID, logPath string) error {
 	mcBridge, err := presentation.NewMinecraftChatBridge(dg, eventsChannelID)
 	if err != nil {
@@ -70,6 +92,9 @@ func startMCWatcher(dg *discordgo.Session, eventsChannelID, logPath string) erro
 	watcher := log.New(logPath)
 	watcher.Register(func(line string) {
 		mcBridge.Handle(line)
+	})
+	watcher.Register(func(line string) {
+		presentation.ProcessAdvancementLine(dg, eventsChannelID, line)
 	})
 
 	go watcher.Start()
