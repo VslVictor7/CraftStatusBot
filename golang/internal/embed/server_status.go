@@ -1,4 +1,4 @@
-package server
+package embed
 
 import (
 	"fmt"

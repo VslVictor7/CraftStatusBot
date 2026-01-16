@@ -19,6 +19,9 @@ func main() {
 	godotenv.Load()
 
 	token := os.Getenv("DISCORD_TOKEN")
+	channel_id := os.Getenv("CHANNEL_ID")
+	message_id := os.Getenv("MESSAGE_ID")
+	events_channel_id := os.Getenv("EVENTS_CHANNEL_ID")
 
 	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
@@ -56,13 +59,22 @@ func main() {
 			fmt.Printf("Erro ao registrar /%s: %v\n", name, err)
 		}
 	}
+
 	monitor := &server.ServerMonitor{
-		Session:    dg,
-		ChannelID:  "1312961162022883420",
-		MessageID:  "1313264218866450484",
 		ServerAddr: "localhost:25565",
-		BotName:    dg.State.User.Username,
 		Interval:   2 * time.Second,
+
+		StatusEmbed: &server.StatusEmbed{
+			Session:   dg,
+			ChannelID: channel_id,
+			MessageID: message_id,
+			BotName:   dg.State.User.Username,
+		},
+
+		PlayerEvents: &server.PlayerEvents{
+			Session:   dg,
+			ChannelID: events_channel_id,
+		},
 	}
 
 	monitor.Start()
