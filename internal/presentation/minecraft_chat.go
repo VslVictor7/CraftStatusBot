@@ -39,13 +39,10 @@ func NewMinecraftChatBridge(
 }
 
 func (b *MinecraftChatBridge) Handle(line string) {
-	stdlog.Printf("Linha recebida do watcher: %s", line)
 	msg, ok := log.ParseChatLine(line)
 	if !ok {
 		return
 	}
-
-	stdlog.Printf("Minecraft chat message from %s: %s", msg.Player, msg.Message)
 
 	avatarURL := fmt.Sprintf(
 		"https://mineskin.eu/helm/%s",
