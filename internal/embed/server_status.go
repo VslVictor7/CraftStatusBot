@@ -8,7 +8,6 @@ import (
 	"os"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/joho/godotenv"
 )
 
 func BuildServerEmbed(
@@ -18,8 +17,6 @@ func BuildServerEmbed(
 	names []string,
 	botName string,
 ) *discordgo.MessageEmbed {
-
-	godotenv.Load()
 
 	host := os.Getenv("HOST")
 

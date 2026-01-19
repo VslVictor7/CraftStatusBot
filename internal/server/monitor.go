@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -24,7 +25,11 @@ func (m *ServerMonitor) Start() {
 }
 
 func (m *ServerMonitor) tick() {
-	snapshot, _ := CollectSnapshot(m.ServerAddr)
+	snapshot, err := CollectSnapshot(m.ServerAddr)
+	if err != nil {
+		fmt.Printf("[ERROR] Falha ao coletar snapshot do servidor %s: %v\n", m.ServerAddr, err)
+		return
+	}
 
 	reconciledNames := reconcileNames(
 		m.lastNames,

@@ -60,7 +60,11 @@ func (p *PlayerEvents) sendEvent(player string, joined bool) {
 		},
 	}
 
-	_, _ = p.Session.ChannelMessageSendEmbed(p.ChannelID, embed)
+	_, err := p.Session.ChannelMessageSendEmbed(p.ChannelID, embed)
+	if err != nil {
+		fmt.Printf("[ERROR] Erro ao enviar webhook de evento de jogador %s: %v\n", player, err)
+		return
+	}
 }
 
 func difference(a, b []string) []string {
