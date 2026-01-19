@@ -1,7 +1,7 @@
 # ======================
 # STAGE 1 — BUILD
 # ======================
-FROM golang:1.25.5-alpine AS app-builder
+FROM golang:1.25.6-alpine AS app-builder
 
 # Dependências mínimas
 RUN apk add --no-cache ca-certificates
