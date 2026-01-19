@@ -91,20 +91,12 @@ func buildDeathRegex(pattern string) string {
 	r := regexp.QuoteMeta(pattern)
 
 	r = strings.ReplaceAll(r, "\\{player\\}", `(?P<player>\S+)`)
-
-	if strings.Contains(pattern, "{item}") {
-		r = strings.ReplaceAll(
-			r,
-			"\\{entity\\} using \\{item\\}",
-			`(?P<entity>.+) using \[(?P<item>[^\[\]]+)\]`,
-		)
-	} else {
-		r = strings.ReplaceAll(
-			r,
-			"\\{entity\\}",
-			`(?P<entity>.+)`,
-		)
-	}
+	r = strings.ReplaceAll(r, "\\{entity\\}", `(?P<entity>.+?)`)
+	r = strings.ReplaceAll(
+		r,
+		"\\{item\\}",
+		`\[(?P<item>[^\[\]]+)\]`,
+	)
 
 	return r
 }
