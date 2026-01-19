@@ -32,6 +32,7 @@ func (c *Stats) Command() *discordgo.ApplicationCommand {
 func (c *Stats) Handler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	username := i.ApplicationCommandData().Options[0].StringValue()
 	statsFolder := os.Getenv("STATS_FOLDER")
+	apiURL := os.Getenv("API_URL")
 
 	uuid, err := handlers.GetUUID(username)
 	if err != nil {
@@ -45,7 +46,7 @@ func (c *Stats) Handler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	embed := handlers.BuildEmbed(username, playerStats)
+	embed := handlers.BuildEmbed(username, playerStats, apiURL)
 
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
