@@ -25,6 +25,8 @@ type PlayerStats struct {
 	KilledBy map[string]any
 }
 
+var mobTranslations map[string]string
+
 func parseFile(path string) (RawStats, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -90,9 +92,6 @@ func Sum(m map[string]any) int {
 	return total
 }
 
-// --------------------
-// BuildEmbed completo
-// --------------------
 func BuildEmbed(username string, ps *PlayerStats, apiURL string) *discordgo.MessageEmbed {
 	playTime := getFloatSafe(ps.Custom, "minecraft:play_time") / 20
 	deaths := getFloatSafe(ps.Custom, "minecraft:deaths")
@@ -118,7 +117,6 @@ func BuildEmbed(username string, ps *PlayerStats, apiURL string) *discordgo.Mess
 	totalKilled := Sum(ps.Killed)
 	totalKilledBy := Sum(ps.KilledBy)
 
-	// Mob mais morto
 	mostKilledMob := ""
 	mostKilledCount := 0
 	for mob, count := range ps.Killed {
@@ -131,13 +129,12 @@ func BuildEmbed(username string, ps *PlayerStats, apiURL string) *discordgo.Mess
 			mostKilledMob = mob
 		}
 	}
-	// tradução do mob via API
+
 	translatedMob := mostKilledMob
-	if apiURL != "" && mostKilledMob != "" {
-		translatedMob = fetchMobName(apiURL, mostKilledMob)
+	if mostKilledMob != "" {
+		translatedMob = translateMob(mostKilledMob, apiURL)
 	}
 
-	// Formatar distâncias em km e metros
 	formatDistance := func(cm int) string {
 		return fmt.Sprintf("%d km e %d metros", cm/100000, (cm%100000)/100)
 	}
@@ -189,12 +186,12 @@ func BuildEmbed(username string, ps *PlayerStats, apiURL string) *discordgo.Mess
 			{
 				Name: "Transportes",
 				Value: fmt.Sprintf(
-					"🚶‍♂️ Andando: %s\n"+
-						"🏃‍♂️ Correndo: %s\n"+
-						"🚤 Barco: %s\n"+
-						"🐎 Cavalo: %s\n"+
-						"🕊️ Elytra: %s\n"+
-						"🚆 Minecart: %s",
+					"🚶‍♂️ **Andando**: %s\n"+
+						"🏃‍♂️ **Correndo**: %s\n"+
+						"🚤 **Barco**: %s\n"+
+						"🐎 **Cavalo**: %s\n"+
+						"🕊️ **Elytra**: %s\n"+
+						"🚆 **Minecart**: %s",
 					formatDistance(walked),
 					formatDistance(sprinted),
 					formatDistance(boat),
@@ -210,36 +207,57 @@ func BuildEmbed(username string, ps *PlayerStats, apiURL string) *discordgo.Mess
 	return embed
 }
 
-// --------------------
-// fetch do nome do mob via API
-// --------------------
-func fetchMobName(apiURL, mob string) string {
-	mobName := strings.Split(mob, ":")
-	if len(mobName) < 2 {
-		return mob
+func translateMob(mob string, apiURL string) string {
+	if mobTranslations == nil && apiURL != "" {
+		LoadMobTranslations(apiURL)
 	}
-	name := strings.ReplaceAll(mobName[1], "_", " ")
 
-	// Chamadas simples, sem async. Pode ser melhorado futuramente.
-	resp, err := http.Get(fmt.Sprintf("%s/images/%s", apiURL, name))
+	parts := strings.Split(mob, ":")
+	name := mob
+	if len(parts) > 1 {
+		name = parts[1]
+	}
+
+	name = strings.ReplaceAll(name, "_", " ")
+
+	nameLower := strings.ToLower(name)
+
+	for k, v := range mobTranslations {
+		if strings.ToLower(k) == nameLower {
+			return v
+		}
+	}
+
+	return name
+}
+
+func LoadMobTranslations(apiURL string) {
+	mobTranslations = make(map[string]string)
+	if apiURL == "" {
+		return
+	}
+
+	resp, err := http.Get(fmt.Sprintf("%s/mobs", apiURL))
 	if err != nil {
-		return name
+		fmt.Println("Erro ao carregar traduções de mobs:", err)
+		return
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return name
+		fmt.Println("Erro ao carregar traduções de mobs: status", resp.StatusCode)
+		return
 	}
 
-	var data map[string]any
+	var data map[string]string
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
-		return name
+		fmt.Println("Erro ao decodificar JSON de mobs:", err)
+		return
 	}
 
-	if n, ok := data["name"].(string); ok {
-		return strings.ReplaceAll(n, "_", " ")
+	for k, v := range data {
+		mobTranslations[k] = v
 	}
-	return name
 }
 
 func GetUUID(username string) (string, error) {
