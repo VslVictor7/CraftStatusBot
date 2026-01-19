@@ -96,6 +96,9 @@ func startMCWatcher(dg *discordgo.Session, eventsChannelID, logPath string) erro
 	watcher.Register(func(line string) {
 		presentation.ProcessAdvancementLine(dg, eventsChannelID, line)
 	})
+	watcher.Register(func(line string) {
+		presentation.ProcessDeathLine(dg, eventsChannelID, line)
+	})
 
 	go watcher.Start()
 	return nil
