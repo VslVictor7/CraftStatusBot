@@ -1,6 +1,7 @@
 package presentation
 
 import (
+	"discord-bot-go/internal/connections"
 	"fmt"
 	"strings"
 
@@ -69,17 +70,42 @@ func extractPlayerMessage(logLine string) (string, string, string) {
 	return playerName, message, eventName
 }
 
-func sendPlayerEvent(s *discordgo.Session, channelID, playerName, action, eventName string, color int) {
+func sendPlayerEvent(
+	s *discordgo.Session,
+	channelID string,
+	playerName string,
+	action string,
+	eventName string,
+	color int,
+) {
+	reader, filename, err := connections.GetPlayerImage(playerName)
+	if err != nil {
+		fmt.Println("[ERROR] Falha ao obter imagem do player:", err)
+		return
+	}
+
+	file := &discordgo.File{
+		Name:   filename,
+		Reader: reader,
+	}
+
 	embed := &discordgo.MessageEmbed{
 		Color: color,
 		Author: &discordgo.MessageEmbedAuthor{
 			Name:    fmt.Sprintf("%s %s %s", playerName, action, eventName),
-			IconURL: fmt.Sprintf("https://mineskin.eu/helm/%s", playerName),
+			IconURL: "attachment://" + filename,
 		},
 	}
 
-	_, err := s.ChannelMessageSendEmbed(channelID, embed)
+	_, err = s.ChannelMessageSendComplex(
+		channelID,
+		&discordgo.MessageSend{
+			Embed: embed,
+			Files: []*discordgo.File{file},
+		},
+	)
+
 	if err != nil {
-		fmt.Println("[BOT ERROR] Falha ao enviar evento do jogador:", err)
+		fmt.Println("[ERROR] Falha ao enviar evento do jogador:", err)
 	}
 }

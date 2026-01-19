@@ -1,6 +1,7 @@
 package presentation
 
 import (
+	"discord-bot-go/internal/connections"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -28,14 +29,14 @@ func loadDeathData() {
 func fetchMap(url string) map[string]string {
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Println("[BOT ERROR] API error:", err)
+		fmt.Println("[ERROR] API error:", err)
 		return map[string]string{}
 	}
 	defer resp.Body.Close()
 
 	var data map[string]string
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
-		fmt.Println("[BOT ERROR] Decode error:", err)
+		fmt.Println("[ERROR] Decode error:", err)
 		return map[string]string{}
 	}
 	return data
@@ -119,16 +120,34 @@ func translate(raw string) string {
 }
 
 func sendDeathEvent(s *discordgo.Session, channelID, player, message string) {
+	reader, filename, err := connections.GetPlayerImage(player)
+	if err != nil {
+		fmt.Println("[ERROR] Falha ao obter imagem do player:", err)
+		return
+	}
+
+	file := &discordgo.File{
+		Name:   filename,
+		Reader: reader,
+	}
+
 	embed := &discordgo.MessageEmbed{
 		Color: 0x000000,
 		Author: &discordgo.MessageEmbedAuthor{
 			Name:    fmt.Sprintf("%s %s", player, message),
-			IconURL: fmt.Sprintf("https://mineskin.eu/helm/%s", player),
+			IconURL: "attachment://" + filename,
 		},
 	}
 
-	_, err := s.ChannelMessageSendEmbed(channelID, embed)
+	_, err = s.ChannelMessageSendComplex(
+		channelID,
+		&discordgo.MessageSend{
+			Embed: embed,
+			Files: []*discordgo.File{file},
+		},
+	)
+
 	if err != nil {
-		fmt.Println("[BOT ERROR] Erro ao enviar evento de morte:", err)
+		fmt.Println("[ERROR] Erro ao enviar evento de morte:", err)
 	}
 }
