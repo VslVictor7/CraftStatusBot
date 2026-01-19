@@ -9,3 +9,15 @@ services:
     #  - /data/world/stats:/stats:ro # Onde a pasta stats do seu servidor se encontra
     #  - ./players.json:/app/bot/core/utils/json/players.json:ro
     # Only map it if SERVER_MODE=1
+    depends_on:
+      - helper-api
+  helper-api:
+    image: victorvsl7/helper-api:latest
+    container_name: helper-api
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
