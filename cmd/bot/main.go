@@ -29,6 +29,8 @@ func main() {
 	}
 	defer dg.Close()
 
+	fmt.Println("[INFO] Conectado ao Discord")
+
 	rcon, err := initRcon(rconAddr, rconPassword)
 	if err != nil {
 		fmt.Println(err)
@@ -43,21 +45,27 @@ func main() {
 	}
 	chatBridge.Register()
 
+	fmt.Println("[INFO] Bridge RCON conectado ao servidor Minecraft e Discord")
+
 	if err := startServerStatusWatcher(dg, eventsChannelID, statusChannelID, statusMessageID, serverAddr); err != nil {
 		fmt.Println(err)
 		return
 	}
+
+	fmt.Println("[INFO] Status do servidor sendo monitorado")
 
 	if err := startMCWatcher(dg, eventsChannelID, logPath); err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Println("Bot rodando")
+	fmt.Println("[INFO] Watcher de logs do Minecraft iniciado")
+
+	fmt.Println("[OK] Bot iniciado com sucesso")
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 	<-stop
 
-	fmt.Println("Desligando bot")
+	fmt.Println("[INFO] Desligando bot")
 }
