@@ -11,7 +11,7 @@ import (
 	"regexp"
 )
 
-const imageCacheDir = "cache/images"
+const imageCacheDir = "cache/mobs"
 
 func GetMobImage(mob string) (*bytes.Reader, string, error) {
 	if err := os.MkdirAll(imageCacheDir, 0755); err != nil {
