@@ -1,3 +1,5 @@
+readme ainda vai ser mudado, tudo aqui está oficialmente desatualizado.
+
 # Status Manager Bot
 
 - A functional Discord bot created by myself to address a niche concept that suits my needs. Its main functionality is monitoring a Minecraft server, displaying the public IP of the machine running the JAVA server, the number of players, their names, and whether the server is online.
@@ -12,37 +14,37 @@
 
 Server will show all of its data in real time, how many players, their names, if the server is online, etc.
 
-![Tela Inicial](bot/images/server_online.png)
-![Tela Inicial](bot/images/server_offline.png)
+![Tela Inicial](images/server_online.png)
+![Tela Inicial](images/server_offline.png)
 
-![Tela Inicial](bot/images/real_time.jpg)
+![Tela Inicial](images/real_time.jpg)
 
 ---
 
 Communication between discord server and minecraft server through RCON:
 
-![uses](bot/images/normal_use.png)
+![uses](images/normal_use.png)
 
 ---
 
 Players joining and leaving the server!
 
-![activity](bot/images/server_activity.png)
+![activity](images/server_activity.png)
 
 ---
 
 Advancements/goals/challenges will be shown with their respective color!
 
-![goal](bot/images/goal1.png)
-![goal](bot/images/goal2.png)
+![goal](images/goal1.png)
+![goal](images/goal2.png)
 
 ---
 
 Deaths of players, named entities and villagers will be shown!
 
-![morte](bot/images/named_entity_death.png)
-![morte](bot/images/villager_death.png)
-![morte](bot/images/player_death.png)
+![morte](images/named_entity_death.png)
+![morte](images/villager_death.png)
+![morte](images/player_death.png)
 
 ---
 
@@ -178,7 +180,7 @@ With the two steps out of they way, we can now continue to configure the env fil
 
 - Go to the directory present in "bot/tools/offline-uuid.py", that's a function to see what is the UUID of a set String. It should look like this:
 
-![Screenshot](bot/images/offline-uuid.png)
+![Screenshot](images/offline-uuid.png)
 
 - In the line present in "final = get_offline_uuid("test")" change the string "test" to the username you want to get the uuid. For isntance:
 

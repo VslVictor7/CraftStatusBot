@@ -1,27 +1,52 @@
-.venv
-venv
-__pycache__
-.pyc
-*.pyc
-__pycache__/
-/bot/images
-/bot/tools/
-*.pyo
-*.git/
-bot_database.db
-readme.md
-.gitignore
-.env.example
-.env.dev
+# Golang project .dockerignore
+
+# Binaries and build outputs
+bin/
+**/bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Vendor and dependency directories
+vendor/
+Godeps/
+pkg/
+
+# Test and coverage
+coverage.out
+testdata/
+
+# Environment files and secrets
 .env
-1.env
-dev.env
-commands.txt
-teste.py
-offline-uuid.py
-placeholder.txt
-1.txt
-*.pyd
-venv/
-docker-compose.yml
+.env.*
+*.pem
+*.key
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Node / frontend artifacts
+node_modules/
+dist/
+build/
+
+# Misc
+.dockerignore
 compose.yaml
