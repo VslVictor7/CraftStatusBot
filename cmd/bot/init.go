@@ -57,27 +57,24 @@ func initRcon(addr, password string) (*connections.Chat, error) {
 	}
 
 	if err := rcon.Connect(); err != nil {
-		return nil, fmt.Errorf("erro ao conectar no RCON: %w", err)
+		return nil, fmt.Errorf("[ERROR] Erro ao conectar no RCON: %w | Desligando...", err)
 	}
 
 	return rcon, nil
 }
 
+// StatusWatcher continua igual, monitorando snapshot e status do servidor
 func startServerStatusWatcher(dg *discordgo.Session, eventsChannelID, statusChannelID, statusMessageID, serverAddr string) error {
 	monitor := &server.ServerMonitor{
 		ServerAddr: serverAddr,
 		Interval:   2 * time.Second,
-
 		StatusEmbed: &server.StatusEmbed{
 			Session:   dg,
 			ChannelID: statusChannelID,
 			MessageID: statusMessageID,
 			BotName:   dg.State.User.Username,
 		},
-		PlayerEvents: &server.PlayerEvents{
-			Session:   dg,
-			ChannelID: eventsChannelID,
-		},
+		// PlayerEvents via snapshot pode ser removido ou mantido como fallback
 	}
 	monitor.Start()
 	return nil
@@ -88,6 +85,8 @@ func startMCWatcher(dg *discordgo.Session, eventsChannelID, logPath string) erro
 	if err != nil {
 		return fmt.Errorf("erro ao criar bridge MC: %w", err)
 	}
+
+	playerTracker := presentation.NewPlayerTracking(dg, eventsChannelID)
 
 	watcher := log.New(logPath)
 	watcher.Register(func(line string) {
@@ -101,6 +100,9 @@ func startMCWatcher(dg *discordgo.Session, eventsChannelID, logPath string) erro
 	})
 	watcher.Register(func(line string) {
 		presentation.ProcessMobDeath(line, dg, eventsChannelID)
+	})
+	watcher.Register(func(line string) {
+		playerTracker.HandleLogLine(line)
 	})
 
 	go watcher.Start()
