@@ -9,8 +9,7 @@ type ServerMonitor struct {
 	ServerAddr string
 	Interval   time.Duration
 
-	StatusEmbed  *StatusEmbed
-	PlayerEvents *PlayerEvents
+	StatusEmbed *StatusEmbed
 
 	lastNames []string
 }
@@ -18,35 +17,34 @@ type ServerMonitor struct {
 func (m *ServerMonitor) Start() {
 	go func() {
 		for {
-			m.tick()
-			time.Sleep(m.Interval)
+			snapshot, err := CollectSnapshot(m.ServerAddr)
+			if err != nil {
+				fmt.Printf("[ERROR] Falha ao coletar snapshot do servidor %s: %v\n, Tentando novamente em 1 minuto...", m.ServerAddr, err)
+			}
+
+			// reconciliar nomes
+			reconciledNames := reconcileNames(
+				m.lastNames,
+				snapshot.PlayerNames,
+				snapshot.PlayerCount,
+			)
+			snapshot.PlayerNames = reconciledNames
+			m.lastNames = reconciledNames
+
+			// atualizar embed
+			if m.StatusEmbed != nil {
+				m.StatusEmbed.Update(snapshot)
+			}
+
+			// definir sleep dinâmico
+			sleepDuration := m.Interval
+			if !snapshot.Online {
+				sleepDuration = 1 * time.Minute
+			}
+
+			time.Sleep(sleepDuration)
 		}
 	}()
-}
-
-func (m *ServerMonitor) tick() {
-	snapshot, err := CollectSnapshot(m.ServerAddr)
-	if err != nil {
-		fmt.Printf("[ERROR] Falha ao coletar snapshot do servidor %s: %v\n", m.ServerAddr, err)
-		return
-	}
-
-	reconciledNames := reconcileNames(
-		m.lastNames,
-		snapshot.PlayerNames,
-		snapshot.PlayerCount,
-	)
-
-	snapshot.PlayerNames = reconciledNames
-	m.lastNames = reconciledNames
-
-	if m.StatusEmbed != nil {
-		m.StatusEmbed.Update(snapshot)
-	}
-
-	if m.PlayerEvents != nil {
-		m.PlayerEvents.Update(snapshot)
-	}
 }
 
 func reconcileNames(
@@ -54,7 +52,6 @@ func reconcileNames(
 	current []string,
 	playerCount int,
 ) []string {
-
 	if playerCount == 0 {
 		return []string{}
 	}
