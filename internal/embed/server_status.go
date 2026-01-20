@@ -37,9 +37,16 @@ func BuildServerEmbed(
 		playerCountText = fmt.Sprintf("%d %s", players, suffix)
 	}
 
+	filteredNames := []string{}
+	for _, n := range names {
+		if n != "Anonymous Player" {
+			filteredNames = append(filteredNames, n)
+		}
+	}
+
 	namesValue := "Nenhum"
-	if len(names) > 0 {
-		namesValue = strings.Join(names, ", ")
+	if len(filteredNames) > 0 {
+		namesValue = strings.Join(filteredNames, ", ")
 	}
 
 	return &discordgo.MessageEmbed{
