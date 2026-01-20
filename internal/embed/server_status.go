@@ -18,7 +18,7 @@ func BuildServerEmbed(
 	botName string,
 ) *discordgo.MessageEmbed {
 
-	host := os.Getenv("HOST")
+	domain := os.Getenv("DOMAIN")
 
 	color := 0xff0000
 	status := "🔴 Offline"
@@ -48,7 +48,7 @@ func BuildServerEmbed(
 		Fields: []*discordgo.MessageEmbedField{
 			{
 				Name:  "🖥️ IP",
-				Value: host,
+				Value: domain,
 			},
 			{
 				Name:  "📶 Status",
