@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"discord-bot-go/internal/commands"
+	"discord-bot-go/internal/commands/handlers"
 	"discord-bot-go/internal/connections"
 	"discord-bot-go/internal/log"
 	"discord-bot-go/internal/presentation"
@@ -16,7 +17,7 @@ import (
 func initDiscord(token string) (*discordgo.Session, error) {
 	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
-		return nil, fmt.Errorf("erro ao criar sessão Discord: %w", err)
+		return nil, fmt.Errorf("[ERROR] erro ao criar sessão Discord: %w", err)
 	}
 
 	dg.Identify.Intents =
@@ -28,22 +29,31 @@ func initDiscord(token string) (*discordgo.Session, error) {
 		if i.Type != discordgo.InteractionApplicationCommand {
 			return
 		}
+
 		cmdName := i.ApplicationCommandData().Name
 		cmd, ok := commands.RegisteredCommands[cmdName]
 		if !ok {
 			return
 		}
+
+		go func() {
+			payload := handlers.BuildCommandLog(i)
+			if err := log.LogCommand(payload); err != nil {
+				fmt.Println("[ERROR] Erro ao logar comando:", err)
+			}
+		}()
+
 		cmd.Handler(s, i)
 	})
 
 	if err := dg.Open(); err != nil {
-		return nil, fmt.Errorf("erro ao abrir conexão Discord: %w", err)
+		return nil, fmt.Errorf("[ERROR] erro ao abrir conexão Discord: %w", err)
 	}
 
 	for name, cmd := range commands.RegisteredCommands {
 		_, err := dg.ApplicationCommandCreate(dg.State.User.ID, "", cmd.Command())
 		if err != nil {
-			fmt.Printf("Erro ao registrar /%s: %v\n", name, err)
+			fmt.Printf("[ERROR] Erro ao registrar /%s: %v\n", name, err)
 		}
 	}
 
@@ -83,7 +93,7 @@ func startServerStatusWatcher(dg *discordgo.Session, eventsChannelID, statusChan
 func startMCWatcher(dg *discordgo.Session, eventsChannelID, logPath string) error {
 	mcBridge, err := presentation.NewMinecraftChatBridge(dg, eventsChannelID)
 	if err != nil {
-		return fmt.Errorf("erro ao criar bridge MC: %w", err)
+		return fmt.Errorf("[ERROR] erro ao criar bridge MC: %w", err)
 	}
 
 	playerTracker := presentation.NewPlayerTracking(dg, eventsChannelID)
