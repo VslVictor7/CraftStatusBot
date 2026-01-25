@@ -1,10 +1,6 @@
-# ======================
-# STAGE 1 — BUILD
-# ======================
 FROM golang:1.25.6-alpine AS app-builder
 
-# Dependências mínimas
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates tzdata
 
 WORKDIR /app
 
@@ -18,13 +14,14 @@ ENV GOARCH=amd64
 
 RUN go build -ldflags="-s -w" -o bot ./cmd/bot
 
-# ======================
-# STAGE 2 — PROD
-# ======================
+
 FROM scratch
 
 COPY --from=app-builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-# the test program:
+COPY --from=app-builder /usr/share/zoneinfo/America/Sao_Paulo /usr/share/zoneinfo/America/Sao_Paulo
+COPY --from=app-builder /usr/share/zoneinfo/UTC /usr/share/zoneinfo/UTC
 COPY --from=app-builder /app/bot /bot
+
+ENV TZ=America/Sao_Paulo
 
 ENTRYPOINT ["/bot"]
