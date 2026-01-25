@@ -2,10 +2,10 @@ package presentation
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"discord-bot-go/internal/connections"
+	"discord-bot-go/internal/log"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -62,11 +62,12 @@ func (d *DiscordChatBridge) onMessage(
 
 	b, err := json.Marshal(payload)
 	if err != nil {
-		fmt.Println("erro ao montar tellraw:", err)
+		log.LogError("erro ao montar tellraw:", err)
 		return
 	}
 
 	if err := d.RconChat.Tellraw(string(b)); err != nil {
-		fmt.Println("erro ao enviar tellraw:", err)
+		log.LogError("erro ao enviar tellraw:", err)
+		return
 	}
 }

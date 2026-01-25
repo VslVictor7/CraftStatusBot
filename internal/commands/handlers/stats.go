@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"discord-bot-go/internal/log"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -239,19 +240,19 @@ func LoadMobTranslations(apiURL string) {
 
 	resp, err := http.Get(fmt.Sprintf("%s/mobs", apiURL))
 	if err != nil {
-		fmt.Println("Erro ao carregar traduções de mobs:", err)
+		log.LogError("Erro ao carregar traduções de mobs:", err)
 		return
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		fmt.Println("Erro ao carregar traduções de mobs: status", resp.StatusCode)
+		log.LogError("Erro ao carregar traduções de mobs: status", fmt.Errorf("%d", resp.StatusCode))
 		return
 	}
 
 	var data map[string]string
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
-		fmt.Println("Erro ao decodificar JSON de mobs:", err)
+		log.LogError("Erro ao decodificar JSON de mobs:", err)
 		return
 	}
 

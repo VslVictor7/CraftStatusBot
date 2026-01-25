@@ -1,7 +1,7 @@
 package server
 
 import (
-	"fmt"
+	"discord-bot-go/internal/log"
 	"time"
 )
 
@@ -19,7 +19,8 @@ func (m *ServerMonitor) Start() {
 		for {
 			snapshot, err := CollectSnapshot(m.ServerAddr)
 			if err != nil {
-				fmt.Printf("[ERROR] Falha ao coletar snapshot do servidor %s: %v\n, Tentando novamente em 1 minuto...", m.ServerAddr, err)
+				log.LogError("Falha ao coletar snapshot do servidor", err)
+				log.LogInfo("Tentando novamente em 1 minuto...")
 			}
 
 			// reconciliar nomes

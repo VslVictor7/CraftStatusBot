@@ -16,7 +16,7 @@ import (
 func initDiscord(token string) (*discordgo.Session, error) {
 	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
-		return nil, fmt.Errorf("erro ao criar sessão Discord: %w", err)
+		return nil, err
 	}
 
 	dg.Identify.Intents =
@@ -37,7 +37,7 @@ func initDiscord(token string) (*discordgo.Session, error) {
 	})
 
 	if err := dg.Open(); err != nil {
-		return nil, fmt.Errorf("erro ao abrir conexão Discord: %w", err)
+		return nil, err
 	}
 
 	for name, cmd := range commands.RegisteredCommands {
@@ -57,7 +57,7 @@ func initRcon(addr, password string) (*connections.Chat, error) {
 	}
 
 	if err := rcon.Connect(); err != nil {
-		return nil, fmt.Errorf("[ERROR] Erro ao conectar no RCON: %w | Desligando...", err)
+		return nil, err
 	}
 
 	return rcon, nil
@@ -83,7 +83,7 @@ func startServerStatusWatcher(dg *discordgo.Session, eventsChannelID, statusChan
 func startMCWatcher(dg *discordgo.Session, eventsChannelID, logPath string) error {
 	mcBridge, err := presentation.NewMinecraftChatBridge(dg, eventsChannelID)
 	if err != nil {
-		return fmt.Errorf("erro ao criar bridge MC: %w", err)
+		return err
 	}
 
 	playerTracker := presentation.NewPlayerTracking(dg, eventsChannelID)

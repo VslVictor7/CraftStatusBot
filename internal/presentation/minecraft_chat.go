@@ -2,10 +2,10 @@ package presentation
 
 import (
 	"fmt"
-	stdlog "log"
 	"strings"
 
 	"discord-bot-go/internal/connections"
+	"discord-bot-go/internal/log"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -65,7 +65,8 @@ func (b *MinecraftChatBridge) Handle(line string) {
 		},
 	)
 	if err != nil {
-		stdlog.Printf("Failed to send message via webhook: %v", err)
+		log.LogError("Falha ao enviar messagem via webhook:", err)
+		return
 	}
 }
 

@@ -2,10 +2,11 @@ package main
 
 import (
 	"discord-bot-go/internal/presentation"
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"discord-bot-go/internal/log"
 
 	"github.com/joho/godotenv"
 )
@@ -24,16 +25,16 @@ func main() {
 
 	dg, err := initDiscord(token)
 	if err != nil {
-		fmt.Println(err)
+		log.LogError("Falha ao iniciar o bot", err)
 		return
 	}
 	defer dg.Close()
 
-	fmt.Println("[INFO] Conectado ao Discord")
+	log.LogInfo("Conectado ao Discord")
 
 	rcon, err := initRcon(rconAddr, rconPassword)
 	if err != nil {
-		fmt.Println(err)
+		log.LogError("Falha ao iniciar RCON", err)
 		return
 	}
 	defer rcon.Close()
@@ -45,27 +46,25 @@ func main() {
 	}
 	chatBridge.Register()
 
-	fmt.Println("[INFO] Bridge RCON conectado ao servidor Minecraft e Discord")
+	log.LogInfo("Bridge RCON conectado ao servidor Minecraft e Discord")
 
 	if err := startServerStatusWatcher(dg, eventsChannelID, statusChannelID, statusMessageID, serverAddr); err != nil {
-		fmt.Println(err)
+		log.LogError("Falha ao iniciar o monitor de status do servidor", err)
 		return
 	}
 
-	fmt.Println("[INFO] Status do servidor sendo monitorado")
-
+	log.LogInfo("Status do servidor sendo monitorado")
 	if err := startMCWatcher(dg, eventsChannelID, logPath); err != nil {
-		fmt.Println(err)
+		log.LogError("Falha ao iniciar o watcher de logs do Minecraft", err)
 		return
 	}
 
-	fmt.Println("[INFO] Watcher de logs do Minecraft iniciado")
-
-	fmt.Println("[OK] Bot iniciado com sucesso")
+	log.LogInfo("Watcher de logs do Minecraft iniciado")
+	log.LogOk("Bot iniciado com sucesso")
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 	<-stop
 
-	fmt.Println("[INFO] Desligando bot")
+	log.LogInfo("Bot Desligando bot...")
 }

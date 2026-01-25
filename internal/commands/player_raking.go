@@ -1,11 +1,10 @@
 package commands
 
 import (
+	"discord-bot-go/internal/commands/handlers"
 	"fmt"
 	"os"
 	"time"
-
-	"discord-bot-go/internal/commands/handlers"
 
 	"github.com/bwmarrin/discordgo"
 )

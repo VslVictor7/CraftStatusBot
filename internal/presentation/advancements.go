@@ -2,6 +2,7 @@ package presentation
 
 import (
 	"discord-bot-go/internal/connections"
+	"discord-bot-go/internal/log"
 	"fmt"
 	"strings"
 
@@ -80,7 +81,7 @@ func sendPlayerEvent(
 ) {
 	reader, filename, err := connections.GetPlayerImage(playerName)
 	if err != nil {
-		fmt.Println("[ERROR] Falha ao obter imagem do player:", err)
+		log.LogError("Falha ao obter imagem do player:", err)
 		return
 	}
 
@@ -106,6 +107,7 @@ func sendPlayerEvent(
 	)
 
 	if err != nil {
-		fmt.Println("[ERROR] Falha ao enviar evento do jogador:", err)
+		log.LogError("Falha ao enviar evento do jogador:", err)
+		return
 	}
 }

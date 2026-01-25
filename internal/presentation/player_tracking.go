@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"discord-bot-go/internal/connections"
+	"discord-bot-go/internal/log"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -111,6 +112,7 @@ func (p *PlayerTracking) sendEvent(player string, joined bool) {
 		Files: files,
 	})
 	if err != nil {
-		fmt.Printf("[ERROR] Falha ao enviar embed do jogador %s: %v\n", player, err)
+		log.LogError("Falha ao enviar embed do jogador:", err)
+		return
 	}
 }

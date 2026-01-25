@@ -1,6 +1,7 @@
 package server
 
 import (
+	"discord-bot-go/internal/log"
 	"fmt"
 	"os"
 	"strings"
@@ -41,7 +42,7 @@ func (s *StatusEmbed) Update(snapshot *ServerSnapshot) {
 		embed,
 	)
 	if err != nil {
-		fmt.Println("erro ao atualizar embed:", err)
+		log.LogError("Erro ao atualizar embed de status do servidor:", err)
 		return
 	}
 

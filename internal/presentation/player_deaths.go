@@ -2,6 +2,7 @@ package presentation
 
 import (
 	"discord-bot-go/internal/connections"
+	"discord-bot-go/internal/log"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -29,14 +30,14 @@ func loadDeathData() {
 func fetchMap(url string) map[string]string {
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Println("[ERROR] API error:", err)
+		log.LogError("API error:", err)
 		return map[string]string{}
 	}
 	defer resp.Body.Close()
 
 	var data map[string]string
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
-		fmt.Println("[ERROR] Decode error:", err)
+		log.LogError("Decode error:", err)
 		return map[string]string{}
 	}
 	return data
@@ -114,7 +115,7 @@ func translate(raw string) string {
 func sendDeathEvent(s *discordgo.Session, channelID, player, message string) {
 	reader, filename, err := connections.GetPlayerImage(player)
 	if err != nil {
-		fmt.Println("[ERROR] Falha ao obter imagem do player:", err)
+		log.LogError("Falha ao obter imagem do player:", err)
 		return
 	}
 
@@ -140,6 +141,7 @@ func sendDeathEvent(s *discordgo.Session, channelID, player, message string) {
 	)
 
 	if err != nil {
-		fmt.Println("[ERROR] Erro ao enviar evento de morte:", err)
+		log.LogError("Erro ao enviar evento de morte:", err)
+		return
 	}
 }
