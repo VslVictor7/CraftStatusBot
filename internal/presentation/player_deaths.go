@@ -63,7 +63,10 @@ func ProcessDeathLine(s *discordgo.Session, channelID, line string) {
 		regex := buildDeathRegex(pattern)
 		re := regexp.MustCompile(regex)
 
-		match := re.FindStringSubmatch(line)
+		cleanLine := regexp.MustCompile(`^\[.*?\]:\s*`).ReplaceAllString(line, "")
+		cleanLine = strings.TrimSpace(cleanLine)
+
+		match := re.FindStringSubmatch(cleanLine)
 		if match == nil {
 			continue
 		}
@@ -91,13 +94,9 @@ func ProcessDeathLine(s *discordgo.Session, channelID, line string) {
 func buildDeathRegex(pattern string) string {
 	r := regexp.QuoteMeta(pattern)
 
-	r = strings.ReplaceAll(r, "\\{player\\}", `(?P<player>\S+)`)
-	r = strings.ReplaceAll(r, "\\{entity\\}", `(?P<entity>.+?)`)
-	r = strings.ReplaceAll(
-		r,
-		"\\{item\\}",
-		`\[(?P<item>[^\[\]]+)\]`,
-	)
+	r = strings.ReplaceAll(r, `\{player\}`, `(?P<player>\S+)`)
+	r = strings.ReplaceAll(r, `\{entity\}`, `(?P<entity>.+?)`)
+	r = strings.ReplaceAll(r, `\{item\}`, `\[(?P<item>[^\[\]]+)\]`)
 
 	return r
 }
