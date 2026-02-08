@@ -44,6 +44,10 @@ func ProcessMobDeath(line string, s *discordgo.Session, channelID string) {
 	}
 
 	entity, item := extractEntityAndItem(line, pattern)
+
+	entity = cleanEntity(entity)
+	item = cleanEntity(item)
+
 	entity = translateMobDeaths(entity, mobs)
 	item = translateMobDeaths(item, mobs)
 
@@ -209,4 +213,10 @@ func resolveMobName(mob string, isVillager bool) string {
 		return "Villager"
 	}
 	return mob
+}
+
+func cleanEntity(raw string) string {
+	raw = strings.TrimSpace(raw)
+	raw = strings.Trim(raw, "'\"") // remocao de aspas simples e duplas
+	return raw
 }
