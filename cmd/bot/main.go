@@ -54,7 +54,7 @@ func main() {
 	}
 
 	log.LogInfo("Status do servidor sendo monitorado")
-	if err := startMCWatcher(dg, eventsChannelID, logPath); err != nil {
+	if err := startMCWatcher(dg, eventsChannelID, logPath, rcon); err != nil {
 		log.LogError("Falha ao iniciar o watcher de logs do Minecraft", err)
 		return
 	}

@@ -24,6 +24,12 @@ func NewPlayerTracking(session *discordgo.Session, channelID string) *PlayerTrac
 	}
 }
 
+func (p *PlayerTracking) SyncInitial(players []string) {
+	for _, name := range players {
+		p.players[name] = struct{}{}
+	}
+}
+
 func (p *PlayerTracking) HandleLogLine(line string) {
 	line = strings.TrimSpace(line)
 	if line == "" {

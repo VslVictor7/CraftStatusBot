@@ -80,13 +80,20 @@ func startServerStatusWatcher(dg *discordgo.Session, eventsChannelID, statusChan
 	return nil
 }
 
-func startMCWatcher(dg *discordgo.Session, eventsChannelID, logPath string) error {
+func startMCWatcher(dg *discordgo.Session, eventsChannelID, logPath string, rcon *connections.Chat) error {
 	mcBridge, err := presentation.NewMinecraftChatBridge(dg, eventsChannelID)
 	if err != nil {
 		return err
 	}
 
 	playerTracker := presentation.NewPlayerTracking(dg, eventsChannelID)
+
+	players, err := rcon.ListPlayers()
+	if err != nil {
+		log.LogError("erro ao obter players via RCON:", err)
+	} else {
+		playerTracker.SyncInitial(players)
+	}
 
 	watcher := log.New(logPath)
 	watcher.Register(func(line string) {

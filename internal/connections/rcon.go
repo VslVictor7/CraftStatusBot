@@ -2,6 +2,7 @@ package connections
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/gorcon/rcon"
@@ -53,4 +54,31 @@ func (c *Chat) Tellraw(json string) error {
 	cmd := fmt.Sprintf("tellraw @a %s", json)
 	_, err := c.conn.Execute(cmd)
 	return err
+}
+
+func (c *Chat) ListPlayers() ([]string, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.conn == nil {
+		return nil, fmt.Errorf("RCON não conectado")
+	}
+
+	resp, err := c.conn.Execute("list")
+	if err != nil {
+		return nil, err
+	}
+
+	parts := strings.Split(resp, ":")
+	if len(parts) < 2 {
+		return []string{}, nil
+	}
+
+	raw := strings.TrimSpace(parts[1])
+	if raw == "" {
+		return []string{}, nil
+	}
+
+	names := strings.Split(raw, ", ")
+	return names, nil
 }
