@@ -31,17 +31,18 @@ func (w *Watcher) Start() error {
 				continue
 			}
 
-			reader := bufio.NewReader(file)
-
-			// começa no final (tail -F)
 			_, _ = file.Seek(0, io.SeekEnd)
+			reader := bufio.NewReader(file)
 
 			for {
 				line, err := reader.ReadString('\n')
 				if err != nil {
-					// qualquer erro → fecha e reabre
+					if err == io.EOF {
+						time.Sleep(100 * time.Millisecond)
+						continue
+					}
 					file.Close()
-					time.Sleep(100 * time.Millisecond)
+					time.Sleep(200 * time.Millisecond)
 					break
 				}
 
