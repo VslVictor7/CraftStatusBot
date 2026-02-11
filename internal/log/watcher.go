@@ -27,68 +27,28 @@ func (w *Watcher) Start() error {
 		for {
 			file, err := os.Open(w.Path)
 			if err != nil {
-				time.Sleep(1 * time.Second)
+				time.Sleep(500 * time.Millisecond)
 				continue
 			}
 
-			func(f *os.File) {
-				defer f.Close()
+			reader := bufio.NewReader(file)
 
-				// info do arquivo aberto
-				curInfo, err := f.Stat()
+			// começa no final (tail -F)
+			_, _ = file.Seek(0, io.SeekEnd)
+
+			for {
+				line, err := reader.ReadString('\n')
 				if err != nil {
-					return
+					// qualquer erro → fecha e reabre
+					file.Close()
+					time.Sleep(100 * time.Millisecond)
+					break
 				}
 
-				// posiciona no final (comportamento "tail -f")
-				_, _ = f.Seek(0, io.SeekEnd)
-				reader := bufio.NewReader(f)
-
-				for {
-					line, err := reader.ReadString('\n')
-					if err != nil {
-						if err == io.EOF {
-							// checar se o arquivo no caminho foi substituído (rotacionado)
-							pathInfo, statErr := os.Stat(w.Path)
-							if statErr != nil {
-								// caminho pode ter sumido temporariamente; esperar e continuar
-								time.Sleep(100 * time.Millisecond)
-								continue
-							}
-
-							// se não é o mesmo arquivo (inode diferente), houve rotação -> reabrir
-							if !os.SameFile(curInfo, pathInfo) {
-								// sair do loop para reabrir no próximo ciclo externo
-								break
-							}
-
-							// se o arquivo foi truncado (size < current offset), seek pro início
-							curOffset, _ := f.Seek(0, io.SeekCurrent)
-							if pathInfo.Size() < curOffset {
-								_, _ = f.Seek(0, io.SeekStart)
-								reader = bufio.NewReader(f)
-								curInfo = pathInfo
-								continue
-							}
-
-							// caso normal: aguardar por novas linhas
-							time.Sleep(100 * time.Millisecond)
-							continue
-						} else {
-							// erro sério de leitura: sair para reabrir
-							break
-						}
-					}
-
-					// entregando linha para handlers
-					for _, h := range w.Handlers {
-						h(line)
-					}
+				for _, h := range w.Handlers {
+					h(line)
 				}
-			}(file)
-
-			// pequena espera antes de tentar abrir novamente
-			time.Sleep(200 * time.Millisecond)
+			}
 		}
 	}()
 	return nil
