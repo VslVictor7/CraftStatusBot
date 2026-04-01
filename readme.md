@@ -182,7 +182,7 @@ With the two steps out of they way, we can now continue to configure the env fil
 
 ![Screenshot](images/offline-uuid.png)
 
-- In the line present in "final = get_offline_uuid("test")" change the string "test" to the username you want to get the uuid. For isntance:
+- In the line present in "final = get_offline_uuid("test")" change the string "test" to the username you want to get the uuid. For instance:
 
 ```bash
 final = get_offline_uuid("JorjinGamer")
