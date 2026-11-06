@@ -11,8 +11,9 @@ services:
     # Only map it if SERVER_MODE=1
     depends_on:
       - helper-api
+      
   helper-api:
-    image: victorvsl7/helper-api:latest
+    image: ghcr.io/vslvictor7/helper-api:latest
     container_name: helper-api
     ports:
       - 8000:8000
