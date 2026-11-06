@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"uuid"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -280,11 +281,9 @@ func GetUUID(username string) (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprintf("%s-%s-%s-%s-%s",
-		data.ID[0:8],
-		data.ID[8:12],
-		data.ID[12:16],
-		data.ID[16:20],
-		data.ID[20:],
-	), nil
+	id, err := uuid.Parse(data.ID)
+	if err != nil {
+		return "", err
+	}
+	return id.String(), nil
 }

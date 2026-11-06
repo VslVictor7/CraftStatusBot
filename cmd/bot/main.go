@@ -7,13 +7,9 @@ import (
 	"syscall"
 
 	"discord-bot-go/internal/log"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	godotenv.Load()
-
 	token := os.Getenv("DISCORD_TOKEN")
 	rconAddr := os.Getenv("RCON_ADDR")
 	rconPassword := os.Getenv("RCON_PASSWORD")
