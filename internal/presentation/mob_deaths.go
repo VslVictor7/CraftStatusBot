@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"regexp"
 	"sort"
 	"strings"
@@ -26,7 +25,7 @@ type DeathPattern struct {
 	Message string
 }
 
-func ProcessMobDeath(line string, s *discordgo.Session, channelID string) {
+func ProcessMobDeath(line string, s *discordgo.Session, channelID, apiURL string) {
 	if shouldIgnore(line) {
 		return
 	}
@@ -36,7 +35,7 @@ func ProcessMobDeath(line string, s *discordgo.Session, channelID string) {
 		return
 	}
 
-	deaths, mobs := fetchMaps()
+	deaths, mobs := fetchMaps(apiURL)
 
 	pattern, message := matchDeath(line, deaths)
 	if pattern == "" {
@@ -56,7 +55,7 @@ func ProcessMobDeath(line string, s *discordgo.Session, channelID string) {
 		msg = strings.ReplaceAll(msg, "{item}", "["+item+"]")
 	}
 
-	reader, filename, err := connections.GetMobImage(resolveMobName(mobType, isVillager))
+	reader, filename, err := connections.GetMobImage(resolveMobName(mobType, isVillager), apiURL)
 	if err != nil {
 		return
 	}
@@ -98,9 +97,8 @@ func extractCoords(line string) string {
 	return fmt.Sprintf("(x: %s, y: %s, z: %s)", m[1], m[2], m[3])
 }
 
-func fetchMaps() ([]DeathPattern, map[string]string) {
-	api := os.Getenv("API_URL")
-	return fetchDeaths(api + "/deaths"), fetchMobMap(api + "/mobs")
+func fetchMaps(apiURL string) ([]DeathPattern, map[string]string) {
+	return fetchDeaths(apiURL + "/deaths"), fetchMobMap(apiURL + "/mobs")
 }
 
 func fetchMobMap(url string) map[string]string {

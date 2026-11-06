@@ -3,7 +3,6 @@ package server
 import (
 	"discord-bot-go/internal/log"
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
@@ -15,6 +14,7 @@ type StatusEmbed struct {
 	ChannelID string
 	MessageID string
 	BotName   string
+	Domain    string
 
 	lastState *ServerSnapshot
 }
@@ -34,6 +34,7 @@ func (s *StatusEmbed) Update(snapshot *ServerSnapshot) {
 		snapshot.Version,
 		snapshot.PlayerNames,
 		s.BotName,
+		s.Domain,
 	)
 
 	_, err := s.Session.ChannelMessageEditEmbed(
@@ -75,10 +76,8 @@ func BuildServerEmbed(
 	players int,
 	version string,
 	names []string,
-	botName string,
+	botName, domain string,
 ) *discordgo.MessageEmbed {
-
-	domain := os.Getenv("DOMAIN")
 
 	color := 0xff0000
 	status := "🔴 Offline"

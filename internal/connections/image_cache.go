@@ -13,7 +13,7 @@ import (
 
 const imageCacheDir = "cache/mobs"
 
-func GetMobImage(mob string) (*bytes.Reader, string, error) {
+func GetMobImage(mob, apiURL string) (*bytes.Reader, string, error) {
 	if err := os.MkdirAll(imageCacheDir, 0755); err != nil {
 		return nil, "", err
 	}
@@ -26,7 +26,6 @@ func GetMobImage(mob string) (*bytes.Reader, string, error) {
 		return bytes.NewReader(data), filename, err
 	}
 
-	apiURL := os.Getenv("API_URL")
 	if apiURL == "" {
 		return nil, "", fmt.Errorf("API_URL não definida")
 	}

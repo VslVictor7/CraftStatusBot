@@ -8,4 +8,11 @@ type Command interface {
 	Handler(s *discordgo.Session, i *discordgo.InteractionCreate)
 }
 
-var RegisteredCommands = map[string]Command{}
+func New(statsFolder, apiURL string) map[string]Command {
+	stats := &Stats{StatsFolder: statsFolder, APIURL: apiURL}
+	ranking := &Ranking{StatsFolder: statsFolder}
+	return map[string]Command{
+		stats.Name():   stats,
+		ranking.Name(): ranking,
+	}
+}

@@ -3,13 +3,14 @@ package commands
 import (
 	"discord-bot-go/internal/commands/handlers"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-type Ranking struct{}
+type Ranking struct {
+	StatsFolder string
+}
 
 func (r *Ranking) Name() string {
 	return "ranking"
@@ -23,10 +24,9 @@ func (r *Ranking) Command() *discordgo.ApplicationCommand {
 }
 
 func (r *Ranking) Handler(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	statsFolder := os.Getenv("STATS_FOLDER")
 	topN := 5
 
-	playerTimes, err := handlers.GetAllPlayerTimes(statsFolder)
+	playerTimes, err := handlers.GetAllPlayerTimes(r.StatsFolder)
 	if err != nil || len(playerTimes) == 0 {
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -68,9 +68,4 @@ func (r *Ranking) Handler(s *discordgo.Session, i *discordgo.InteractionCreate) 
 			Embeds: []*discordgo.MessageEmbed{embed},
 		},
 	})
-}
-
-func init() {
-	cmd := &Ranking{}
-	RegisteredCommands[cmd.Name()] = cmd
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func initDiscord(token string) (*discordgo.Session, error) {
+func initDiscord(token, statsFolder, apiURL string) (*discordgo.Session, error) {
 	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
 		return nil, err
@@ -24,12 +24,13 @@ func initDiscord(token string) (*discordgo.Session, error) {
 			discordgo.IntentsGuildMessages |
 			discordgo.IntentsMessageContent
 
+	registeredCommands := commands.New(statsFolder, apiURL)
 	dg.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		if i.Type != discordgo.InteractionApplicationCommand {
 			return
 		}
 		cmdName := i.ApplicationCommandData().Name
-		cmd, ok := commands.RegisteredCommands[cmdName]
+		cmd, ok := registeredCommands[cmdName]
 		if !ok {
 			return
 		}
@@ -40,7 +41,7 @@ func initDiscord(token string) (*discordgo.Session, error) {
 		return nil, err
 	}
 
-	for name, cmd := range commands.RegisteredCommands {
+	for name, cmd := range registeredCommands {
 		_, err := dg.ApplicationCommandCreate(dg.State.User.ID, "", cmd.Command())
 		if err != nil {
 			fmt.Printf("Erro ao registrar /%s: %v\n", name, err)
@@ -64,7 +65,7 @@ func initRcon(addr, password string) (*connections.Chat, error) {
 }
 
 // StatusWatcher continua igual, monitorando snapshot e status do servidor
-func startServerStatusWatcher(dg *discordgo.Session, eventsChannelID, statusChannelID, statusMessageID, serverAddr string) error {
+func startServerStatusWatcher(dg *discordgo.Session, statusChannelID, statusMessageID, serverAddr, domain string) error {
 	monitor := &server.ServerMonitor{
 		ServerAddr: serverAddr,
 		Interval:   2 * time.Second,
@@ -73,6 +74,7 @@ func startServerStatusWatcher(dg *discordgo.Session, eventsChannelID, statusChan
 			ChannelID: statusChannelID,
 			MessageID: statusMessageID,
 			BotName:   dg.State.User.Username,
+			Domain:    domain,
 		},
 		// PlayerEvents via snapshot pode ser removido ou mantido como fallback
 	}
@@ -80,7 +82,7 @@ func startServerStatusWatcher(dg *discordgo.Session, eventsChannelID, statusChan
 	return nil
 }
 
-func startMCWatcher(dg *discordgo.Session, eventsChannelID, logPath string, rcon *connections.Chat) error {
+func startMCWatcher(dg *discordgo.Session, eventsChannelID, logPath, apiURL string, rcon *connections.Chat) error {
 	mcBridge, err := presentation.NewMinecraftChatBridge(dg, eventsChannelID)
 	if err != nil {
 		return err
@@ -103,10 +105,10 @@ func startMCWatcher(dg *discordgo.Session, eventsChannelID, logPath string, rcon
 		presentation.ProcessAdvancementLine(dg, eventsChannelID, line)
 	})
 	watcher.Register(func(line string) {
-		presentation.ProcessDeathLine(dg, eventsChannelID, line)
+		presentation.ProcessDeathLine(dg, eventsChannelID, line, apiURL)
 	})
 	watcher.Register(func(line string) {
-		presentation.ProcessMobDeath(line, dg, eventsChannelID)
+		presentation.ProcessMobDeath(line, dg, eventsChannelID, apiURL)
 	})
 	watcher.Register(func(line string) {
 		playerTracker.HandleLogLine(line)

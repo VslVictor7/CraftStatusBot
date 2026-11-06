@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"regexp"
 	"strings"
 	"sync"
@@ -20,9 +19,7 @@ var (
 	loadOnce      sync.Once
 )
 
-func loadDeathData() {
-	apiURL := os.Getenv("API_URL")
-
+func loadDeathData(apiURL string) {
 	deathMessages = fetchMap(apiURL + "/deaths")
 	mobsMap = fetchMap(apiURL + "/mobs")
 }
@@ -43,7 +40,7 @@ func fetchMap(url string) map[string]string {
 	return data
 }
 
-func ProcessDeathLine(s *discordgo.Session, channelID, line string) {
+func ProcessDeathLine(s *discordgo.Session, channelID, line, apiURL string) {
 	ignorePatterns := []string{
 		"[Rcon]", "[Not Secure]", "Disconnecting VANILLA connection attempt",
 		"rejected vanilla connections", "lost connection", "id=<null>",
@@ -57,7 +54,7 @@ func ProcessDeathLine(s *discordgo.Session, channelID, line string) {
 		}
 	}
 
-	loadOnce.Do(loadDeathData)
+	loadOnce.Do(func() { loadDeathData(apiURL) })
 
 	for pattern, translated := range deathMessages {
 		regex := buildDeathRegex(pattern)
